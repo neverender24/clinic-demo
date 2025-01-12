@@ -1,0 +1,8 @@
+@import '/vendor/filament/filament/resources/css/theme.css';
+
+@config 'tailwind.config.js';
+
+/* 
+#consutation-form ~ .fi-form-actions .fi-ac {
+    @apply justify-center;
+} */

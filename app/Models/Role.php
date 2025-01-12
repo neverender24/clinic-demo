@@ -1,0 +1,20 @@
+<?php
+
+namespace App\Models;
+
+use Spatie\Permission\Models\Role as SpatieRole;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+
+class Role extends SpatieRole
+{
+    public function clinic(): BelongsTo
+    {
+        return $this->belongsTo(Clinic::class, 'team_id');
+    }
+    
+    public function clinics(): BelongsToMany
+    {
+        return $this->belongsToMany(Clinic::class);
+    }
+}
