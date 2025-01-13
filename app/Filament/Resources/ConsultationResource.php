@@ -22,8 +22,10 @@ use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\View as ComponentsView;
 use Filament\Tables\Actions\Action as ActionsAction;
 use Illuminate\View\View;
+use Livewire\Attributes\Url;
 
 class ConsultationResource extends Resource
 {
@@ -31,6 +33,10 @@ class ConsultationResource extends Resource
 
     protected static ?string $navigationIcon = 'healthicons-o-telemedicine';
 
+    protected static bool $shouldRegisterNavigation = true;
+
+    #[Url]
+    public static $patient;
    
     public static function form(Form $form): Form
     {
@@ -61,29 +67,69 @@ class ConsultationResource extends Resource
                                                 return $data;
                                             });
                                     })
+                                    ->afterStateUpdated(function($state) {
+                                        static::$patient = $state;
+                                    })
+                                    ->live()
                                     ->required()
                                     ->columnSpan(3),
+                                Forms\Components\RichEditor::make('test_results')
+                                    ->required()
+                                    ->toolbarButtons([
+                                        'bold',
+                                        'bulletList',
+                                        'italic',
+                                        'orderedList',
+                                        'redo',
+                                        'underline',
+                                        'undo',
+                                    ])
+                                    ->columnSpanFull()
+                                    ,
                                 Grid::make()
                                     ->schema([
                                         Forms\Components\RichEditor::make('chief_complaint')
                                             ->required()
+                                            ->toolbarButtons([
+                                                'bold',
+                                                'bulletList',
+                                                'italic',
+                                                'orderedList',
+                                                'redo',
+                                                'underline',
+                                                'undo',
+                                            ])
                                             // ->columnSpanFull()
                                             ->columnSpan(2)
                                             ,
-                                        Forms\Components\RichEditor::make('test_results')
-                                            ->required()
-                                            // ->columnSpanFull()
-                                            ->columnSpan(2)
-                                            ,
+                                       
                                         Forms\Components\RichEditor::make('diagnosis')
                                             ->required()
+                                            ->toolbarButtons([
+                                                'bold',
+                                                'bulletList',
+                                                'italic',
+                                                'orderedList',
+                                                'redo',
+                                                'underline',
+                                                'undo',
+                                            ])
                                             ->columnSpan(2),
                                         Forms\Components\RichEditor::make('management')
                                             ->required()
-                                            ->columnSpan(2),
+                                            ->toolbarButtons([
+                                                'bold',
+                                                'bulletList',
+                                                'italic',
+                                                'orderedList',
+                                                'redo',
+                                                'underline',
+                                                'undo',
+                                            ])
+                                            ->columnSpanFull(),
                                     ])
+                                    ->visible(true)
                                     ->columns(4),
-                                    
                             ])
                             ->columns(4)
                             ->columnSpan(2),
@@ -106,12 +152,10 @@ class ConsultationResource extends Resource
                                         ->label('Prescription')
                                         ->defaultItems(1)
                                 ])
+                                ->visible(false)
                                 
                     ])
-                    // ->extraAttributes([
-                    //     'class' => 'flex justify-center',
-                    // ])
-                    // ->columnSpanFull()
+                    ->columnSpan(1),
             ])
             ->columns(1)
             ->extraAttributes(['class' => '', 'id' => 'consutation-form']);
@@ -125,22 +169,7 @@ class ConsultationResource extends Resource
                 Tables\Columns\TextColumn::make('date')
                     ->date()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('chief_complaint')
-                    ->searchable()
-                    ->html(),
-                Tables\Columns\TextColumn::make('test_results')
-                    ->searchable()
-                    ->html(),
-                Tables\Columns\TextColumn::make('diagnosis')
-                    ->searchable()
-                    ->html(),
-                Tables\Columns\TextColumn::make('management')
-                    ->searchable()
-                    ->html(),
-                Tables\Columns\TextColumn::make('clinic_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('patient_id')
+                Tables\Columns\TextColumn::make('patient.full_name')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
@@ -168,11 +197,7 @@ class ConsultationResource extends Resource
                     })
                     ->slideOver(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
+            ;
     }
 
     public static function getRelations(): array

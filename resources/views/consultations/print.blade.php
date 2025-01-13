@@ -2,9 +2,56 @@
     .inline p {
         display: inline;
     }
+
+    .container {
+        width: 60%;
+        margin: 0 auto;
+        position: relative;
+    }
+    .table-bordered {
+        border: solid black 1px;
+    }
+
+    .right-element {
+        position: absolute;
+        right: 1;
+    }
+
+    .main{
+        width: 100%;
+        height: 100%;
+        margin: 0 auto;
+    }
+
+    .fi-modal-content:has(> #prescription) {
+        background-color:rgb(238, 236, 236);
+        padding: 0;
+        padding-top: 2rem;
+    }
+
+    .paper-background {
+        background-color:rgb(255, 255, 255);
+        height: 80%;
+        padding: 7rem 5rem 5rem 1rem;
+    }
+    
 </style>
-<div class="inline">
-    @foreach($medicines as $medicine)
-        <h1 class="inline">{!! $medicine->name !!} {!! $medicine->brand !!}</h1>
-    @endforeach
+
+<div class="main" id="prescription">
+    <div class="container paper-background">
+        <p>
+            <strong>Name: </strong>{{ $patient->full_name }} 
+            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
+            <span class="right-element">
+            <strong >Date: </strong> {{ now()->format('F j, Y')}}
+            </span>
+        </p>
+        <p><strong>Age:</strong> {{ Carbon\Carbon::parse($patient->birthday)->age }}</p>
+        <p>&nbsp;</p>
+    
+        @foreach($medicines as $key => $medicine)
+            <h1 class="inline"><b>{{ $key + 1}}.)</b> {!! $medicine->name !!} {!! $medicine->brand !!} {!! $medicine->pivot->remarks !!}</h1>
+        @endforeach
+    </div>
+    
 </div>

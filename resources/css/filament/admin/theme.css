@@ -6,3 +6,12 @@
 #consutation-form ~ .fi-form-actions .fi-ac {
     @apply justify-center;
 } */
+
+.fi-fo-rich-editor-toolbar-btn svg {
+    @apply w-3;
+    @apply h-3;
+}
+
+.fi-fo-rich-editor-toolbar {
+    @apply py-0.5
+}
