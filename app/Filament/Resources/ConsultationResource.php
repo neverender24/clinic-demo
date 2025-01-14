@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\ConsultationResource\Pages;
 use App\Filament\Resources\ConsultationResource\RelationManagers;
 use App\Models\Patient;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Repeater;
@@ -27,7 +28,7 @@ use Filament\Tables\Actions\Action as ActionsAction;
 use Illuminate\View\View;
 use Livewire\Attributes\Url;
 
-class ConsultationResource extends Resource
+class ConsultationResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = Consultation::class;
 
@@ -35,9 +36,29 @@ class ConsultationResource extends Resource
 
     protected static bool $shouldRegisterNavigation = true;
 
-    #[Url]
-    public static $patient;
-   
+    public static function  getPermissionPrefixes(): array
+    {
+        return [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'restore',
+            'restore_any',
+            'replicate',
+            'reorder',
+            'delete',
+            'delete_any',
+            'force_delete',
+            'force_delete_any',
+            'add_management',
+            'add_diagnosis',
+            'add_chief_complaint',
+            'add_prescription',
+            'add_test_results',
+        ];
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -67,13 +88,10 @@ class ConsultationResource extends Resource
                                                 return $data;
                                             });
                                     })
-                                    ->afterStateUpdated(function($state) {
-                                        static::$patient = $state;
-                                    })
                                     ->live()
                                     ->required()
                                     ->columnSpan(3),
-                                Forms\Components\RichEditor::make('test_results')
+                                Forms\Components\MarkdownEditor::make('test_results')
                                     ->required()
                                     ->toolbarButtons([
                                         'bold',
@@ -85,10 +103,11 @@ class ConsultationResource extends Resource
                                         'undo',
                                     ])
                                     ->columnSpanFull()
+                                    ->visible(fn() => auth()->user()->can('addTestResult', static::$model))
                                     ,
                                 Grid::make()
                                     ->schema([
-                                        Forms\Components\RichEditor::make('chief_complaint')
+                                        Forms\Components\MarkdownEditor::make('chief_complaint')
                                             ->required()
                                             ->toolbarButtons([
                                                 'bold',
@@ -103,7 +122,7 @@ class ConsultationResource extends Resource
                                             ->columnSpan(2)
                                             ,
                                        
-                                        Forms\Components\RichEditor::make('diagnosis')
+                                        Forms\Components\MarkdownEditor::make('diagnosis')
                                             ->required()
                                             ->toolbarButtons([
                                                 'bold',
@@ -115,7 +134,7 @@ class ConsultationResource extends Resource
                                                 'undo',
                                             ])
                                             ->columnSpan(2),
-                                        Forms\Components\RichEditor::make('management')
+                                        Forms\Components\MarkdownEditor::make('management')
                                             ->required()
                                             ->toolbarButtons([
                                                 'bold',
@@ -128,7 +147,7 @@ class ConsultationResource extends Resource
                                             ])
                                             ->columnSpanFull(),
                                     ])
-                                    ->visible(true)
+                                    ->visible(fn() => auth()->user()->hasRole('Doctor'))
                                     ->columns(4),
                             ])
                             ->columns(4)
@@ -152,7 +171,7 @@ class ConsultationResource extends Resource
                                         ->label('Prescription')
                                         ->defaultItems(1)
                                 ])
-                                ->visible(false)
+                                ->visible(fn() => auth()->user()->hasRole('Doctor'))
                                 
                     ])
                     ->columnSpan(1),

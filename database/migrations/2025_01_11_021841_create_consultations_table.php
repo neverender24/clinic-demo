@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('consultations', function (Blueprint $table) {
             $table->id();
             $table->date('date');
-            $table->text('chief_complaint');
-            $table->text('test_results');
-            $table->text('diagnosis');
-            $table->text('management');
+            $table->text('chief_complaint')->nullable();
+            $table->text('test_results')->nullable();
+            $table->text('diagnosis')->nullable();
+            $table->text('management')->nullable();
             $table->integer('clinic_id')->unsigned();
             $table->integer('patient_id')->unsigned();
             $table->timestamps();
