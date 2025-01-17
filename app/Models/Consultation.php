@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Consultation extends Model
 {
-    protected $guarded = [];
+    protected $guarded = ['medicines'];
 
     public function clinic(): BelongsTo
     {

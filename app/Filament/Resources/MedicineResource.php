@@ -10,6 +10,7 @@ use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -27,10 +28,12 @@ class MedicineResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\RichEditor::make('name')
+                Forms\Components\TextInput::make('name')
+                    ->label('Generic Name')
                     ->required()
                     ->columnSpanFull(),
-                Forms\Components\RichEditor::make('brand')
+                Forms\Components\TextInput::make('brand')
+                    ->label('Brand Name')
                     ->required()
                     ->columnSpanFull(),
             ]);
@@ -52,10 +55,14 @@ class MedicineResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->headerActions([
+                CreateAction::make()
+                    ->modalWidth('lg')
             ])
-            ;
+            ->actions([
+                Tables\Actions\EditAction::make()
+                    ->modalWidth('lg'),
+            ]);
     }
 
     public static function getRelations(): array
@@ -69,8 +76,8 @@ class MedicineResource extends Resource
     {
         return [
             'index' => Pages\ListMedicines::route('/'),
-            'create' => Pages\CreateMedicine::route('/create'),
-            'edit' => Pages\EditMedicine::route('/{record}/edit'),
+            // 'create' => Pages\CreateMedicine::route('/create'),
+            // 'edit' => Pages\EditMedicine::route('/{record}/edit'),
         ];
     }
 }

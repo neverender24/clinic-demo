@@ -106,7 +106,7 @@ class ConsultationPolicy
         return $user->can('reorder_consultation');
     }
 
-    /**
+        /**
      * Customized permissions.
      */
     public function addManagement(User $user): bool

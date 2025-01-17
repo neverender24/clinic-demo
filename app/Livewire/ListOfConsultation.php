@@ -26,9 +26,9 @@ class ListOfConsultation extends Component implements HasTable, HasForms
     use InteractsWithTable;
     use InteractsWithForms;
 
-    public $data;
+    public ?array $data = [];
 
-    public function mount()
+    public function mount(): void
     {
         $this->form->fill();
     }
