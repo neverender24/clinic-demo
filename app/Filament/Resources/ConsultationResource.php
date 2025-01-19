@@ -32,9 +32,13 @@ use App\Filament\Resources\ConsultationResource\Pages;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use App\Filament\Resources\ConsultationResource\RelationManagers;
 use App\Filament\Resources\ConsultationResource\Pages\ListConsultations;
+use App\Trait\HasStatusAction;
+use Filament\Actions\ActionGroup;
 
 class ConsultationResource extends Resource implements HasShieldPermissions
 {
+    use HasStatusAction;
+
     protected static ?string $model = Consultation::class;
 
     protected static ?string $navigationIcon = 'healthicons-o-telemedicine';
@@ -61,6 +65,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
             'add_chief_complaint',
             'add_prescription',
             'add_test_results',
+            'edit_as_doctor'
         ];
     }
 
@@ -73,6 +78,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                         Section::make()
                             ->schema([
                                 Forms\Components\DatePicker::make('date')
+                                    ->default(now())
                                     ->required(),
                                 Forms\Components\Select::make('patient_id')
                                     ->label('Patient')
@@ -96,7 +102,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                     ->live()
                                     ->required()
                                     ->columnSpan(3),
-                                Forms\Components\MarkdownEditor::make('test_results')
+                                Forms\Components\RichEditor::make('test_results')
                                     ->required()
                                     ->toolbarButtons([
                                         'bold',
@@ -106,13 +112,14 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                         'redo',
                                         'underline',
                                         'undo',
+                                        'attachFiles'
                                     ])
                                     ->columnSpanFull()
                                     ->visible(fn() => auth()->user()->can('addTestResult', static::$model))
                                     ,
                                 Grid::make()
                                     ->schema([
-                                        Forms\Components\MarkdownEditor::make('chief_complaint')
+                                        Forms\Components\RichEditor::make('chief_complaint')
                                             ->required()
                                             ->toolbarButtons([
                                                 'bold',
@@ -127,7 +134,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                             ->columnSpan(2)
                                             ,
                                        
-                                        Forms\Components\MarkdownEditor::make('diagnosis')
+                                        Forms\Components\RichEditor::make('diagnosis')
                                             ->required()
                                             ->toolbarButtons([
                                                 'bold',
@@ -139,7 +146,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                                 'undo',
                                             ])
                                             ->columnSpan(2),
-                                        Forms\Components\MarkdownEditor::make('management')
+                                        Forms\Components\RichEditor::make('management')
                                             ->required()
                                             ->toolbarButtons([
                                                 'bold',
@@ -191,12 +198,14 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                 ->visible(fn() => auth()->user()->hasRole('Doctor'))
                                 
                     ])
-                    ->columnSpan(function($operation) {
-                        if($operation == 'create') {
-                            return 2;
-                        }
-                        return 1;
-                    }),
+                    ->columnSpan(2)
+                    // ->columnSpan(function($operation) {
+                    //     if($operation == 'create') {
+                    //         return 2;
+                    //     }
+                    //     return 1;
+                    // })
+                    ,
                 // Grid::make('')
                 //     ->schema([
                 //         Livewire::make(ListRecords::class, data: fn($record) => ['patient_id' => $record->patient_id])
@@ -212,14 +221,18 @@ class ConsultationResource extends Resource implements HasShieldPermissions
     {
         return $table
             ->modifyQueryUsing(fn(Builder $query) => $query->with(['medicines', 'patient']))
+            ->defaultSort('date', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('date')
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('patient.full_name')
-                    ->numeric()
                     ->searchable()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('status')
+                    ->searchable()
+                    ->sortable()
+                    ->badge(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -233,25 +246,34 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                ActionsAction::make('print prescription')
-                    ->color('success')
-                    ->icon('heroicon-o-printer')
-                    ->modalContent(function($record): View {
-                        return view('consultations.print', [
-                            'medicines' => $record->medicines,
-                            'patient' => $record->patient,
-                        ]);
-                    })
-                    ->slideOver(),
+                Tables\Actions\EditAction::make()
+                    ->disabled(fn($record) => $record->status->value == 'Done'),
+                Tables\Actions\Action::make('edit_history')
+                    ->visible(fn($record) => auth()->user()->can('edit_as_doctor_consultation'))
+                    ->disabled(fn($record) => $record->status->value == 'Done')
+                    ->label(fn() => auth()->user()->superAdmin() ? 'Edit as Doctor' : 'Edit')
+                    ->icon('heroicon-m-pencil-square')
+                    ->url(fn($record) => route('filament.admin.resources.consultations.edit.consultation', [$record->clinic_id, $record->id])),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\Action::make('print prescription')
+                        ->color('success')
+                        ->icon('heroicon-o-printer')
+                        ->modalContent(function($record): View {
+                            return view('consultations.print', [
+                                'medicines' => $record->medicines,
+                                'patient' => $record->patient,
+                            ]);
+                        })
+                        ->slideOver(),
+                    Tables\Actions\Action::make('status')
+                        ->label(fn($record) => static::statusLabel($record))
+                        ->color(fn($record) => static::statusColor($record))
+                        ->icon(fn($record) => static::statusIcon($record))
+                        ->action(fn($record) => $record->changeStatus())
+                        ->requiresConfirmation()
+                ])
             ])
             ;
-    }
-
-    #[On('selected-history')]
-    public function selectHistory()
-    {
-        dd('testing history12');
     }
 
     public static function getRelations(): array
@@ -266,7 +288,8 @@ class ConsultationResource extends Resource implements HasShieldPermissions
         return [
             'index' => Pages\ListConsultations::route('/'),
             'create' => Pages\CreateConsultation::route('/create'),
-            'edit' => Pages\EditWithHistory::route('/{record}/edit'),
+            'edit' => Pages\EditConsultation::route('/{record}/edit'),
+            'edit.consultation' => Pages\EditWithHistory::route('/{record}/edit-consultation'),
         ];
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ConsultationResource\Pages;
 
+use Carbon\Carbon;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use App\Models\Consultation;
@@ -9,14 +10,21 @@ use Filament\Resources\Pages\Page;
 use Illuminate\Support\Facades\DB;
 use Filament\Tables\Actions\Action;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
+use App\Infolists\Components\PatientEntry;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\IconEntry;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Concerns\InteractsWithForms;
 use App\Filament\Resources\ConsultationResource;
 use Filament\Tables\Concerns\InteractsWithTable;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
+use Filament\Resources\Pages\Concerns\InteractsWithRecord;
 
 class EditWithHistory extends Page implements HasForms, HasTable
 {
@@ -26,6 +34,8 @@ class EditWithHistory extends Page implements HasForms, HasTable
 
     use InteractsWithTable;
     use InteractsWithForms;
+    use InteractsWithRecord;
+    // use HasPageShield;
 
     public $patient_id;
 
@@ -33,19 +43,30 @@ class EditWithHistory extends Page implements HasForms, HasTable
 
     public $data;
 
-    public function mount($record)
+    protected static function getPermissionName(): string
     {
-        $this->consultation = Consultation::findOrFail($record)->load('consultationMedicines');
+        return 'edit_as_doctor';
+    }
 
-        $this->patient_id = $this->consultation->patient_id;
 
-        $this->consultation->medicines = $this->consultation->consultationMedicines->map(fn($item) => [
+    public function mount(int | string $record): void
+    {
+        
+        $this->record = $this->resolveRecord($record)->load('consultationMedicines');
+
+        // dd(auth()->user());
+
+        $this->authorize('edit_as_doctor_consultation', [$this->record]);
+        
+        $this->patient_id = $this->record->patient_id;
+
+        $this->record->medicines = $this->record->consultationMedicines->map(fn($item) => [
                                             "consultation_id" => $item->consultation_id,
                                             "medicine_id" => $item->medicine_id,
                                             "remarks" => $item->remarks
                                         ]);
     
-        $this->form->fill(collect($this->consultation)->except('consultation_medicines')->toArray());
+        $this->form->fill(collect($this->record)->except('consultation_medicines')->toArray());
         
     }
 
@@ -71,21 +92,38 @@ class EditWithHistory extends Page implements HasForms, HasTable
                 ])
                 ->actions([
                     Action::make('select')
-                        ->action(fn($record) => $this->selectHistory($record))
+                        ->modal()
+                        ->infolist([
+                            Section::make()
+                                ->schema([
+                                    PatientEntry::make('patient.full_name')
+                                        ->inlineLabel(false)
+                                        ->hiddenLabel()
+                                        ->size(TextEntry\TextEntrySize::Large)
+                                        ->icon('healthicons-o-traumatism')
+                                        ->iconColor('white')
+                                        ->formatStateUsing(fn($state) => strtoupper($state)),
+                                    TextEntry::make('test_results')
+                                        ->html()
+                                ])
+                        ])
+                        ->modalHeading(fn($record) => 'Consultation Details '.Carbon::parse($record->date)->format('F j, Y'))
+                        // ->action(fn($record) => $this->selectHistory($record))
                 ])
                 ->actionsColumnLabel('Action')
-                ->heading('Previous Consultations');
+                ->heading('Previous Consultations')
+                ->paginated(false);
     }
 
     protected function selectHistory($record)
     {
         // $record = collect($record)->except('date');
         // dd($record);
-        $record->date = $this->consultation->date; 
+        $record->date = $this->record->date; 
 
-        $record->id = $this->consultation->id; 
+        $record->id = $this->record->id; 
 
-        // dd($this->consultation);
+        // dd($this->record);
         
         $this->data = $record->toArray();
 
@@ -99,9 +137,9 @@ class EditWithHistory extends Page implements HasForms, HasTable
 
         DB::transaction(function() {
             try {
-                $this->consultation->update($this->data);
+                $this->record->update($this->data);
 
-                $this->consultation->medicines()->attach($this->data['medicines']);
+                $this->record->medicines()->attach($this->data['medicines']);
 
                 Notification::make()
                     ->title('Saved successfully')

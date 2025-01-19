@@ -133,4 +133,10 @@ class ConsultationPolicy
     {
         return $user->can('add_test_results_consultation');
     }
+
+    public function editAsDoctor(User $user)
+    {
+        dd($user->hasPermissionTo());
+        return $user->can('edit_as_doctor_consultation');
+    }
 }

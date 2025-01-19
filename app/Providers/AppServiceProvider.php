@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\Permission;
+use Filament\Resources\Resource;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
@@ -28,6 +29,7 @@ class AppServiceProvider extends ServiceProvider
                 return true;
             }
         });
+
         
         app(\Spatie\Permission\PermissionRegistrar::class)
             ->setPermissionClass(Permission::class)

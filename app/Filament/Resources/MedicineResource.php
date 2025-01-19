@@ -29,11 +29,11 @@ class MedicineResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
-                    ->label('Generic Name')
+                    ->label('Name')
                     ->required()
                     ->columnSpanFull(),
                 Forms\Components\TextInput::make('brand')
-                    ->label('Brand Name')
+                    ->label('Brand')
                     ->required()
                     ->columnSpanFull(),
             ]);
@@ -52,6 +52,7 @@ class MedicineResource extends Resource
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime('F j, Y'),
             ])
+            ->paginated(false)
             ->filters([
                 //
             ])

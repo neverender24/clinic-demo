@@ -20,3 +20,8 @@
 .choices__input > option p {
     @apply inline;
 } */
+
+.prose :where(p):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+    margin-top: 0;
+    margin-bottom: 0;
+}

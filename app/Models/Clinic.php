@@ -27,4 +27,9 @@ class Clinic extends Model
     {
         return $this->hasMany(Consultation::class);
     }
+
+    public function hospitalAdmissions(): HasMany
+    {
+        return $this->hasMany(Consultation::class);
+    }
 }

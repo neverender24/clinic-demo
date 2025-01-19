@@ -10,7 +10,7 @@ class EditConsultation extends EditRecord
 {
     protected static string $resource = ConsultationResource::class;
 
-    protected static string $view = 'filament.consultations.list-records';
+    // protected static string $view = 'filament.consultations.list-records';
     
     protected function getHeaderActions(): array
     {
@@ -19,10 +19,11 @@ class EditConsultation extends EditRecord
         ];
     }
 
-    protected function getViewData(): array
-    {
-        return [
-            'patient_id' => 'test'
-        ];   
-    }
+
+    // protected function getViewData(): array
+    // {
+    //     return [
+    //         'patient_id' => 'test'
+    //     ];   
+    // }
 }

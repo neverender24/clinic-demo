@@ -10,11 +10,12 @@ use Filament\Resources\Resource;
 use App\Models\HospitalAdmission;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Section;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Forms\Components\Actions\Action;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\HospitalAdmissionResource\Pages;
 use App\Filament\Resources\HospitalAdmissionResource\RelationManagers;
-use Filament\Forms\Components\Section;
 
 class HospitalAdmissionResource extends Resource
 {
@@ -32,7 +33,19 @@ class HospitalAdmissionResource extends Resource
                         ->schema([
                             Select::make('patient_id')
                                 ->relationship('patient', 'full_name')
-                                ->searchable(['full_name']),
+                                ->searchable(['full_name'])
+                                ->createOptionForm(function (Form $form) {
+                                    return PatientResource::form($form)->extraAttributes(['class' => 'w-full']);
+                                })
+                                ->createOptionAction(function(Action $action) {
+                                    return $action
+                                        ->modalWidth('xl')
+                                        ->modalHeading('Create Patient')
+                                        ->mutateFormDataUsing(function(array $data) {
+                                            $data['user_id'] = auth()->id();
+                                            return $data;
+                                        });
+                                }),
                             Forms\Components\DatePicker::make('admission_date')
                                 ->required(),
                             Forms\Components\DatePicker::make('discharge_date'),
