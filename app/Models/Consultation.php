@@ -31,7 +31,7 @@ class Consultation extends Model
 
     public function medicines():BelongsToMany
     {
-        return $this->belongsToMany(Medicine::class)->withPivot(['remarks']);
+        return $this->belongsToMany(Medicine::class)->withPivot(['remarks', 'quantity']);
     }
 
     public function consultationMedicines(): HasMany

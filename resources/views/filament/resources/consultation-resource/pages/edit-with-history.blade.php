@@ -15,4 +15,11 @@
             </x-filament::button>
         </div>
     </div>
+
+    <x-filament::modal id="history-modal" width="7xl">
+        <x-slot name="heading">
+            Consultation Details {{Carbon\Carbon::parse($this->historyData->date)->format('F j, Y')}}
+        </x-slot>
+        
+    </x-filament::modal>
 </x-filament-panels::page>

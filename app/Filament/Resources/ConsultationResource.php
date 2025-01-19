@@ -169,33 +169,41 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                     Repeater::make('medicines')
                                         ->relationship('consultationMedicines')
                                         ->schema([
-                                            Select::make('medicine_id')
-                                                ->label('Medicine')
-                                                ->relationship('medicine', 'full_name_of_medicine')
-                                                // ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->name} - <b>{$record->brand}</b>")
-                                                ->allowHtml()
-                                                ->preload()
-                                                ->searchable()
-                                                ->required()
-                                                ->createOptionForm(function (Form $form) {
-                                                    return MedicineResource::form($form)->extraAttributes(['class' => 'w-full']);
-                                                })
-                                                ->createOptionAction(function(Action $action) {
-                                                    return $action
-                                                        ->modalHeading('Add Medicine')
-                                                        ->mutateFormDataUsing(function(array $data) {
-                                                            $data['user_id'] = auth()->id();
-                                                            return $data;
-                                                        });
-                                                }),
-                                            TextInput::make('remarks')
-                                                ->required(),
+                                            Grid::make(columns: 5)
+                                                ->schema([
+                                                    Select::make('medicine_id')
+                                                        ->label('Medicine')
+                                                        ->relationship('medicine', 'full_name_of_medicine')
+                                                        // ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->name} - <b>{$record->brand}</b>")
+                                                        ->allowHtml()
+                                                        ->preload()
+                                                        ->searchable()
+                                                        ->required()
+                                                        ->createOptionForm(function (Form $form) {
+                                                            return MedicineResource::form($form)->extraAttributes(['class' => 'w-full']);
+                                                        })
+                                                        ->createOptionAction(function(Action $action) {
+                                                            return $action
+                                                                ->modalHeading('Add Medicine')
+                                                                ->mutateFormDataUsing(function(array $data) {
+                                                                    $data['user_id'] = auth()->id();
+                                                                    return $data;
+                                                                });
+                                                        })
+                                                        ->columnSpanFull(),
+                                                    TextInput::make('remarks')
+                                                        ->required()
+                                                        ->columnSpan(4),
+                                                    TextInput::make('quantity')
+                                                        ->required()
+                                                        ->columnSpan(1),
+                                                ])
                                         ])
                                         ->columns(2)
                                         ->label('Prescription')
                                         ->defaultItems(1)
                                 ])
-                                ->visible(fn() => auth()->user()->hasRole('Doctor'))
+                                ->visible(fn() => auth()->user()->hasRole('Doctor') || auth()->user()->superAdmin())
                                 
                     ])
                     ->columnSpan(2)
@@ -256,6 +264,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                     ->url(fn($record) => route('filament.admin.resources.consultations.edit.consultation', [$record->clinic_id, $record->id])),
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\Action::make('print prescription')
+                        ->hidden(false)
                         ->color('success')
                         ->icon('heroicon-o-printer')
                         ->modalContent(function($record): View {
@@ -264,6 +273,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                 'patient' => $record->patient,
                             ]);
                         })
+                        ->modalWidth('7xl')
                         ->slideOver(),
                     Tables\Actions\Action::make('status')
                         ->label(fn($record) => static::statusLabel($record))

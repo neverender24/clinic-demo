@@ -14,7 +14,8 @@
 
     .right-element {
         position: absolute;
-        right: 1;
+        right: 0;
+        margin-right: 1rem;
     }
 
     .main{
@@ -38,7 +39,7 @@
 </style>
 
 <div class="main" id="prescription">
-    <div class="container paper-background">
+    <div class="container paper-background" style="color:black">
         <p>
             <strong>Name: </strong>{{ $patient->full_name }} 
             &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
@@ -48,9 +49,12 @@
         </p>
         <p><strong>Age:</strong> {{ Carbon\Carbon::parse($patient->birthday)->age }}</p>
         <p>&nbsp;</p>
-    
         @foreach($medicines as $key => $medicine)
-            <h1 class="inline"><b>{{ $key + 1}}.)</b> {!! $medicine->name !!} {!! $medicine->brand !!} {!! $medicine->pivot->remarks !!}</h1>
+            <ol>
+                <li>
+                    <h1 class="inline"><b>{{ $key + 1}}.)</b> {!! $medicine->name !!} {!! $medicine->brand !!} {!! $medicine->pivot->remarks !!}</h1>
+                </li>
+            </ol>
         @endforeach
     </div>
     
