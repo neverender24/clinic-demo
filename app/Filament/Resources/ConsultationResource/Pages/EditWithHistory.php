@@ -35,6 +35,7 @@ use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
 use Filament\Infolists\Components\Actions\Action as InfolistAction;
+use Illuminate\Contracts\Support\Htmlable;
 
 class EditWithHistory extends Page implements HasForms, HasTable, HasInfolists
 {
@@ -63,10 +64,13 @@ class EditWithHistory extends Page implements HasForms, HasTable, HasInfolists
         return 'edit_as_doctor';
     }
 
+    public function getTitle(): string|Htmlable
+    {
+        return 'Edit Consultation';
+    }
 
     public function mount(int | string $record): void
     {
-        
         $this->record = $this->resolveRecord($record)->load('consultationMedicines');
 
         $this->historyData = $this->record;

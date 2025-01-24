@@ -3,8 +3,13 @@
         <div class="col-span-2">
             {{ $this->form }}
         </div>
-        <div>
-            {{ $this->table }}
+        <div class="flex flex-col gap-y-3">
+            <div>
+                {{ $this->table }}
+            </div>
+            <div>
+                @livewire('list-hospital-admission', ['patient_id' => $record->patient_id])
+            </div>
         </div>
         <div>
             <x-filament::button wire:click="submit" class="mt-3">

@@ -3,11 +3,14 @@
 namespace App\Models;
 
 use App\Enums\Enums\Status;
+use App\Models\Scopes\TenantScope;
+use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
+#[ScopedBy([TenantScope::class])]
 class Consultation extends Model
 {
     protected $guarded = ['medicines'];

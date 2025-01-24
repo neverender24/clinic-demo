@@ -16,6 +16,7 @@ use Filament\Forms\Components\Actions\Action;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\HospitalAdmissionResource\Pages;
 use App\Filament\Resources\HospitalAdmissionResource\RelationManagers;
+use Filament\Forms\Components\TextInput;
 
 class HospitalAdmissionResource extends Resource
 {
@@ -33,6 +34,7 @@ class HospitalAdmissionResource extends Resource
                         ->schema([
                             Select::make('patient_id')
                                 ->relationship('patient', 'full_name')
+                                ->preload()
                                 ->searchable(['full_name'])
                                 ->createOptionForm(function (Form $form) {
                                     return PatientResource::form($form)->extraAttributes(['class' => 'w-full']);
@@ -46,11 +48,14 @@ class HospitalAdmissionResource extends Resource
                                             return $data;
                                         });
                                 }),
+                            TextInput::make('hospital')
+                                ->required()
+                                ->datalist(fn($model) => $model::query()->select('hospital')->distinct()->get()->pluck('hospital')),
                             Forms\Components\DatePicker::make('admission_date')
                                 ->required(),
                             Forms\Components\DatePicker::make('discharge_date'),
                         ])
-                        ->columns(3),
+                        ->columns(2),
                     Grid::make()
                         ->schema([
                             Forms\Components\RichEditor::make('final_diagnosis'),
@@ -72,15 +77,12 @@ class HospitalAdmissionResource extends Resource
                 Tables\Columns\TextColumn::make('discharge_date')
                     ->date()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('clinic_id')
+                Tables\Columns\TextColumn::make('patient.full_name')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('patient_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('user_id')
-                    ->numeric()
-                    ->sortable(),
+                // Tables\Columns\TextColumn::make('user_id')
+                //     ->numeric()
+                //     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

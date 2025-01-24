@@ -82,11 +82,12 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                     ->required(),
                                 Forms\Components\Select::make('patient_id')
                                     ->label('Patient')
+                                    ->relationship('patient', 'full_name')
                                     // ->getSearchResultsUsing(fn (string $search) => Patient::query()->where('full_name', 'like', "%$search%")->pluck('full_name', 'id'))
                                     ->getOptionLabelsUsing(fn ($value) => Patient::find($value)->full_name)
                                     ->preload()
                                     ->searchable()
-                                    ->relationship('patient', 'full_name')
+                                    
                                     ->createOptionForm(function (Form $form) {
                                         return PatientResource::form($form)->extraAttributes(['class' => 'w-full']);
                                     })
@@ -229,7 +230,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
     {
         return $table
             ->modifyQueryUsing(fn(Builder $query) => $query->with(['medicines', 'patient']))
-            ->defaultSort('date', 'desc')
+            ->defaultSort('id', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('date')
                     ->date()
@@ -307,6 +308,6 @@ class ConsultationResource extends Resource implements HasShieldPermissions
 
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::count();
+        return transform(static::getModel()::query()->where('status', 'Pending')->count(), fn($value) => $value > 0 ? $value : null);
     }
 }

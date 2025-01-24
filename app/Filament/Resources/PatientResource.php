@@ -5,9 +5,12 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\PatientResource\Pages;
 use App\Filament\Resources\PatientResource\RelationManagers;
 use App\Models\Patient;
+use Carbon\Carbon;
 use Filament\Forms;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -57,6 +60,24 @@ class PatientResource extends Resource
                         Forms\Components\TagsInput::make('contact_details')
                             // ->separator(',')
                             ->hint('Can be a phone number, email, and/or any other contact detail'),
+                        Forms\Components\Repeater::make('patientHmos')
+                            ->relationship()
+                            ->schema([
+                                Select::make('hmo_id')
+                                    ->relationship('hmo', 'name')
+                                    ->searchable()
+                                    ->preload()
+                                    ->createOptionForm([
+                                        Forms\Components\TextInput::make('name')
+                                            ->required()
+                                            ->maxLength(255)
+                                    ]),
+                                DatePicker::make('date_registered')
+                                    ->label('Registered Date'),
+                                DatePicker::make('date_expiry')
+                                    ->label('Expired Date'),
+                            ])
+                            ->columns(3)
                     ])
             ])
             ->columns(1)
@@ -77,6 +98,14 @@ class PatientResource extends Resource
                 Tables\Columns\TextColumn::make('contact_details')
                     ->searchable()
                     ->listWithLineBreaks(),
+                Tables\Columns\TextColumn::make('hmos')
+                    ->searchable()
+                    ->badge()
+                    ->color(fn($state) => now()->gte(Carbon::parse($state->pivot?->date_expiry)) ? 'danger' : 'success')
+                    ->formatStateUsing(fn($state) => $state->name)
+                    // ->colors(fn($record) => dd($record))
+                    // ->color(fn($record) => dd($record->pivot))
+                    ,
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Created By')
                     ->searchable()

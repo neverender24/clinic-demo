@@ -29,14 +29,14 @@ class MedicineResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('type')
-                    ->label('Type')
+                    ->label('Preparation')
                     ->columnSpanFull(),
                 Forms\Components\TextInput::make('name')
-                    ->label('Name')
+                    ->label('Generic Name')
                     ->required()
                     ->columnSpanFull(),
                 Forms\Components\TextInput::make('brand')
-                    ->label('Brand')
+                    ->label('Brand Name')
                     ->required()
                     ->columnSpanFull(),
             ]);

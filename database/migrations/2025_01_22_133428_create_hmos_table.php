@@ -11,8 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('medicines', function (Blueprint $table) {
-            $table->text('full_name_of_medicine')->virtualAs('concat(name, " - ", "<b>(", brand, ")</b>")');
+        Schema::create('hmos', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->timestamps();
         });
     }
 
@@ -21,8 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('medicines', function (Blueprint $table) {
-            $table->dropColumn('full_name_of_medicine');
-        });
+        Schema::dropIfExists('hmos');
     }
 };
