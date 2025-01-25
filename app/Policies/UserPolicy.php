@@ -141,4 +141,9 @@ class UserPolicy
     {
         return $user->can('reorder_user');
     }
+
+    public function canManageTenant(User $user): bool
+    {
+        return $user->doctor();
+    }
 }

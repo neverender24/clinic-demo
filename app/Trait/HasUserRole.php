@@ -13,4 +13,9 @@ trait HasUserRole
     {
         return $this->hasRole('super_admin');
     }
+
+    public function doctor(): bool
+    {
+        return $this->hasRole('Doctor') || $this->superAdmin();
+    }
 }

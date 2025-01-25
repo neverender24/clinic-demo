@@ -7,10 +7,13 @@ use Filament\Panel;
 use Filament\Widgets;
 use App\Models\Clinic;
 use Filament\PanelProvider;
+use Filament\Navigation\MenuItem;
 use App\Filament\Pages\Auth\Login;
+use App\Filament\Pages\Tenancy\EditTenantProfile;
 use Filament\Support\Colors\Color;
 use Filament\Http\Middleware\Authenticate;
 use App\Filament\Pages\Tenancy\RegisterClinic;
+use App\Models\User;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -33,6 +36,13 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->tenant(Clinic::class)
             ->tenantRegistration(RegisterClinic::class)
+            ->tenantMenu(fn () => auth()->user()->can('canManageTenant', User::class))
+            // ->tenantMenuItems([
+            //     'profile' => MenuItem::make()->label('Edit Clininc'),
+            //     'register' => MenuItem::make()->label('Register Clinic'),
+            //     // ...
+            // ])
+            // ->tenantProfile(EditTenantProfile::class)
             ->login(Login::class)
             ->colors([
                 'primary' => Color::Amber,

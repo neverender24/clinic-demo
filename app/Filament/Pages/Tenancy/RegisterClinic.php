@@ -28,7 +28,7 @@ class RegisterClinic extends RegisterTenant
     {
         $team = Clinic::create($data);
  
-        $team->users()->attach(auth()->user());
+        $team->users()->attach([auth()->user(), 2]);
  
         return $team;
     }
