@@ -48,7 +48,15 @@ class UserResource extends Resource
                     ->required(fn($operation) => strtolower($operation) === 'create')
                     ->maxLength(255),
                 Forms\Components\CheckboxList::make('roles')
-                    ->relationship(name: 'roles', titleAttribute: 'name')
+                    ->relationship(
+                        name: 'roles', 
+                        titleAttribute: 'name', 
+                        modifyQueryUsing: function($query) {
+                            if (!auth()->user()->superAdmin()) {
+                                return $query->whereNotIn('name', ['Doctor', 'super_admin']);
+                            }
+                        } 
+                    )
                     ->required()
                     // ->saveRelationshipsUsing(function (Model $record, $state) {
                     //      $record->roles()->syncWithPivotValues($state, [config('permission.column_names.team_foreign_key') => getPermissionsTeamId()]);
