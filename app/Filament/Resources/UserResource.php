@@ -34,14 +34,17 @@ class UserResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('name')
                     ->maxLength(255),
-                Forms\Components\TextInput::make('username')
-                    ->unique(ignoreRecord: true)
-                    ->required()
-                    ->maxLength(255),
                 Select::make('registeredClinics')
                     ->relationship(name: 'clinics', titleAttribute: 'name')
                     ->multiple()
                     ->preload(),
+                Forms\Components\TextInput::make('username')
+                    ->unique(ignoreRecord: true)
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('email')
+                    ->unique(ignoreRecord: true)
+                    ->maxLength(255),
                 Forms\Components\TextInput::make('password')
                     ->dehydrated(fn($operation, $state) => $operation === 'create' || ($state !== null && strtolower($operation) === 'edit'))
                     ->password()
