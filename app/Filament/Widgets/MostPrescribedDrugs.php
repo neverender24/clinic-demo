@@ -15,10 +15,14 @@ class MostPrescribedDrugs extends BaseWidget
 
     protected function getHeading(): ?string
     {
-        if ($this->medicines->count() > 0) {
-
-            return 'Most Prescribed Drugs';
-
+        try {
+            if ($this->medicines->count() > 0) {
+    
+                return 'Most Prescribed Drugs';
+    
+            }
+        } catch (\Throwable $th) {
+            //throw $th;
         }
 
         return null;
