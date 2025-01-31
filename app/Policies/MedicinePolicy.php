@@ -39,6 +39,7 @@ class MedicinePolicy
      */
     public function update(User $user, Medicine $medicine): bool
     {
+        // dd($medicine);
         return $user->can('update_medicine');
     }
 

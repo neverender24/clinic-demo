@@ -187,7 +187,7 @@ class EditWithHistory extends Page implements HasForms, HasTable, HasInfolists
                                         ->columnSpan(2)
                             ])
                         ])
-                        ->modalContent(new HtmlString('test'))
+                        // ->modalContent(new HtmlString('test'))
                         ->modalHeading(fn($record) => 'Consultation Details '.Carbon::parse($record->date)->format('F j, Y'))
                         ->modalFooterActions([
                             Action::make('copy_patient_details')

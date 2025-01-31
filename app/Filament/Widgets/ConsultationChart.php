@@ -17,6 +17,8 @@ class ConsultationChart extends ApexChartWidget
 
     protected static ?int $sort = 2;
 
+    protected int | string | array $columnSpan = 2;
+
     /**
      * Chart Id
      *
@@ -48,6 +50,7 @@ class ConsultationChart extends ApexChartWidget
     
             Select::make('clinic_id')
                 ->options(Clinic::all()->pluck('name', 'id'))
+                ->label('Clinic')
                 ->default(Filament::getTenant()->id),
             Select::make('period')
                 ->options([
@@ -90,7 +93,6 @@ class ConsultationChart extends ApexChartWidget
                     ],
                 ],
             ],
-            'colors' => ['#f59e0b'],
             'plotOptions' => [
                 'bar' => [
                     'borderRadius' => 3,

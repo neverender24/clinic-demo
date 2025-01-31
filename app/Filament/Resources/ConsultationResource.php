@@ -32,8 +32,10 @@ use App\Filament\Resources\ConsultationResource\Pages;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use App\Filament\Resources\ConsultationResource\RelationManagers;
 use App\Filament\Resources\ConsultationResource\Pages\ListConsultations;
+use App\Models\Medicine;
 use App\Trait\HasStatusAction;
 use Filament\Actions\ActionGroup;
+use Filament\Forms\ComponentContainer;
 
 class ConsultationResource extends Resource implements HasShieldPermissions
 {
@@ -79,7 +81,11 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                             ->schema([
                                 Forms\Components\DatePicker::make('date')
                                     ->default(now())
-                                    ->required(),
+                                    ->required()
+                                    ->columnSpan([
+                                        'default' => 'full',
+                                        'md' => '1'
+                                    ]),
                                 Forms\Components\Select::make('patient_id')
                                     ->label('Patient')
                                     ->relationship('patient', 'full_name')
@@ -102,108 +108,119 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                     })
                                     ->live()
                                     ->required()
-                                    ->columnSpan(3),
-                                Forms\Components\RichEditor::make('test_results')
-                                    ->required()
-                                    ->toolbarButtons([
-                                        'bold',
-                                        'bulletList',
-                                        'italic',
-                                        'orderedList',
-                                        'redo',
-                                        'underline',
-                                        'undo',
-                                        'attachFiles'
-                                    ])
-                                    ->columnSpanFull()
-                                    ->visible(fn() => auth()->user()->can('addTestResult', static::$model))
-                                    ,
+                                    ->columnSpan([
+                                        'default' => 'full',
+                                        'md' => '3'
+                                    ]),
                                 Grid::make()
                                     ->schema([
-                                        Forms\Components\RichEditor::make('chief_complaint')
+                                        Forms\Components\RichEditor::make('test_results')
+                                            ->label('Medical Data')
                                             ->required()
-                                            ->toolbarButtons([
-                                                'bold',
-                                                'bulletList',
-                                                'italic',
-                                                'orderedList',
-                                                'redo',
-                                                'underline',
-                                                'undo',
-                                            ])
-                                            // ->columnSpanFull()
-                                            ->columnSpan(2)
-                                            ,
-                                       
+                                            ->toolbarButtons(self::onlyAllowedToolbar())
+                                            // ->columnSpan(2)
+                                            // ->columnSpan(function() {
+                                            //     if (auth()->user()->doctor()) {
+                                            //         return 'full';
+                                            //     }
+                                            //     return '2';
+                                            // })
+                                            ->visible(fn() => auth()->user()->can('addTestResult', static::$model)),
+                                        Forms\Components\RichEditor::make('chief_complaint')
+                                                ->required()
+                                                ->toolbarButtons(self::onlyAllowedToolbar())
+                                                // ->columnSpan(2)
+                                                // ->columnSpanFull()
+                                                // ->columnSpan(function() {
+                                                //     if (auth()->user()->doctor()) {
+                                                //         return 'full';
+                                                //     }
+                                                //     return '2';
+                                                // })
+                                                ->visible(fn() => auth()->user()->can('addChiefComplaint', static::$model)),
                                         Forms\Components\RichEditor::make('diagnosis')
                                             ->required()
-                                            ->toolbarButtons([
-                                                'bold',
-                                                'bulletList',
-                                                'italic',
-                                                'orderedList',
-                                                'redo',
-                                                'underline',
-                                                'undo',
-                                            ])
-                                            ->columnSpan(2),
+                                            ->toolbarButtons(self::onlyAllowedToolbar())
+                                            ->visible(fn() => auth()->user()->hasAnyRole(['Doctor', 'super_admin'])),
                                         Forms\Components\RichEditor::make('management')
                                             ->required()
-                                            ->toolbarButtons([
-                                                'bold',
-                                                'bulletList',
-                                                'italic',
-                                                'orderedList',
-                                                'redo',
-                                                'underline',
-                                                'undo',
-                                            ])
-                                            ->columnSpanFull(),
+                                            ->toolbarButtons(self::onlyAllowedToolbar())
+                                            ->visible(fn() => auth()->user()->hasAnyRole(['Doctor', 'super_admin']))
+                                            // ->columnSpanFull()
+                                            ,
                                     ])
-                                    ->visible(fn() => auth()->user()->hasAnyRole(['Doctor', 'super_admin']))
-                                    ->columns(4),
+                                    // ->visible(fn() => auth()->user()->hasAnyRole(['Doctor', 'super_admin']))
+                                    ->columns([
+                                        'lg' => 1,
+                                        'xl' => '2'
+                                    ]),
                             ])
-                            ->columns(4)
+                            ->columns([
+                                'default' => 4
+                            ])
                             ->columnSpan(2),
                             Section::make('Prescriptions')
                                 ->schema([
                                     Repeater::make('medicines')
                                         ->relationship('consultationMedicines')
                                         ->schema([
-                                            Grid::make(columns: 5)
-                                                ->schema([
-                                                    Select::make('medicine_id')
-                                                        ->label('Medicine')
-                                                        ->relationship('medicine', 'full_name_of_medicine')
-                                                        // ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->name} - <b>{$record->brand}</b>")
-                                                        ->allowHtml()
-                                                        ->preload()
-                                                        ->searchable()
-                                                        ->required()
-                                                        ->createOptionForm(function (Form $form) {
-                                                            return MedicineResource::form($form)->extraAttributes(['class' => 'w-full']);
-                                                        })
-                                                        ->createOptionAction(function(Action $action) {
-                                                            return $action
-                                                                ->modalHeading('Add Medicine')
-                                                                ->mutateFormDataUsing(function(array $data) {
-                                                                    $data['user_id'] = auth()->id();
-                                                                    return $data;
-                                                                });
-                                                        })
-                                                        ->columnSpanFull(),
-                                                    TextInput::make('remarks')
-                                                        ->required()
-                                                        ->columnSpan(4),
-                                                    TextInput::make('quantity')
-                                                        ->required()
-                                                        ->columnSpan(1),
-                                                ])
+                                            Grid::make([
+                                                'lg' => 4
+                                            ])
+                                            ->schema([
+                                                Select::make('medicine_id')
+                                                    ->label('Medicine')
+                                                    ->relationship('medicine', 'full_name_of_medicine')
+                                                    // ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->name} - <b>{$record->brand}</b>")
+                                                    ->allowHtml()
+                                                    ->preload()
+                                                    ->searchable()
+                                                    ->required()
+                                                    ->createOptionForm(function (Form $form) {
+                                                        return MedicineResource::form($form)->extraAttributes(['class' => 'w-full']);
+                                                    })
+                                                    ->createOptionAction(function(Action $action) {
+                                                        return $action
+                                                            ->modalHeading('Add Medicine')
+                                                            ->mutateFormDataUsing(function(array $data) {
+                                                                $data['user_id'] = auth()->id();
+                                                                return $data;
+                                                            });
+                                                    })
+                                                    ->editOptionForm(function (Form $form) {
+                                                        return MedicineResource::form($form)->extraAttributes(['class' => 'w-full']);
+                                                    })
+                                                    ->editOptionAction(function(Action $action, $state) {
+                                                        return $action
+                                                                ->visible(fn($state) => Medicine::with('consultations')->find($state)->consultations->isEmpty());
+                                                    })
+                                                    ->columnSpan([
+                                                        'lg' => 'full',  
+                                                    ]),
+                                                TextInput::make('remarks')
+                                                    ->required()
+                                                    ->columnSpan([
+                                                        'md' => 'full',
+                                                        'lg' => 3
+                                                    ]),
+                                                TextInput::make('quantity')
+                                                    ->required()
+                                                    // ->columnSpan([
+                                                    //     'lg' => 4,
+                                                    //     'xl' => 1
+                                                    // ]),
+                                            ])
                                         ])
-                                        ->columns(2)
-                                        ->label('Prescription')
+                                        ->grid([
+                                            'xl' => 2
+                                        ])
+                                        ->hiddenLabel()
+                                        // ->label('Prescription')
+                                        ->columns(1)
                                         ->defaultItems(1)
+                                        ->columnSpanFull()
                                 ])
+                                ->columnSpan(2)
                                 ->visible(fn() => auth()->user()->hasRole('Doctor') || auth()->user()->superAdmin())
                                 
                     ])
@@ -224,6 +241,20 @@ class ConsultationResource extends Resource implements HasShieldPermissions
             ])
             ->columns(2)
             ->extraAttributes(['class' => '', 'id' => 'consutation-form']);
+    }
+
+    protected static function onlyAllowedToolbar(): array
+    {
+        return [
+            'bold',
+            'bulletList',
+            'italic',
+            'orderedList',
+            'redo',
+            'underline',
+            'undo',
+            'attachFiles'
+        ];
     }
 
     public static function table(Table $table): Table

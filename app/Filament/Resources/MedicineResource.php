@@ -28,9 +28,6 @@ class MedicineResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('type')
-                    ->label('Preparation')
-                    ->columnSpanFull(),
                 Forms\Components\TextInput::make('name')
                     ->label('Generic Name')
                     ->required()
@@ -38,6 +35,9 @@ class MedicineResource extends Resource
                 Forms\Components\TextInput::make('brand')
                     ->label('Brand Name')
                     ->required()
+                    ->columnSpanFull(),
+                Forms\Components\TextInput::make('type')
+                    ->label('Preparation')
                     ->columnSpanFull(),
             ]);
     }

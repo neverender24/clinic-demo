@@ -12,6 +12,7 @@ class Medicine extends Model
         'name',
         'user_id',
         'brand',
+        'type'
     ];
 
     public function user(): BelongsTo

@@ -61,6 +61,7 @@ class PatientResource extends Resource
                             // ->separator(',')
                             ->hint('Can be a phone number, email, and/or any other contact detail'),
                         Forms\Components\Repeater::make('patientHmos')
+                            ->label('HMOs')
                             ->relationship()
                             ->schema([
                                 Select::make('hmo_id')
@@ -71,13 +72,14 @@ class PatientResource extends Resource
                                         Forms\Components\TextInput::make('name')
                                             ->required()
                                             ->maxLength(255)
-                                    ]),
+                                    ])
+                                    ->columnSpanFull(),
                                 DatePicker::make('date_registered')
                                     ->label('Registered Date'),
                                 DatePicker::make('date_expiry')
                                     ->label('Expired Date'),
                             ])
-                            ->columns(3)
+                            ->columns(2)
                     ])
             ])
             ->columns(1)

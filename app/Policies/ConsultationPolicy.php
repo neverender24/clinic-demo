@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\Models\User;
 use App\Models\Consultation;
+use Filament\Facades\Filament;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class ConsultationPolicy
@@ -136,7 +137,12 @@ class ConsultationPolicy
 
     public function editAsDoctor(User $user)
     {
-        dd($user->hasPermissionTo());
+        // dd($user->hasPermissionTo());
         return $user->can('edit_as_doctor_consultation');
+    }
+
+    public function editRecord(User $user, Consultation $consultation): bool
+    {
+        return ($consultation->status->value !== 'Done' || $user->doctor());
     }
 }

@@ -58,13 +58,29 @@ class HospitalAdmissionResource extends Resource
                         ->columns(2),
                     Grid::make()
                         ->schema([
-                            Forms\Components\RichEditor::make('final_diagnosis'),
-                            Forms\Components\RichEditor::make('remarks'),
+                            Forms\Components\RichEditor::make('final_diagnosis')
+                                ->toolbarButtons(self::onlyAllowedToolbar()),
+                            Forms\Components\RichEditor::make('remarks')
+                                ->toolbarButtons(self::onlyAllowedToolbar()),
                         ])
                         ->columns(2)
                 ]),
                 
             ]);
+    }
+    
+    protected static function onlyAllowedToolbar(): array
+    {
+        return [
+            'bold',
+            'bulletList',
+            'italic',
+            'orderedList',
+            'redo',
+            'underline',
+            'undo',
+            'attachFiles'
+        ];
     }
 
     public static function table(Table $table): Table

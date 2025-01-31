@@ -70,6 +70,7 @@ class AdminPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ])
+            ->sidebarFullyCollapsibleOnDesktop()
             ->plugins([
                 FilamentShieldPlugin::make(),
                 FilamentApexChartsPlugin::make()
