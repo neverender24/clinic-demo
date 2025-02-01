@@ -132,7 +132,7 @@
         
     </style>
 <body>
-    asdasd
+    
     <div class="prescription-container">
         <!-- Heading Section -->
         <header class="prescription-header">
@@ -213,7 +213,9 @@
                     </div>
                 </div>
                 <div class="col-3 physician-signature">
-                    <p>Dr. John Doe</p>
+                    <p>BEN JAY C. PORCADILLA, RMT, MD,FPCP</p>
+                    <p>License no:0132066</p>
+                    <p>PTR no: 2173419</p>
                     <p>Signature: _____________________</p>
                 </div>
             </div>
