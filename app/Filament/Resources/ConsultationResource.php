@@ -36,6 +36,7 @@ use App\Models\Medicine;
 use App\Trait\HasStatusAction;
 use Filament\Actions\ActionGroup;
 use Filament\Forms\ComponentContainer;
+use Filament\Forms\Components\DatePicker;
 
 class ConsultationResource extends Resource implements HasShieldPermissions
 {
@@ -112,7 +113,8 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                         'default' => 'full',
                                         'md' => '3'
                                     ]),
-                                Grid::make()
+                                Section::make()
+                                    ->extraAttributes(['class' => 'mt-4'])
                                     ->schema([
                                         Forms\Components\RichEditor::make('test_results')
                                             ->label('Medical Data')
@@ -141,13 +143,23 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                         Forms\Components\RichEditor::make('diagnosis')
                                             ->required()
                                             ->toolbarButtons(self::onlyAllowedToolbar())
+                                            ->columnSpanFull()
                                             ->visible(fn() => auth()->user()->hasAnyRole(['Doctor', 'super_admin'])),
-                                        Forms\Components\RichEditor::make('management')
+                                        Forms\Components\TextInput::make('management')
                                             ->required()
-                                            ->toolbarButtons(self::onlyAllowedToolbar())
+                                            // ->toolbarButtons(self::onlyAllowedToolbar())
                                             ->visible(fn() => auth()->user()->hasAnyRole(['Doctor', 'super_admin']))
-                                            // ->columnSpanFull()
+                                            ->columnSpan([
+                                                'lg' => 1,
+                                                'xl' =>1
+                                            ])
                                             ,
+                                        DatePicker::make('next_follow_up_schedule')
+                                            ->label('Patient\'s next follow up schedule (If necessary)')
+                                            ->columnSpan([
+                                                'lg' => 1,
+                                                'xl' =>1
+                                            ])
                                     ])
                                     // ->visible(fn() => auth()->user()->hasAnyRole(['Doctor', 'super_admin']))
                                     ->columns([
@@ -303,6 +315,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                             return view('consultations.print', [
                                 'medicines' => $record->medicines,
                                 'patient' => $record->patient,
+                                'next_follow_up_schedule' => $record->next_follow_up_schedule->format('F j, Y')
                             ]);
                         })
                         ->modalWidth('7xl')

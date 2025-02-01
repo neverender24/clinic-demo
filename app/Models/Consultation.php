@@ -18,7 +18,8 @@ class Consultation extends Model
     protected function casts(): array
     {
         return [
-            'status' => Status::class
+            'status' => Status::class,
+            'next_follow_up_schedule' => 'date'
         ];
     }
 

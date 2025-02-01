@@ -60,11 +60,16 @@ class PatientResource extends Resource
                         Forms\Components\TagsInput::make('contact_details')
                             // ->separator(',')
                             ->hint('Can be a phone number, email, and/or any other contact detail'),
+                        Forms\Components\TextInput::make('address')
+                            // ->separator(',')
+                            ,
                         Forms\Components\Repeater::make('patientHmos')
                             ->label('HMOs')
                             ->relationship()
                             ->schema([
                                 Select::make('hmo_id')
+                                    ->label('Name')
+                                    ->required()
                                     ->relationship('hmo', 'name')
                                     ->searchable()
                                     ->preload()
@@ -79,6 +84,7 @@ class PatientResource extends Resource
                                 DatePicker::make('date_expiry')
                                     ->label('Expired Date'),
                             ])
+                            ->defaultItems(0)
                             ->columns(2)
                     ])
             ])
