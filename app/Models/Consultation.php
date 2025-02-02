@@ -19,7 +19,8 @@ class Consultation extends Model
     {
         return [
             'status' => Status::class,
-            'next_follow_up_schedule' => 'date'
+            'next_follow_up_schedule' => 'date',
+            'date' => 'date'
         ];
     }
 
