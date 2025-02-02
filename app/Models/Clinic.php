@@ -11,6 +11,7 @@ class Clinic extends Model
     protected $fillable = [
         'name',
         'location',
+        'header_image'
     ];
 
     public function users()

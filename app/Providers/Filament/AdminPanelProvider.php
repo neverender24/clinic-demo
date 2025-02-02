@@ -38,12 +38,12 @@ class AdminPanelProvider extends PanelProvider
             ->tenant(Clinic::class)
             ->tenantRegistration(RegisterClinic::class)
             ->tenantMenu(fn () => auth()->user()->can('canManageTenant', User::class))
-            // ->tenantMenuItems([
-            //     'profile' => MenuItem::make()->label('Edit Clininc'),
-            //     'register' => MenuItem::make()->label('Register Clinic'),
-            //     // ...
-            // ])
-            // ->tenantProfile(EditTenantProfile::class)
+            ->tenantMenuItems([
+                'profile' => MenuItem::make()->label('Edit Clininc'),
+                'register' => MenuItem::make()->label('Register Clinic'),
+                // ...
+            ])
+            ->tenantProfile(EditTenantProfile::class)
             ->login(Login::class)
             ->colors([
                 'primary' => Color::Amber,

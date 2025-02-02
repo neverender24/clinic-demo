@@ -11,11 +11,16 @@
         /* justify-content: space-between;  */
         /* overflow: hidden; */
     }
+    .physician-signature p {
+        margin: 5px 0;
+        font-size: 9pt;
+    }
+    
 </style>
-<div class="prescription-container bg-white shadow px-5 gap-x-0 flex flex-col space-y-5 py-5" id="prescription">
+<div class="prescription-container bg-white shadow px-5 gap-x-0 flex flex-col space-y-5 py-5 text-[9pt]" id="prescription">
         <!-- Heading Section -->
         <header class="prescription-header">
-            <img src="{{asset('images/clinic/mati-clinic.png')}}" alt="Clinic Logo" class="logo">
+            <img src="{{asset('storage/'.$header_image)}}" alt="Clinic Logo" class="logo">
             <h1>
                 <hr>
             </h1>
@@ -96,16 +101,16 @@
 
         <!-- Footer Section -->
         <footer class="prescription-footer h-full flex items-end">
-            <div class="grid grid-cols-6 gap-x-5">
+            <div class="grid grid-cols-6 gap-x-5 mt-auto">
                 <div class="col-span-3 physician-signature">
                     Next follow-up schedule:
                     <div class="wrapper">
                         <div class="col-4" style="border-bottom: solid black 1px; padding-top: 5px">
                            {{$next_follow_up_schedule}}
                         </div>
-                    </div>
+                    </div> 
                 </div>
-                <div class="col-span-3 physician-signature">
+                <div class="col-span-3 physician-signature ">
                     <p>BEN JAY C. PORCADILLA, RMT, MD,FPCP</p>
                     <p>License no:0132066</p>
                     <p>PTR no: 2173419</p>
@@ -113,6 +118,4 @@
                 </div>
             </div>
         </footer>
-        
-    
     </div>

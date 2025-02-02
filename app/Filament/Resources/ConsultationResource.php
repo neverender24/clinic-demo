@@ -316,7 +316,9 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                         ->content(fn($record): View => view('consultations.print', [
                                 'medicines' => $record->medicines,
                                 'patient' => $record->patient,
-                                'next_follow_up_schedule' => $record->next_follow_up_schedule?->format('F j, Y')
+                                'next_follow_up_schedule' => $record->next_follow_up_schedule?->format('F j, Y'),
+                                'header_image' => $record->clinic->header_image,
+                                'header_image1' => public_path("storage/{$record->clinic->header_image}"),
                             ]))
                         // ->preview()
                         ->orientation()
