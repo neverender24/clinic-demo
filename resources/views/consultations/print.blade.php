@@ -1,139 +1,18 @@
-
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            color:rgb(31, 31, 32);
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-
-        .prescription-container {
-            background-color: white;
-            width: 39rem;  /* Custom width */
-            height: 51rem; /* Custom height */
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            display: flex;
-            flex-direction: column; /* Stack content vertically */
-            justify-content: space-between; /* Push footer to the bottom */
-            overflow: hidden;
-        }
-
-        .prescription-header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .prescription-header .logo {
-            width: 100%; /* Make logo full width of container */
-            height: auto; /* Maintain aspect ratio */
-            display: block;
-        }
-
-        .prescription-header h1 {
-            font-size: 2rem;
-            margin-top: 10px;
-        }
-
-        .patient-details {
-            margin-bottom: 20px;
-            font-size: 1.1rem;
-        }
-
-        .patient-details p {
-            margin-bottom: 12px;
-        }
-
-        .underline {
-            border-bottom: 1px solid black;
-            display: inline-block;
-            margin-top: 0.2rem;
-        }
-
-        .medication-list {
-            margin-bottom: 30px;
-            margin-top: 40px;
-            padding-left: 15px;
-        }
-
-        .medication-list h2 {
-            font-size: 11pt;
-            margin-bottom: 10px;
-        }
-
-        .medication-list ul {
-            list-style-type: none;
-        }
-
-        .medication-list ul li {
-            font-size: 11pt;
-            margin: 5px 0;
-        }
-
-        .medication-list li {
-            font-size: 11pt;
-            font-weight: normal;
-            font-style: normal;
-        }
-
-        .prescription-footer {
-            /* text-align: right; */
-            font-size: 1rem;
-            margin-top: auto; /* Ensures it pushes to the bottom if content height is less */
-        }
-
-        .physician-signature p {
-            margin: 5px 0;
-        }
-
-        .parent {
-            display: grid;
-        }
-
-        .child {
-            width: 100%;
-        }
-
-        .wrapper {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-        }
-
-        .col-1 {
-            grid-column: auto / span 1;
-        }
-
-        .col-2 {
-            grid-column: auto / span 2;
-        }
-
-        .col-3 {
-            grid-column: auto / span 3;
-        }
-
-        .col-4 {
-            grid-column: auto / span 4;
-        }
-
-        .col-5 {
-            grid-column: auto / span 5;
-        }
-
+<style>
+   .prescription-container {
+        background-color: white;
+        width: 556.8px;  /* Custom width */
+        height: 797px; 
+        /* height: 796.8000000000001px;  */
+        /* Custom height */
+        /* padding: 20px; */
         
-    </style>
-<body>
-    
-    <div class="prescription-container">
+        /* Push footer to the bottom */
+        /* justify-content: space-between;  */
+        /* overflow: hidden; */
+    }
+</style>
+<div class="prescription-container bg-white shadow px-5 gap-x-0 flex flex-col space-y-5 py-5" id="prescription">
         <!-- Heading Section -->
         <header class="prescription-header">
             <img src="{{asset('images/clinic/mati-clinic.png')}}" alt="Clinic Logo" class="logo">
@@ -148,8 +27,25 @@
             <p><strong>Address:</strong> <span class="underline">___________________________</span> <strong>Age:</strong> <span class="underline">______</span> <strong>Sex:</strong> <span class="underline">______</span></p>
         </div> -->
 
+        <div class="grid grid-cols-5">
+            <div class="col-span-3 flex p-0">
+                <div class="font-bold">Name:</div> <div class="w-96 py-0 my-0 uppercase">{{$patient->full_name}}</div>
+            </div>
+            <div class="col-span-2">
+                <strong>Date:</strong> <span class="w-full border-b-1">{{ now()->format('F j, Y')}}</span>
+            </div>
+            <div class="col-span-3">
+                <strong style="display: inline;">Address:</strong> <span style="display: inline;" class="">{{$patient->address}}</span>
+            </div>
+            <div class="col-span-1">
+                <strong>Age:</strong> <span class="">{{ Carbon\Carbon::parse($patient->birthday)->age}}</span>
+            </div>
+            <div class="col-span-1">
+                <strong>Sex:</strong> <span class="">{{ $patient->sex }}</span>
+            </div>
+        </div>
 
-        <table style="">
+        <!-- <table style="">
             <tr style="">
                 <td colspan="3">
                     <p class="parent">
@@ -158,31 +54,28 @@
                         </div>
                     </p> 
                 </td>
-                <td colspan="2"><strong>Date:</strong> <span class="">{{ now()->format('F j, Y')}}</span></td>
+                <td><strong>Date:</strong> <span class="">{{ now()->format('F j, Y')}}</span></td>
             </tr>
-            <tr style="border: solid black 1px;">
-                <td colspan="3" style="width: 70%;">
-                    <p style="white-space: nowrap;">
-                        <strong>Address:</strong> <span class="">{{ $patient->address }}</span>
-                    </p>
+            <tr>
+                <td colspan="3">
+                <strong>Address:</strong>
+                <p >
+                        <span class="">{{ $patient->address }}</span>
+                </p>
                 </td>
-                <td ><strong>Age:</strong> <span class="">{{ Carbon\Carbon::parse($patient->birthday)->age }}</span></td>
-                <td style="width: 10%;"><strong>Sex:</strong> <span class="">{{ $patient->sex }}</span></td>
+                <td><strong>Age:</strong> <span class="">{{ Carbon\Carbon::parse($patient->birthday)->age }}</span></td>
+                <td ><strong>Sex:</strong> <span class="">{{ $patient->sex }}</span></td>
+                
             </tr>
-            <!-- <tr>
-                <td><strong>Name:</strong> <span class="underline" style="width: 15rem;">{{$patient->full_name}}</span> </td>
-                <td><strong>Date:</strong> <span class="underline">{{ now()->format('F j, Y')}}</span></td>
-                <td><strong>Date:</strong> <span class="underline">{{ now()->format('F j, Y')}}</span></td>
-            </tr> -->
-        </table>
+        </table> -->
 
         <!-- Body Section -->
         <div class="medication-list">
-            <ol class="list-decimal">
+            <ol class="list-decimal list-outside ps-5">
                 @foreach($medicines as $key => $medicine)
-                <li style="margin-top:5px;">
-                    <div class="wrapper">
-                        <div class="col-5">
+                <li>
+                    <div class="grid grid-cols-6">
+                        <div class="col-span-5">
                             <span class="inline">{!! $medicine->name !!} {!! $medicine->brand !!} {!! $medicine->pivot->remarks !!}</span>
                             <div>{{$medicine->pivot?->remarks}}</div>
                         </div>
@@ -202,17 +95,17 @@
         </div>
 
         <!-- Footer Section -->
-        <footer class="prescription-footer">
-            <div class="wrapper">
-                <div class="col-3">
+        <footer class="prescription-footer h-full flex items-end">
+            <div class="grid grid-cols-6 gap-x-5">
+                <div class="col-span-3 physician-signature">
                     Next follow-up schedule:
                     <div class="wrapper">
                         <div class="col-4" style="border-bottom: solid black 1px; padding-top: 5px">
-                            {{$next_follow_up_schedule}}
+                           {{$next_follow_up_schedule}}
                         </div>
                     </div>
                 </div>
-                <div class="col-3 physician-signature">
+                <div class="col-span-3 physician-signature">
                     <p>BEN JAY C. PORCADILLA, RMT, MD,FPCP</p>
                     <p>License no:0132066</p>
                     <p>PTR no: 2173419</p>
@@ -221,4 +114,5 @@
             </div>
         </footer>
         
+    
     </div>

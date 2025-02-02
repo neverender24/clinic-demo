@@ -34,9 +34,11 @@ use App\Filament\Resources\ConsultationResource\RelationManagers;
 use App\Filament\Resources\ConsultationResource\Pages\ListConsultations;
 use App\Models\Medicine;
 use App\Trait\HasStatusAction;
+use Carbon\Carbon;
 use Filament\Actions\ActionGroup;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\DatePicker;
+use Torgodly\Html2Media\Tables\Actions\Html2MediaAction;
 
 class ConsultationResource extends Resource implements HasShieldPermissions
 {
@@ -307,19 +309,52 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                     ->icon('heroicon-m-pencil-square')
                     ->url(fn($record) => route('filament.admin.resources.consultations.edit.consultation', [$record->clinic_id, $record->id])),
                 Tables\Actions\ActionGroup::make([
-                    Tables\Actions\Action::make('print prescription')
-                        ->hidden(false)
+                    Html2MediaAction::make('print_prescription')
+                        ->label('Prescription')
                         ->color('success')
                         ->icon('heroicon-o-printer')
-                        ->modalContent(function($record): View {
-                            return view('consultations.print', [
+                        ->content(fn($record): View => view('consultations.print', [
                                 'medicines' => $record->medicines,
                                 'patient' => $record->patient,
-                                'next_follow_up_schedule' => $record->next_follow_up_schedule->format('F j, Y')
-                            ]);
-                        })
-                        ->modalWidth('7xl')
-                        ->slideOver(),
+                                'next_follow_up_schedule' => $record->next_follow_up_schedule?->format('F j, Y')
+                            ]))
+                        // ->preview()
+                        ->orientation()
+                        ->format('a5')
+                        ->pagebreak('section', ['css', 'legacy'])
+                        // ->margin([2, 2, 0, 2])
+                        ->modalWidth('2xl'),
+                    // Tables\Actions\Action::make('print_prescription1')
+                    //     ->label('Prescription')
+                    //     ->hidden(false)
+                    //     ->color('success')
+                    //     ->icon('heroicon-o-printer')
+                    //     ->modalContent(function($record): View {
+                    //         return view('consultations.print', [
+                    //             'medicines' => $record->medicines,
+                    //             'patient' => $record->patient,
+                    //             'next_follow_up_schedule' => $record->next_follow_up_schedule->format('F j, Y')
+                    //         ]);
+                    //     })
+                    //     ->modalWidth('2xl')
+                    //     ->modalSubmitAction(false)
+                    //     ->modalCancelAction(false)
+                    //     // ->modalFooterActions(function(Action))
+                    //     ->slideOver(),
+                    // Tables\Actions\Action::make('med_cert')
+                    //     ->label('Medical Certification')
+                    //     ->hidden(false)
+                    //     ->color('success')
+                    //     ->icon('heroicon-o-printer')
+                    //     ->modalContent(function($record): View {
+                    //         return view('consultations.print', [
+                    //             'medicines' => $record->medicines,
+                    //             'patient' => $record->patient,
+                    //             'next_follow_up_schedule' => $record->next_follow_up_schedule->format('F j, Y')
+                    //         ]);
+                    //     })
+                    //     ->modalWidth('7xl')
+                    //     ->slideOver(),
                     Tables\Actions\Action::make('status')
                         ->label(fn($record) => static::statusLabel($record))
                         ->color(fn($record) => static::statusColor($record))

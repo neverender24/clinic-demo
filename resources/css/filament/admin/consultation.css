@@ -1,0 +1,147 @@
+ /* * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        color:rgb(31, 31, 32);
+    } */
+
+    /* body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    } */
+
+    .prescription-container {
+        background-color: white;
+        width: 556.8px;  /* Custom width */
+        height: 797px; 
+        /* height: 796.8000000000001px;  */
+        /* Custom height */
+        /* padding: 20px; */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column; /* Stack content vertically */
+        /* Push footer to the bottom */
+        /* justify-content: space-between;  */
+        /* overflow: hidden; */
+    }
+
+    .prescription-header {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .prescription-header .logo {
+        width: 100%; /* Make logo full width of container */
+        height: auto; /* Maintain aspect ratio */
+        display: block;
+    }
+
+    .prescription-header h1 {
+        font-size: 2rem;
+        margin-top: 10px;
+    }
+
+    .patient-details {
+        margin-bottom: 20px;
+        font-size: 1.1rem;
+    }
+
+    .patient-details p {
+        margin-bottom: 12px;
+    }
+
+    .underline {
+        border-bottom: 1px solid black;
+        display: inline-block;
+        margin-top: 0.2rem;
+    }
+
+    .medication-list {
+        margin-bottom: 30px;
+        margin-top: 40px;
+        padding-left: 15px;
+    }
+
+    .medication-list h2 {
+        font-size: 11pt;
+        margin-bottom: 10px;
+    }
+
+    .medication-list ul {
+        list-style-type: none;
+    }
+
+    .medication-list ul li {
+        font-size: 11pt;
+        margin: 5px 0;
+    }
+
+    .medication-list li {
+        font-size: 11pt;
+        font-weight: normal;
+        font-style: normal;
+    }
+
+    .prescription-footer {
+        /* text-align: right; */
+        font-size: 1rem;
+        /* margin-top: auto;  */
+        /* Ensures it pushes to the bottom if content height is less */
+        /* padding-bottom: 10px; */
+    }
+
+    .physician-signature p {
+        margin: 5px 0;
+        font-size: 11pt;
+    }
+
+    .parent {
+        display: grid;
+    }
+
+    .child {
+        width: 100%;
+    }
+
+    .wrapper {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+    }
+
+    .col-1 {
+        grid-column: auto / span 1;
+    }
+
+    .col-2 {
+        grid-column: auto / span 2;
+    }
+
+    .col-3 {
+        grid-column: auto / span 3;
+    }
+
+    .col-4 {
+        grid-column: auto / span 4;
+    }
+
+    .col-5 {
+        grid-column: auto / span 5;
+    }
+
+    /* @media print {
+        body {
+            visibility: hidden !important;
+        }
+        #prescription {
+            visibility: visible !important;
+            position: absolute !important;
+            left: 0;
+            top: 0;
+        }
+    } */
+    
