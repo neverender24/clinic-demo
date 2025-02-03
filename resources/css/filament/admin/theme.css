@@ -12,6 +12,10 @@
     @apply h-3;
 }
 
+.img-attachment:hover {
+    cursor: zoom-in;
+}
+
 .fi-fo-rich-editor-toolbar {
     @apply py-0.5
 }

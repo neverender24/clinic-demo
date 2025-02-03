@@ -80,9 +80,10 @@
                 @foreach($medicines as $key => $medicine)
                 <li>
                     <div class="grid grid-cols-6">
-                        <div class="col-span-5">
-                            <span class="inline">{!! $medicine->name !!} {!! $medicine->brand !!} {!! $medicine->pivot->remarks !!}</span>
-                            <div>{{$medicine->pivot?->remarks}}</div>
+                        <div class="col-span-5 gap-y-0 leading">
+                            <span class="inline">{!! $medicine->name !!}</span>
+                            <div class="font-bold">({!! $medicine->brand !!})</div>
+                            <div>Sig {{$medicine->pivot?->remarks}}</div>
                         </div>
                         <div>
                             <strong class="inline">#{{ $medicine->pivot?->quantity }}</strong>

@@ -2,19 +2,23 @@
 
 namespace App\Filament\Pages\Tenancy;
 
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\FileUpload;
+use App\Models\Clinic;
 use Filament\Forms\Form;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Actions\Action;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Pages\Tenancy\EditTenantProfile as BaseEditTenantProfile;
 
 class EditTenantProfile extends BaseEditTenantProfile
 {
-    protected static string $view = 'filament.pages.tenancy.edit-tenant-profile';
+    use HasPageShield;
+    
+    // protected static string $view = 'filament.pages.tenancy.edit-tenant-profile';
     
     public static function getLabel(): string
     {
-        return 'Clinic';
+        return 'Edit Clinic';
     }
 
     // public static function isTenantSubscriptionRequired(Panel $panel): bool
@@ -32,6 +36,8 @@ class EditTenantProfile extends BaseEditTenantProfile
                 TextInput::make('location')
                     ->required(),
                 FileUpload::make('header_image')
+                    ->required(),
+                FileUpload::make('watermarks')
                     ->required()
 
                 // ...
@@ -39,13 +45,6 @@ class EditTenantProfile extends BaseEditTenantProfile
             ->extraAttributes([
                 'class' => 'w-2/5'
             ]);
-    }
-
-    protected function getFormActions(): array
-    {
-        return [
-            $this->getSaveFormAction()
-                ->formId('form')
-        ];
-    }
+    }    
+    
 }
