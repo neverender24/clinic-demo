@@ -323,7 +323,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                         // ->preview()
                         ->orientation()
                         ->format('a5')
-                        ->pagebreak('section', ['css', 'legacy'])
+                        // ->pagebreak('section', ['css', 'legacy'])
                         // ->margin([2, 2, 0, 2])
                         ->modalWidth('2xl'),
                     Html2MediaAction::make('print_medcert')
