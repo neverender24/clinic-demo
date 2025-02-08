@@ -390,6 +390,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
     public static function getPages(): array
     {
         return [
+            // 'index' => Pages\CustomListConsultations::route('/'),
             'index' => Pages\ListConsultations::route('/'),
             'create' => Pages\CreateConsultation::route('/create'),
             'edit' => Pages\EditConsultation::route('/{record}/edit'),
