@@ -323,7 +323,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                         // ->preview()
                         ->orientation()
                         ->format('a5')
-                        ->pagebreak('section', ['css', 'legacy'])
+                        // ->pagebreak('section', ['css', 'legacy'])
                         // ->margin([2, 2, 0, 2])
                         ->modalWidth('2xl'),
                     Html2MediaAction::make('print_medcert')
@@ -336,7 +336,8 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                             'patient' => $record->patient,
                             'next_follow_up_schedule' => $record->next_follow_up_schedule?->format('F j, Y'),
                             'header_image' => asset('storage/'.$record->clinic->header_image),
-                            'watermark' => asset('images/logo/sto_tomas_logo.jpeg'),
+                            'watermark' => asset('storage/'.$record->clinic->watermarks),
+                            'consultation_date' => $record->date?->format('F d, Y')
                         ])),
                     // Tables\Actions\Action::make('print_prescription1')
                     //     ->label('Prescription')

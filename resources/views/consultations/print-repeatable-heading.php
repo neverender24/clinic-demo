@@ -1,24 +1,17 @@
-<style>
-   .prescription-container {
-        /* background-color: white;
-        width: 556.8px;   */
-        /* Custom width */
-        height: 797px; 
-        /* height: 796.8000000000001px;  */
-        /* Custom height */
-        /* padding: 20px; */
-        
-        /* Push footer to the bottom */
-        /* justify-content: space-between;  */
-        /* overflow: hidden; */
-    }
-    /* .physician-signature p {
-        margin: 5px 0;
-        font-size: 9pt;
-    } */
-    
-    
-</style>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  @vite(['resources/css/app.css'])
+</head>
+<body>
+@php
+ $meds = $medicines->chunk(3);
+@endphp
+
+@foreach($meds as $med)
 <div class="prescription-container bg-white shadow px-5 gap-x-0 flex flex-col space-y-5 py-5 text-[9pt]" id="prescription">
         <!-- Heading Section -->
         <header class="header">
@@ -80,7 +73,7 @@
             <!-- Body Section -->
             <div class="medication-list">
                 <ol class="list-decimal list-outside ps-5">
-                    @foreach($medicines as $key => $medicine)
+                    @foreach($med as $key => $medicine)
                     <li class="text-[8pt]">
                         <div class="grid grid-cols-6">
                             <div class="col-span-5 gap-y-0 leading">
@@ -94,6 +87,8 @@
                         </div>
                         
                     </li>
+                    
+                    
                     @endforeach
                 </ol>
                 <!-- <ul>
@@ -124,3 +119,6 @@
             </div>
         </footer>
     </div>
+@endforeach
+</body>
+</html>
