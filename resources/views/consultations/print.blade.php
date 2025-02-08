@@ -82,7 +82,7 @@
             </table> -->
             
             <!-- Body Section -->
-            <div class="medication-list">
+            <div class="medication-list mt-5">
                 <ol class="list-decimal list-outside ps-5">
                     @foreach($row as $key => $medicine)
                     <li class="text-[8pt]">
@@ -121,8 +121,8 @@
                 </div>
                 <div class="col-span-3 physician-signature gap-y-0 text-[7pt] flex justify-end">
                    <div>
-                     <p>BEN JAY C. PORCADILLA, RMT, MD,FPCP</p>
-                     <p>License no:0132066</p>
+                     <p>BEN JAY C. PORCADILLA, RMT, MD, FPCP</p>
+                     <p>License no: 0132066</p>
                      <p>PTR no: 2173419</p>
                      <p>S2 License no: _____________________</p>
                    </div>

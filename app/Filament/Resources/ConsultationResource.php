@@ -177,6 +177,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                 ->schema([
                                     Repeater::make('medicines')
                                         ->relationship('consultationMedicines')
+                                        ->label('Prescription')
                                         ->reorderable()
                                         ->schema([
                                             Grid::make([

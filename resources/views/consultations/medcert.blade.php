@@ -40,7 +40,7 @@
                     </p>
                     <p>
                         Please be advised that this certificate is issued at the patient's request and for their specific
-                        purposes. However, it is important to note that this document is not legally valid i a cout of law.
+                        purposes. However, it is important to note that this document is not legally valid in a court of law.
                     </p>
                     <p>
                         <span class="font-bold">Remarks:</span>  
