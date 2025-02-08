@@ -1,7 +1,9 @@
 <style>
    .prescription-container {
         /* background-color: white;
-        width: 556.8px;   */
+        width: 556.8px;  
+        */
+        width: 556.8px;  
         /* Custom width */
         height: 797px; 
         /* height: 796.8000000000001px;  */
