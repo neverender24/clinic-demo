@@ -19,7 +19,9 @@
     
     
 </style>
-<div class="prescription-container bg-white shadow px-5 gap-x-0 flex flex-col space-y-5 py-5 text-[9pt]" id="prescription">
+
+@foreach($medicines as $row)
+<div class="prescription-container bg-white shadow pl-14 pr-10 flex flex-col space-y-5 py-5 pb-10 text-[9pt]" id="prescription">
         <!-- Heading Section -->
         <header class="header">
             <img src="{{asset('storage/'.$header_image)}}" alt="Clinic Logo" class="logo">
@@ -80,7 +82,7 @@
             <!-- Body Section -->
             <div class="medication-list">
                 <ol class="list-decimal list-outside ps-5">
-                    @foreach($medicines as $key => $medicine)
+                    @foreach($row as $key => $medicine)
                     <li class="text-[8pt]">
                         <div class="grid grid-cols-6">
                             <div class="col-span-5 gap-y-0 leading">
@@ -105,8 +107,8 @@
         </section>
 
         <!-- Footer Section -->
-        <footer class="footer h-full flex items-end">
-            <div class="grid grid-cols-6 gap-x-5 mt-auto">
+        <footer class="footer h-full flex items-end ">
+            <div class="grid grid-cols-6 gap-x-5 mt-auto w-full">
                 <div class="col-span-3 flex flex-col justify-between pb-2">
                     <div>
                     Next follow-up schedule:
@@ -115,12 +117,15 @@
                        {{$next_follow_up_schedule}}
                     </div> 
                 </div>
-                <div class="col-span-3 physician-signature gap-y-0 text-xs">
-                    <p>BEN JAY C. PORCADILLA, RMT, MD,FPCP</p>
-                    <p>License no:0132066</p>
-                    <p>PTR no: 2173419</p>
-                    <p>S2 License no: _____________________</p>
+                <div class="col-span-3 physician-signature gap-y-0 text-[7pt] flex justify-end">
+                   <div>
+                     <p>BEN JAY C. PORCADILLA, RMT, MD,FPCP</p>
+                     <p>License no:0132066</p>
+                     <p>PTR no: 2173419</p>
+                     <p>S2 License no: _____________________</p>
+                   </div>
                 </div>
             </div>
         </footer>
     </div>
+@endforeach

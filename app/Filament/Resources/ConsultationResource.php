@@ -177,6 +177,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                 ->schema([
                                     Repeater::make('medicines')
                                         ->relationship('consultationMedicines')
+                                        ->reorderable()
                                         ->schema([
                                             Grid::make([
                                                 'lg' => 4
@@ -313,13 +314,16 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                         ->label('Prescription')
                         ->color('success')
                         ->icon('heroicon-o-printer')
-                        ->content(fn($record): View => view('consultations.print', [
-                                'medicines' => $record->medicines,
-                                'patient' => $record->patient,
-                                'next_follow_up_schedule' => $record->next_follow_up_schedule?->format('F j, Y'),
-                                'header_image' => $record->clinic->header_image,
-                                'header_image1' => public_path("storage/{$record->clinic->header_image}"),
-                            ]))
+                        ->content(function($record): View { 
+                            return view('consultations.print', [
+                                        'medicines' => $record->medicines->chunk(6),
+                                        'patient' => $record->patient,
+                                        'next_follow_up_schedule' => $record->next_follow_up_schedule?->format('F j, Y'),
+                                        'header_image' => $record->clinic->header_image,
+                                        'header_image1' => public_path("storage/{$record->clinic->header_image}"),
+                                    ]
+                                );
+                        })
                         // ->preview()
                         ->orientation()
                         ->format('a5')

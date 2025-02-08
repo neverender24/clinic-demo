@@ -4,11 +4,13 @@ namespace App\Models;
 
 use App\Enums\Enums\Status;
 use App\Models\Scopes\TenantScope;
-use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Carbon;
 
 #[ScopedBy([TenantScope::class])]
 class Consultation extends Model
@@ -23,6 +25,13 @@ class Consultation extends Model
             'date' => 'date'
         ];
     }
+
+    // public function date(): Attribute
+    // {
+    //     return Attribute::make(
+    //         get: fn($value) => Carbon::parse($value)->format('F j, Y')
+    //     );
+    // }
 
     public function clinic(): BelongsTo
     {

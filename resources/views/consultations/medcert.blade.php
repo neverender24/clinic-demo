@@ -1,9 +1,5 @@
-<style>
-    body {
-        height: 100vh;
-    }
-</style>
-<div class="flex justify-center p-20 min-h-screen" style="font-size: 12pt;">
+
+<div class="flex justify-center  min-h-screen" style="font-size: 12pt;">
     <div class="bg-white h-full pl-14 pr-10" style="width: 8.5in;">
         <div class="bg-transparent">
             <header class="prescription-header">
@@ -13,7 +9,7 @@
         </div>
         <div class="relative min-h-screen">
             <!-- Absolute background image -->
-            <div class="absolute inset-0 bg-no-repeat bg-center bg-cover bg-contain opacity-15 " style="background-image: url('{{$watermark}}');"></div>
+            <div class="absolute inset-0 bg-no-repeat bg-center bg-auto bg-contain opacity-15 " style="background-image: url('{{$watermark}}');"></div>
             
             <!-- Your child content, unaffected by parent opacity -->
             <div class="relative">

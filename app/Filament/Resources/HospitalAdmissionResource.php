@@ -17,6 +17,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\HospitalAdmissionResource\Pages;
 use App\Filament\Resources\HospitalAdmissionResource\RelationManagers;
 use Filament\Forms\Components\TextInput;
+use Illuminate\View\View;
+use Torgodly\Html2Media\Tables\Actions\Html2MediaAction;
 
 class HospitalAdmissionResource extends Resource
 {
@@ -87,6 +89,8 @@ class HospitalAdmissionResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('hospital')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('admission_date')
                     ->date()
                     ->sortable(),
@@ -113,6 +117,17 @@ class HospitalAdmissionResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Html2MediaAction::make('print_admitting_order')
+                    ->icon('heroicon-o-printer')
+                    ->color('success')
+                    ->label('Admitting Order')
+                    ->content(function($record): View {
+                        return view('consultations.admitting-order', [
+                            'header_image' => $record->clinic->header_image,
+                            'patient' => $record->patient,
+                            'hospital' => $record->hospital
+                        ]);
+                    })
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

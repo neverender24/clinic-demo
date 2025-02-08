@@ -29,4 +29,14 @@ class Patient extends Model
     {
         return $this->hasMany(PatientHmo::class);
     }
+
+    public function consultations(): HasMany
+    {
+        return $this->hasMany(Consultation::class);
+    }
+
+    public function hospitalAdmissions(): HasMany
+    {
+        return $this->hasMany(HospitalAdmission::class);
+    }
 }
