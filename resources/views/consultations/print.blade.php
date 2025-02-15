@@ -1,11 +1,33 @@
 <style>
+    @page {
+        size: A5;
+    }
+    body {
+        font-family: Arial, sans-serif;
+    }
+/*         
+        .prescription {
+            width: 100%;
+            border: 1px solid #000;
+            padding: 10mm;
+        } */
+        /* .header, .footer {
+            text-align: center;
+            margin-bottom: 10mm;
+        } */
+        /* .content {
+            margin-bottom: 20mm;
+        } */
+
    .prescription-container {
+        width: 148mm;
+        height: 210mm;
         /* background-color: white;
         width: 556.8px;  
         */
-        width: 556.8px;  
+        /* width: 556.8px;   */
         /* Custom width */
-        height: 797px; 
+        /* height: 797px;  */
         /* height: 796.8000000000001px;  */
         /* Custom height */
         /* padding: 20px; */
@@ -18,12 +40,24 @@
         margin: 5px 0;
         font-size: 9pt;
     } */
+    @media print {
+        body {
+            size: A5;
+            margin: 20mm;
+        }
+        /* .prescription-container {
+            width: 556.8px;
+            height: 797px;
+            page-break-after: always;
+            margin: 1in;
+        } */
+    }
     
     
 </style>
 
 @foreach($medicines as $row)
-<div class="prescription-container bg-white shadow pl-14 pr-10 flex flex-col space-y-5 py-5 pb-10 text-[9pt]" id="prescription">
+<div class="prescription-container bg-white shadow flex flex-col text-[9pt] p-[10mm]" id="prescription">
         <!-- Heading Section -->
         <header class="header">
             <img src="{{asset('storage/'.$header_image)}}" alt="Clinic Logo" class="logo">
@@ -38,7 +72,7 @@
             <p><strong>Address:</strong> <span class="underline">___________________________</span> <strong>Age:</strong> <span class="underline">______</span> <strong>Sex:</strong> <span class="underline">______</span></p>
         </div> -->
 
-        <section class="content">
+        <section class="content ">
             <div class="grid grid-cols-5">
                 <div class="col-span-3 flex p-0">
                     <div class="font-bold">Name:</div> <div class="w-96 py-0 my-0 uppercase">{{$patient->full_name}}</div>
@@ -55,6 +89,9 @@
                 <div class="col-span-1">
                     <strong>Sex:</strong> <span class="">{{ $patient->sex }}</span>
                 </div>
+            </div>
+            <div>
+            <img src="{{asset('images/clinic/rx.png')}}" alt="Rx" class="w-20">
             </div>
             
             <!-- <table style="">
@@ -82,7 +119,7 @@
             </table> -->
             
             <!-- Body Section -->
-            <div class="medication-list mt-5">
+            <div class="medication-list">
                 <ol class="list-decimal list-outside ps-5">
                     @foreach($row as $key => $medicine)
                     <li class="text-[8pt]">
@@ -90,7 +127,7 @@
                             <div class="col-span-5 gap-y-0 leading">
                                 <span class="inline">{!! $medicine->name !!}</span>
                                 <div class="font-bold">({!! $medicine->brand !!})</div>
-                                <div>Sig {{$medicine->pivot?->remarks}}</div>
+                                <div>Sig. {{$medicine->pivot?->remarks}}</div>
                             </div>
                             <div>
                                 <strong class="inline">#{{ $medicine->pivot?->quantity }}</strong>
@@ -107,9 +144,7 @@
                 </ul> -->
             </div>
         </section>
-
-        <!-- Footer Section -->
-        <footer class="footer h-full flex items-end ">
+        <footer class="footer h-full flex items-end">
             <div class="grid grid-cols-6 gap-x-5 mt-auto w-full">
                 <div class="col-span-3 flex flex-col justify-between pb-2">
                     <div>
@@ -129,5 +164,7 @@
                 </div>
             </div>
         </footer>
+
+        <!-- Footer Section -->
     </div>
 @endforeach

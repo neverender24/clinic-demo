@@ -145,4 +145,9 @@ class ConsultationPolicy
     {
         return ($consultation->status->value !== 'Done' || $user->doctor());
     }
+
+    public function addFollowupSchedule(User $user, Consultation $consultation): bool
+    {
+        return $user->can('add_followup_schedule_consultation');
+    }
 }

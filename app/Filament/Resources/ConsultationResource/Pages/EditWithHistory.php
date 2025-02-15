@@ -69,6 +69,7 @@ class EditWithHistory extends Page implements HasForms, HasTable, HasInfolists
         return 'Edit Consultation';
     }
 
+
     public function mount(int | string $record): void
     {
         $this->record = $this->resolveRecord($record)->load('consultationMedicines');
@@ -335,13 +336,14 @@ class EditWithHistory extends Page implements HasForms, HasTable, HasInfolists
         DB::transaction(function() {
             try {
                 $this->record->update($this->data);
-
+                $this->record->medicines()->detach();
                 $this->record->medicines()->sync($this->data['medicines']);
 
                 Notification::make()
                     ->title('Saved successfully')
                     ->success()
                     ->send();
+                redirect()->to($this->getResource()::getUrl('index'));
 
             } catch (\Throwable $th) {
                 Notification::make()

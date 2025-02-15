@@ -2,22 +2,24 @@
 
 namespace App\Filament\Resources;
 
+use Carbon\Carbon;
+use Filament\Forms;
+use Filament\Tables;
+use App\Models\Patient;
+use Filament\Forms\Form;
+use Filament\Tables\Table;
+use Filament\Resources\Resource;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Select;
+use Filament\Support\Enums\Alignment;
+use Filament\Forms\Components\Actions;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\DatePicker;
 use App\Filament\Resources\PatientResource\Pages;
 use App\Filament\Resources\PatientResource\RelationManagers;
 use App\Filament\Resources\PatientResource\RelationManagers\ConsultationsRelationManager;
 use App\Filament\Resources\PatientResource\RelationManagers\HospitalAdmissionsRelationManager;
-use App\Models\Patient;
-use Carbon\Carbon;
-use Filament\Forms;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
-use Filament\Tables;
-use Filament\Tables\Table;
-
+use Filament\Actions\StaticAction;
 
 class PatientResource extends Resource
 {
@@ -66,7 +68,17 @@ class PatientResource extends Resource
                             // ->separator(',')
                             ,
                         Forms\Components\Repeater::make('patientHmos')
-                            ->label('HMOs')
+                            ->label('Patient HMOs')
+                            // ->addActionLabel('Click here to add HMO')
+                            // ->addActionAlignment(Alignment::Left)
+                            ->addAction(function(StaticAction $action) {
+                                return $action
+                                            ->label('Click here to add HMO')
+                                            ->icon('healthicons-o-social-work')
+                                            ->color('primary')
+                                            ->link()
+                                            ->size('lg');
+                            })
                             ->relationship()
                             ->schema([
                                 Select::make('hmo_id')

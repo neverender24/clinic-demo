@@ -12,6 +12,7 @@ class Clinic extends Model
         'name',
         'location',
         'header_image',
+        'medcert_header_image',
         'watermarks'
     ];
 

@@ -37,6 +37,9 @@ class EditTenantProfile extends BaseEditTenantProfile
                     ->required(),
                 FileUpload::make('header_image')
                     ->required(),
+                FileUpload::make('medcert_header_image')
+                    ->label('Header for Medcert')
+                    ->required(),
                 FileUpload::make('watermarks')
                     ->required()
 

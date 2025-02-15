@@ -1,5 +1,28 @@
 
-<div class="flex justify-center  min-h-screen" style="font-size: 12pt;">
+
+<style >
+    @page {
+        size: letter;
+        margin: 0;
+    }
+    .paper-size {
+        width: 8.5in;
+        height: 11in;
+    }
+    @media print {
+        @page {
+            size: letter;
+            margin: 0;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            padding: 1in;
+            width: 8.5in;
+            height: 11in;
+        }
+    }
+</style>
+<div class="flex justify-center paper-size" style="font-size: 11pt;">
     <div class="bg-white h-full pl-14 pr-10" style="width: 8.5in;">
         <div class="bg-transparent">
             <header class="prescription-header">
@@ -9,7 +32,7 @@
         </div>
         <div class="relative min-h-screen">
             <!-- Absolute background image -->
-            <div class="absolute inset-0 bg-no-repeat bg-center bg-auto bg-contain opacity-15 " style="background-image: url('{{$watermark}}');"></div>
+            <div class="absolute inset-0 bg-no-repeat bg-center opacity-15" style="background-image: url('{{$watermark}}');"></div>
             
             <!-- Your child content, unaffected by parent opacity -->
             <div class="relative">
@@ -19,7 +42,7 @@
                         <span class="underline">{{now()->format('F j, Y')}}</span>
                     </p>
                 </div>
-                <div class="text-content px-5 py-5 space-y-7">
+                <div class="text-content px-5 py-5 space-y-6">
                     <p class="">
                         <span class="">To whom it may concern,</span>
                     </p>

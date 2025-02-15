@@ -70,7 +70,8 @@ class ConsultationResource extends Resource implements HasShieldPermissions
             'add_chief_complaint',
             'add_prescription',
             'add_test_results',
-            'edit_as_doctor'
+            'edit_as_doctor',
+            'add_followup_schedule'
         ];
     }
 
@@ -122,6 +123,9 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                             ->label('Medical Data')
                                             ->required()
                                             ->toolbarButtons(self::onlyAllowedToolbar())
+                                            ->columnSpan([
+                                                'lg' => auth()->user()->doctor() ? 1 : 2
+                                            ])
                                             // ->columnSpan(2)
                                             // ->columnSpan(function() {
                                             //     if (auth()->user()->doctor()) {
@@ -147,21 +151,23 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                             ->toolbarButtons(self::onlyAllowedToolbar())
                                             ->columnSpanFull()
                                             ->visible(fn() => auth()->user()->hasAnyRole(['Doctor', 'super_admin'])),
-                                        Forms\Components\TextInput::make('management')
+                                        Forms\Components\RichEditor::make('management')
                                             ->required()
                                             // ->toolbarButtons(self::onlyAllowedToolbar())
                                             ->visible(fn() => auth()->user()->hasAnyRole(['Doctor', 'super_admin']))
                                             ->columnSpan([
-                                                'lg' => 1,
-                                                'xl' =>1
-                                            ])
-                                            ,
+                                                'lg' => 2,
+                                                'xl' =>2
+                                            ]),
                                         DatePicker::make('next_follow_up_schedule')
+
                                             ->label('Patient\'s next follow up schedule (If necessary)')
                                             ->columnSpan([
                                                 'lg' => 1,
                                                 'xl' =>1
                                             ])
+                                            ->visible(fn($livewire) => auth()->user()->can('addFollowupSchedule', $livewire->record))
+                                            // ->extraAttributes(['class' => 'mt-4'])
                                     ])
                                     // ->visible(fn() => auth()->user()->hasAnyRole(['Doctor', 'super_admin']))
                                     ->columns([
@@ -277,8 +283,12 @@ class ConsultationResource extends Resource implements HasShieldPermissions
     {
         return $table
             ->modifyQueryUsing(fn(Builder $query) => $query->with(['medicines', 'patient']))
-            ->defaultSort('id', 'desc')
+            ->defaultSort('queueing_number')
             ->columns([
+                Tables\Columns\TextColumn::make('queueing_number')
+                    ->label('Queue')
+                    ->formatStateUsing(fn($state) => sprintf('%03d', $state))
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('date')
                     ->date()
                     ->sortable(),
@@ -303,6 +313,8 @@ class ConsultationResource extends Resource implements HasShieldPermissions
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
+                    ->disabled(fn($record) => $record->status->value == 'Done'),
+                Tables\Actions\DeleteAction::make()
                     ->disabled(fn($record) => $record->status->value == 'Done'),
                 Tables\Actions\Action::make('edit_history')
                     ->visible(fn($record) => auth()->user()->can('edit_as_doctor_consultation'))
@@ -340,7 +352,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                             'medicines' => $record->medicines,
                             'patient' => $record->patient,
                             'next_follow_up_schedule' => $record->next_follow_up_schedule?->format('F j, Y'),
-                            'header_image' => asset('storage/'.$record->clinic->header_image),
+                            'header_image' => asset('storage/'.$record->clinic->medcert_header_image),
                             'watermark' => asset('storage/'.$record->clinic->watermarks),
                             'consultation_date' => $record->date?->format('F d, Y')
                         ])),
