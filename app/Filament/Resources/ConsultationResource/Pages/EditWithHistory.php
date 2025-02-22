@@ -32,6 +32,7 @@ use App\Filament\Resources\ConsultationResource;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Infolists\Components\RepeatableEntry;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
+use Filament\Forms\Components\RichEditor;
 use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
 use Filament\Infolists\Components\Actions\Action as InfolistAction;
@@ -99,6 +100,14 @@ class EditWithHistory extends Page implements HasForms, HasTable, HasInfolists
             ->columns(1)
             ->statePath('data')
             ->model(Consultation::class);
+    }
+
+    public function form2(Form $form): Form
+    {
+        return $form
+                    ->schema([
+                        RichEditor::make('test')
+                    ]);
     }
     
     public function table(Table $table): Table

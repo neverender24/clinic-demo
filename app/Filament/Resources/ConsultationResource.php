@@ -119,6 +119,18 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                 Section::make()
                                     ->extraAttributes(['class' => 'mt-4'])
                                     ->schema([
+                                        Forms\Components\RichEditor::make('chief_complaint')
+                                        ->required()
+                                        ->toolbarButtons(self::onlyAllowedToolbar())
+                                        // ->columnSpan(2)
+                                        // ->columnSpanFull()
+                                        // ->columnSpan(function() {
+                                        //     if (auth()->user()->doctor()) {
+                                        //         return 'full';
+                                        //     }
+                                        //     return '2';
+                                        // })
+                                        ->visible(fn() => auth()->user()->can('addChiefComplaint', static::$model)),
                                         Forms\Components\RichEditor::make('test_results')
                                             ->label('Medical Data')
                                             ->required()
@@ -134,18 +146,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                             //     return '2';
                                             // })
                                             ->visible(fn() => auth()->user()->can('addTestResult', static::$model)),
-                                        Forms\Components\RichEditor::make('chief_complaint')
-                                                ->required()
-                                                ->toolbarButtons(self::onlyAllowedToolbar())
-                                                // ->columnSpan(2)
-                                                // ->columnSpanFull()
-                                                // ->columnSpan(function() {
-                                                //     if (auth()->user()->doctor()) {
-                                                //         return 'full';
-                                                //     }
-                                                //     return '2';
-                                                // })
-                                                ->visible(fn() => auth()->user()->can('addChiefComplaint', static::$model)),
+                                    
                                         Forms\Components\RichEditor::make('diagnosis')
                                             ->required()
                                             ->toolbarButtons(self::onlyAllowedToolbar())
@@ -282,7 +283,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
     public static function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn(Builder $query) => $query->with(['medicines', 'patient']))
+            ->modifyQueryUsing(fn(Builder $query) => $query->with(['medicines', 'patient'])->where('date', now()->format('Y-m-d')))
             ->defaultSort('queueing_number')
             ->columns([
                 Tables\Columns\TextColumn::make('queueing_number')
@@ -348,6 +349,10 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                         ->color('success')
                         ->icon('heroicon-o-printer')
                         ->format(format: 'letter')
+                        ->form([
+                            TextInput::make('number_of_days')
+                        ])
+                        ->preview()
                         ->content(fn($record): View => view('consultations.medcert', [
                             'medicines' => $record->medicines,
                             'patient' => $record->patient,

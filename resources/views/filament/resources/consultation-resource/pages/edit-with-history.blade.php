@@ -10,6 +10,7 @@
             <div>
                 @livewire('list-hospital-admission', ['patient_id' => $record->patient_id])
             </div>
+           
         </div>
         <div>
             <x-filament::button wire:click="submit" class="mt-3">
@@ -25,6 +26,11 @@
         <x-slot name="heading">
             Consultation Details {{Carbon\Carbon::parse($this->historyData->date)->format('F j, Y')}}
         </x-slot>
+        
+    </x-filament::modal>
+
+    <x-filament::modal id="test" width="7xl">
+       
         
     </x-filament::modal>
 </x-filament-panels::page>
