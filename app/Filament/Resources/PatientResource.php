@@ -35,7 +35,6 @@ class PatientResource extends Resource
             ->schema([
                 Section::make('')
                     ->schema([
-
                         Forms\Components\TextInput::make('last_name')
                             ->required()
                             ->maxLength(45)
@@ -120,6 +119,7 @@ class PatientResource extends Resource
                 Tables\Columns\TextColumn::make('contact_details')
                     ->searchable()
                     ->listWithLineBreaks(),
+                Tables\Columns\TextColumn::make('address'),
                 Tables\Columns\TextColumn::make('hmos')
                     ->searchable()
                     ->badge()

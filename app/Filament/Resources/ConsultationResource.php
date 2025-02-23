@@ -97,7 +97,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                     ->getOptionLabelsUsing(fn ($value) => Patient::find($value)->full_name)
                                     ->preload()
                                     ->searchable()
-                                    
+
                                     ->createOptionForm(function (Form $form) {
                                         return PatientResource::form($form)->extraAttributes(['class' => 'w-full']);
                                     })
@@ -146,7 +146,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                             //     return '2';
                                             // })
                                             ->visible(fn() => auth()->user()->can('addTestResult', static::$model)),
-                                    
+
                                         Forms\Components\RichEditor::make('diagnosis')
                                             ->required()
                                             ->toolbarButtons(self::onlyAllowedToolbar())
@@ -218,7 +218,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                                                 ->visible(fn($state) => Medicine::with('consultations')->find($state)->consultations->isEmpty());
                                                     })
                                                     ->columnSpan([
-                                                        'lg' => 'full',  
+                                                        'lg' => 'full',
                                                     ]),
                                                 TextInput::make('remarks')
                                                     ->required()
@@ -245,7 +245,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                 ])
                                 ->columnSpan(2)
                                 ->visible(fn() => auth()->user()->hasRole('Doctor') || auth()->user()->superAdmin())
-                                
+
                     ])
                     ->columnSpan(2)
                     // ->columnSpan(function($operation) {
@@ -288,7 +288,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
             ->columns([
                 Tables\Columns\TextColumn::make('queueing_number')
                     ->label('Queue')
-                    ->formatStateUsing(fn($state) => sprintf('%03d', $state))
+                    ->formatStateUsing(fn($state) => sprintf('%02d', $state))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('date')
                     ->date()
@@ -328,7 +328,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                         ->label('Prescription')
                         ->color('success')
                         ->icon('heroicon-o-printer')
-                        ->content(function($record): View { 
+                        ->content(function($record): View {
                             return view('consultations.print', [
                                         'medicines' => $record->medicines->chunk(6),
                                         'patient' => $record->patient,

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ConsultationResource\Pages;
 
+use App\Models\Scopes\ConsultationScope;
 use Carbon\Carbon;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
@@ -80,7 +81,7 @@ class EditWithHistory extends Page implements HasForms, HasTable, HasInfolists
         // dd(auth()->user());
 
         $this->authorize('edit_as_doctor_consultation', [$this->record]);
-        
+
         $this->patient_id = $this->record->patient_id;
 
         $this->record->medicines = $this->record->consultationMedicines->map(fn($item) => [
@@ -89,9 +90,9 @@ class EditWithHistory extends Page implements HasForms, HasTable, HasInfolists
                                             "remarks" => $item->remarks,
                                             "quantity" => $item->quantity
                                         ]);
-    
+
         $this->form->fill(collect($this->record)->except('consultation_medicines')->toArray());
-        
+
     }
 
     public function form(Form $form): Form
@@ -109,11 +110,12 @@ class EditWithHistory extends Page implements HasForms, HasTable, HasInfolists
                         RichEditor::make('test')
                     ]);
     }
-    
+
     public function table(Table $table): Table
-    {   
+    {
         return $table
                 ->query(fn() => Consultation::query()
+                                ->withoutGlobalScopes(scopes: [ConsultationScope::class])
                                 ->where('patient_id', $this->patient_id)
                                 ->whereDate('date', '<', $this->data['date'])
                 )
@@ -310,12 +312,12 @@ class EditWithHistory extends Page implements HasForms, HasTable, HasInfolists
     {
         // $record = collect($record)->except('date');
 
-        // $record->date = $this->record->date; 
+        // $record->date = $this->record->date;
 
-        // $record->id = $this->record->id; 
+        // $record->id = $this->record->id;
 
         // dd($this->record);
- 
+
 
         // dd($record->chief_complaint);
         $this->data['test_results'].=$record->test_results;
@@ -325,7 +327,7 @@ class EditWithHistory extends Page implements HasForms, HasTable, HasInfolists
         // $this->data = $record->toArray();
 
         // dd($this->data);
-        
+
     }
 
     protected function copyPrescription($record)
@@ -366,6 +368,6 @@ class EditWithHistory extends Page implements HasForms, HasTable, HasInfolists
 
     public function cancelAction()
     {
-        
+
     }
 }
