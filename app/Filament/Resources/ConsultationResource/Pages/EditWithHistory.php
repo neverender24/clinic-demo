@@ -74,7 +74,8 @@ class EditWithHistory extends Page implements HasForms, HasTable, HasInfolists
 
     public function mount(int | string $record): void
     {
-        $this->record = $this->resolveRecord($record)->load('consultationMedicines');
+        // dd($record);
+        $this->record = Consultation::with('consultationMedicines')->withoutGlobalScope(ConsultationScope::class)->findOrFail($record);
 
         $this->historyData = $this->record;
 
@@ -354,6 +355,7 @@ class EditWithHistory extends Page implements HasForms, HasTable, HasInfolists
                     ->title('Saved successfully')
                     ->success()
                     ->send();
+                    
                 redirect()->to($this->getResource()::getUrl('index'));
 
             } catch (\Throwable $th) {

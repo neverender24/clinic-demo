@@ -17,6 +17,7 @@ use App\Filament\Resources\UserResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use STS\FilamentImpersonate\Tables\Actions\Impersonate;
 use App\Filament\Resources\UserResource\RelationManagers;
+use Filament\Tables\Actions\ActionGroup;
 
 class UserResource extends Resource
 {
@@ -96,9 +97,15 @@ class UserResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
                 Impersonate::make()
-                    ->redirectTo(route('filament.admin.resources.consultations.index', [Filament::getTenant()->id])),
+                ->redirectTo(route('filament.admin.resources.consultations.index', [Filament::getTenant()->id]))
+                ->button()
+                // ->icon('')
+                ->label('Login'),
+                ActionGroup::make([
+                    Tables\Actions\EditAction::make(),
+                    Tables\Actions\DeleteAction::make(),
+                ]),
             ]);
     }
 

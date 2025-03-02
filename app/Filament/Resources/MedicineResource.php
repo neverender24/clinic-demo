@@ -64,6 +64,11 @@ class MedicineResource extends Resource
             ->headerActions([
                 CreateAction::make()
                     ->modalWidth('lg')
+                    ->mutateFormDataUsing(function($data) {
+                        $data['user_id'] = auth()->id();
+
+                        return $data;
+                    })
             ])
             ->actions([
                 Tables\Actions\EditAction::make()

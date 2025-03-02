@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets;
 
 use App\Models\Medicine;
+use App\Models\Scopes\ConsultationScope;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Support\HtmlString;
@@ -30,8 +31,11 @@ class MostPrescribedDrugs extends BaseWidget
 
     protected function getStats(): array
     {
-        $this->medicines = Medicine::with('consultations')->whereHas('consultations')->get();
+        $this->medicines = Medicine::with(['consultations' => fn($query) => $query->withoutGlobalScope(ConsultationScope::class)])
+                            ->whereHas('consultations', fn($query) => $query->withoutGlobalScope(ConsultationScope::class))
+                            ->get();
         
+                            // dd($this->medicines);   
         $data = $this->medicines->map(fn($item) => [
                                 'stat' => Stat::make(
                                                 new HtmlString($item->full_name_of_medicine), 

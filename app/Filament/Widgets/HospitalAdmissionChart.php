@@ -2,43 +2,33 @@
 
 namespace App\Filament\Widgets;
 
-use Carbon\Carbon;
-use App\Models\Clinic;
-use App\Models\Consultation;
-use Filament\Facades\Filament;
-use App\Models\Scopes\TenantScope;
-use Filament\Forms\Components\Select;
-use App\Models\Scopes\ConsultationScope;
-use App\Trait\HasPeriodFilter;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\DatePicker;
 use Filament\Support\RawJs;
+use App\Trait\HasPeriodFilter;
+use Filament\Facades\Filament;
+use App\Models\HospitalAdmission;
+use Carbon\Carbon;
+use Filament\Forms\Components\Select;
 use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
 
-class ConsultationChart extends ApexChartWidget
+class HospitalAdmissionChart extends ApexChartWidget
 {
-
     use HasPeriodFilter;
-
-    protected static ?string $pollingInterval = '';
-
-    protected static ?int $sort = 2;
-
-    protected int | string | array $columnSpan = 1;
-
     /**
      * Chart Id
      *
      * @var string
      */
-    protected static ?string $chartId = 'consultationChart';
+    protected static ?string $chartId = 'hospitalAdmissionChart';
 
+    protected static ?string $pollingInterval = '';
+
+    protected static ?int $sort = 3;
     /**
      * Widget Title
      *
      * @var string|null
      */
-    protected static ?string $heading = 'Out-Patient Chart';
+    protected static ?string $heading = 'HospitalAdmissionChart';
 
     /**
      * Chart options (series, labels, types, size, animations...)
@@ -51,14 +41,14 @@ class ConsultationChart extends ApexChartWidget
 
      protected $chartLabel;
 
+
      protected function getFormSchema(): array
     {
         return [
-    
-            Select::make('clinic_id')
-                ->options(Clinic::all()->pluck('name', 'id'))
-                ->label('Clinic')
-                ->default(Filament::getTenant()->id),
+            Select::make('hospital')
+                ->options(HospitalAdmission::distinct('hospital')->pluck('hospital', 'hospital'))
+                ->label('Hospital')
+                ->default(HospitalAdmission::first()?->hospital),
             Select::make('period')
                 ->options([
                     'Daily' => 'Daily',
@@ -69,7 +59,6 @@ class ConsultationChart extends ApexChartWidget
                 ->default('Daily'),
         ];
     }
-
     protected function getOptions(): array
     {
         $this->getData();
@@ -104,7 +93,7 @@ class ConsultationChart extends ApexChartWidget
                 'size' => 0, // Remove markers
             ],
             'title' => [
-                'text' => "Showing {$this->filterFormData['period']} Consultations", // Chart title
+                'text' => "Showing {$this->filterFormData['period']} Hospital Admission", // Chart title
                 'align' => 'left',
             ],
             'fill' => [
@@ -137,7 +126,6 @@ class ConsultationChart extends ApexChartWidget
                 // 
             ],
         ];
-
     }
 
     protected function getData(): void
@@ -145,12 +133,12 @@ class ConsultationChart extends ApexChartWidget
         // dd($this->filterFormData['clinic_id']);
         // dd();
         
-        $data = Consultation::withoutGlobalScopes([TenantScope::class, ConsultationScope::class])
-                    ->where('clinic_id', $this->filterFormData['clinic_id'])
-                    ->withPeriod($this->filterFormData['period'])
+        $data = HospitalAdmission::withPeriod($this->filterFormData['period'])
+                    ->where('hospital', $this->filterFormData['hospital'])
                     ->get()
                     ->each(function($item) {
-                        $item->consultation_date = $item->date->format('Y-m-d');
+                        $item->date = Carbon::parse($item->admission_date);
+                        $item->year = $item->date->year;
                     });
          
         $filteredData = [];
@@ -160,6 +148,8 @@ class ConsultationChart extends ApexChartWidget
             $filteredData = $this->getWeekly($data);
         } else if ($this->filterFormData['period'] === 'Monthly') {
             $filteredData = $this->getMonthly($data);
+        } else if($this->filterFormData['period'] === 'Yearly') {
+            $filteredData = $this->getYearly($data);
         }
 
         // dd($filteredData);

@@ -24,7 +24,8 @@ class Consultation extends Model
         return [
             'status' => Status::class,
             'next_follow_up_schedule' => 'date',
-            'date' => 'date'
+            'date' => 'date',
+            'estimated_date' => 'date'
         ];
     }
 
@@ -64,5 +65,14 @@ class Consultation extends Model
     protected function scopeCurrentConsultations(Builder $query, $date)
     {
         $query->where('date', $date);
+    }
+
+    public function scopeWithPeriod(Builder $query, $period)
+    {
+        if($period == 'Weekly' || $period == 'Daily')
+        {
+            $query->whereMonth('date', now()->month)
+                ->whereYear('date', now()->year);
+        }
     }
 }

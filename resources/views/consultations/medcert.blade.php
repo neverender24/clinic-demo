@@ -52,14 +52,13 @@
                         <span class="underline font-bold">{{$consultation_date}}.</span>
                         During the consultation, the patient presented with clinical sign and symptoms suggestive 
                         of the following medical condition/s: 
-                        <div class="border-b border-gray-900"> </div>
-                        <div class="border-b border-gray-900"> </div>
+                        <div class="border-b border-gray-900"> {!! $diagnosis !!} </div>
                         <div class="border-b border-gray-900"> </div>
                     </p>
                     <p>
-                        The anticipated duration of the patient's recovery is estimated to be approximately ____ day/s, 
+                        The anticipated duration of the patient's recovery is estimated to be approximately <span class="underline font-bold">{{$approximate_days}} day/s</span>, 
                         after which the patient is expected to be fit for resuming regular activies, including work, 
-                        on or around _______________.
+ font-bold                        on or around <span class="underline font-bold">{{$estimated_date}}</span>.
                     </p>
                     <p>
                         Please be advised that this certificate is issued at the patient's request and for their specific
@@ -67,13 +66,20 @@
                     </p>
                     <p>
                         <span class="font-bold">Remarks:</span>  
-                        <div class="border-b border-gray-900"> </div>
-                        <div class="border-b border-gray-900"> </div>
-                        <div class="border-b border-gray-900"> </div>
+                        <div class="border-b border-gray-900"> {!!$medical_cert_remarks!!} </div>
+                        <div class="border-b border-gray-900">  </div>
                     </p>
                     <p class="pt-10">
-                         <span class="font-bold">Attending Physician:</span>
-                         
+                        <div class="col-span-3 physician-signature gap-y-0  flex justify-end">
+                            <div>
+                            <span class="font-bold">Attending Physician:</span>
+                            <p>BEN JAY C. PORCADILLA, RMT, MD, FPCP</p>
+                            <p>License no: 0132066</p>
+                            <p>PTR no: 2173419</p>
+                            <p>S2 License no: _____________________</p>
+                        </div>
+                        </div>
+
                     </p>
                 </div>
                 <!-- More child elements -->
