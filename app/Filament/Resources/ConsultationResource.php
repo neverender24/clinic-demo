@@ -327,7 +327,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                     $months[$key] = [
                                         'text' => Carbon::create()->day(1)->month($value)->format('F'),
                                         'value' => $value
-                                    ]; 
+                                    ];
                                 }
 
                                 return collect($months)->pluck('text', 'value');
@@ -341,7 +341,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                 foreach (range(2024,now()->year) as $key => $value) {
                                     $years[$key] = [
                                         'value' => $value
-                                    ]; 
+                                    ];
                                 }
 
                                 return collect($years)->pluck('value', 'value');
@@ -385,7 +385,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                         ->form([
                             Forms\Components\Grid::make(2)
                                 ->schema([
-                                    
+
                                     Forms\Components\TextInput::make('approximate_days'),
                                     Forms\Components\DatePicker::make('estimated_date'),
                                 ]),
@@ -409,15 +409,16 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                         }),
                     Tables\Actions\Action::make('admitting_order')
                         ->label('Admitting Order Form')
+                        ->icon('heroicon-s-document-text')
                         ->form([
                             RichEditor::make('admitting_order_data')
-                            ->default(fn($record) => $record->admitting_order_data ?? '<p>&nbsp;To: <span style="text-decoration: underline;">&nbsp; &nbsp; &nbsp; &nbsp;</span></p><p><br></p><p><br></p><p><br></p><p>&nbsp;- Please admit patient to __________&nbsp;</p><p>&nbsp;- Secure consent to care&nbsp;</p><p>&nbsp;- Diet&nbsp;</p><p>&nbsp;- IVF&nbsp;</p><p>&nbsp;- Diagnostics:&nbsp;</p><p><br></p><p><br></p><p>&nbsp;- Medications:&nbsp;</p><p><br></p><p><br></p><p>&nbsp;- VS q4 and I &amp; O qShift&nbsp;</p><p>&nbsp;- Watchout for unusualities&nbsp;</p><p>&nbsp;- Kindly inform me once admitted&nbsp;</p><p>&nbsp;- Refer accordingly&nbsp;</p><p><br></p><p>- Special Instructions (if any):</p>')
+                            ->default(fn($record) => $record->admitting_order_data ?? '<p>&nbsp;To: <span style="text-decoration: underline;">&nbsp; &nbsp; &nbsp; &nbsp;</span></p><p><br></p><p><br></p><p><br></p><p>&nbsp;- Please admit patient to <span style="text-decoration: underline;"> &nbsp; &nbsp; &nbsp; &nbsp;</span>&nbsp;</p><p>&nbsp;- Secure consent to care&nbsp;</p><p>&nbsp;- Diet&nbsp;</p><p>&nbsp;- IVF&nbsp;</p><p>&nbsp;- Diagnostics:&nbsp;</p><p><br></p><p><br></p><p>&nbsp;- Medications:&nbsp;</p><p><br></p><p><br></p><p>&nbsp;- VS q4 and I &amp; O qShift&nbsp;</p><p>&nbsp;- Watchout for unusualities&nbsp;</p><p>&nbsp;- Kindly inform me once admitted&nbsp;</p><p>&nbsp;- Refer accordingly&nbsp;</p><p><br></p><p>- Special Instructions (if any):</p>')
                         ])
                         // ->fillForm(fn($record) => [
-                        //     'admitting_order_data' => $record->admitting_order_data 
+                        //     'admitting_order_data' => $record->admitting_order_data
                         // ])
                         ->action(function($data, $record) {
-                            dd($record);
+//                            dd($data);
                             try {
                                 //code...
                                 $record->update($data);
@@ -445,7 +446,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                     ]
                                 );
                         })
-                        
+
                         // ->preview()
                         ->orientation()
                         ->format('a5')

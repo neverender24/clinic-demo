@@ -5,7 +5,7 @@
     body {
         font-family: Arial, sans-serif;
     }
-/*         
+/*
         .prescription {
             width: 100%;
             border: 1px solid #000;
@@ -23,7 +23,7 @@
         width: 148mm;
         height: 210mm;
         /* background-color: white;
-        width: 556.8px;  
+        width: 556.8px;
         */
         /* width: 556.8px;   */
         /* Custom width */
@@ -31,7 +31,7 @@
         /* height: 796.8000000000001px;  */
         /* Custom height */
         /* padding: 20px; */
-        
+
         /* Push footer to the bottom */
         /* justify-content: space-between;  */
         /* overflow: hidden; */
@@ -54,8 +54,8 @@
             margin: 1in;
         } */
     }
-    
-    
+
+
 </style>
 <div class="prescription-container bg-white shadow flex flex-col text-[9pt] p-[10mm]" id="prescription">
         <!-- Heading Section -->
@@ -66,7 +66,7 @@
             </h1>
         </header>
 
-        <section class="content ">
+        <section class="content pt-2">
           {!! $data !!}
         </section>
         <footer class="footer h-full flex items-end">
@@ -76,7 +76,7 @@
                     <!-- Next follow-up schedule: -->
                     </div>
                     <div class="b mt-auto">
-                    </div> 
+                    </div>
                 </div>
                 <div class="col-span-3 physician-signature gap-y-0 text-[7pt] flex justify-end">
                    <div>
