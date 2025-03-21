@@ -40,7 +40,7 @@ class AdminPanelProvider extends PanelProvider
             ->tenantRegistration(RegisterClinic::class)
             ->tenantMenu(fn () => auth()->user()->can('canManageTenant', User::class))
             ->tenantMenuItems([
-                'profile' => MenuItem::make()->label('Edit Clininc'),
+                'profile' => MenuItem::make()->label('Edit Clinic'),
                 'register' => MenuItem::make()->label('Register Clinic'),
                 // ...
             ])

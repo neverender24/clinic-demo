@@ -2,51 +2,52 @@
 
 namespace App\Filament\Resources;
 
+use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Tables;
 use App\Models\Patient;
+use App\Models\Medicine;
 use Filament\Forms\Form;
 use Illuminate\View\View;
 use Filament\Tables\Table;
 use Livewire\Attributes\On;
 use App\Models\Consultation;
 use Livewire\Attributes\Url;
+use App\Trait\HasStatusAction;
 use Filament\Resources\Resource;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\StaticAction;
+use function Laravel\Prompts\form;
 use Filament\Forms\Components\Grid;
+use Filament\Tables\Filters\Filter;
 use Filament\Forms\Components\Select;
+use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Livewire;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Tabs\Tab;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Scopes\ConsultationScope;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\RichEditor;
+use Filament\Tables\Filters\QueryBuilder;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use App\Livewire\Consultation\ListRecords;
 use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\MarkdownEditor;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Tables\Actions\Action as ActionsAction;
 use Filament\Forms\Components\View as ComponentsView;
 use App\Filament\Resources\ConsultationResource\Pages;
+use Torgodly\Html2Media\Tables\Actions\Html2MediaAction;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
+
 use App\Filament\Resources\ConsultationResource\RelationManagers;
 use App\Filament\Resources\ConsultationResource\Pages\ListConsultations;
-use App\Models\Medicine;
-use App\Models\Scopes\ConsultationScope;
-use App\Trait\HasStatusAction;
-use Carbon\Carbon;
-use Filament\Actions\ActionGroup;
-use Filament\Forms\ComponentContainer;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\MarkdownEditor;
-use Filament\Notifications\Notification;
-use Filament\Tables\Filters\Filter;
-use Filament\Tables\Filters\QueryBuilder;
-use Filament\Tables\Filters\SelectFilter;
-use Torgodly\Html2Media\Tables\Actions\Html2MediaAction;
-
-use function Laravel\Prompts\form;
 
 class ConsultationResource extends Resource implements HasShieldPermissions
 {
@@ -193,6 +194,14 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                     Repeater::make('medicines')
                                         ->relationship('consultationMedicines')
                                         ->label('Prescription')
+                                        ->addAction(function(StaticAction $action) {
+                                            return $action
+                                                        ->label('Add medicine to prescription')
+                                                        ->icon('healthicons-o-medicines')
+                                                        ->color('primary')
+                                                        ->link()
+                                                        ->size('lg');
+                                        })
                                         ->reorderable()
                                         ->schema([
                                             Grid::make([
@@ -459,7 +468,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                         ->icon('heroicon-o-printer')
                         ->format(format: 'letter')
                         // ->action(fn($data) => dd($data))
-                        ->visible(fn($record) => filled($record->approximate_days) && filled($record->estimated_date) && filled($record->medical_cert_remarks))
+                        // ->visible(fn($record) => filled($record->approximate_days) && filled($record->estimated_date) && filled($record->medical_cert_remarks))
                         ->content(fn($record): View => view('consultations.medcert', [
                             'medicines' => $record->medicines,
                             'patient' => $record->patient,
@@ -469,7 +478,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                             'consultation_date' => $record->date?->format('F d, Y'),
                             'medical_cert_remarks' => $record->medical_cert_remarks,
                             'approximate_days' => $record->approximate_days,
-                            'estimated_date' => $record->estimated_date->format('F j, Y'),
+                            'estimated_date' => $record->estimated_date ? $record->estimated_date->format('F j, Y') : '',
                             'diagnosis' => $record->diagnosis
                         ])),
                     Html2MediaAction::make('print_admitting_order')

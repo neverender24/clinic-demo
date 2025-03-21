@@ -36,9 +36,9 @@ class MedicineResource extends Resource
                     ->label('Brand Name')
                     ->required()
                     ->columnSpanFull(),
-                Forms\Components\TextInput::make('type')
-                    ->label('Preparation')
-                    ->columnSpanFull(),
+                // Forms\Components\TextInput::make('type')
+                //     ->label('Preparation')
+                //     ->columnSpanFull(),
             ]);
     }
 

@@ -69,15 +69,17 @@
                         <div class="border-b border-gray-900"> {!!$medical_cert_remarks!!} </div>
                         <div class="border-b border-gray-900">  </div>
                     </p>
-                    <p class="pt-10">
+                    <p class="">
+                        <br>
+                        <br>
                         <div class="col-span-3 physician-signature gap-y-0  flex justify-end">
                             <div>
-                            <span class="font-bold">Attending Physician:</span>
-                            <p>BEN JAY C. PORCADILLA, RMT, MD, FPCP</p>
-                            <p>License no: 0132066</p>
-                            <p>PTR no: 2173419</p>
-                            <p>S2 License no: _____________________</p>
-                        </div>
+                                <span class="font-bold ">Attending Physician:</span>
+                                <p class="mt-10">BEN JAY C. PORCADILLA, RMT, MD, FPCP</p>
+                                <p>License no: 0132066</p>
+                                <p>PTR no: 2173419</p>
+                                <p>S2 License no: _____________________</p>
+                            </div>
                         </div>
 
                     </p>
