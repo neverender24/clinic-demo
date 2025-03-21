@@ -46,8 +46,13 @@ class AdminPanelProvider extends PanelProvider
             ->tenantProfile(EditTenantProfile::class)
             ->login(Login::class)
             ->colors([
-                'primary' => Color::Amber,
-                'indigo' => Color::Indigo,
+                'primary' => Color::Blue,
+                'red' => Color::Red,
+                'danger' => Color::Rose,
+                'gray' => Color::Gray,
+                'info' => Color::Blue,
+                'success' => Color::Emerald,
+                'warning' => Color::Orange,
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
