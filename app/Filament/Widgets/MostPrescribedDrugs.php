@@ -18,9 +18,9 @@ class MostPrescribedDrugs extends BaseWidget
     {
         try {
             if ($this->medicines->count() > 0) {
-    
+
                 return 'Most Prescribed Drugs';
-    
+
             }
         } catch (\Throwable $th) {
             //throw $th;
@@ -34,11 +34,11 @@ class MostPrescribedDrugs extends BaseWidget
         $this->medicines = Medicine::with(['consultations' => fn($query) => $query->withoutGlobalScope(ConsultationScope::class)])
                             ->whereHas('consultations', fn($query) => $query->withoutGlobalScope(ConsultationScope::class))
                             ->get();
-        
-                            // dd($this->medicines);   
+
+//                             dd($this->medicines);
         $data = $this->medicines->map(fn($item) => [
                                 'stat' => Stat::make(
-                                                new HtmlString($item->full_name_of_medicine), 
+                                                new HtmlString($item->full_name_of_medicine),
                                                 $item->consultations->count()
                                             ),
                                 'count' => $item->consultations->count()

@@ -66,7 +66,7 @@ class ConsultationChart extends ApexChartWidget
                     'Monthly' => 'Monthly',
                     'Yearly' => 'Yearly',
                 ])
-                ->default('Daily'),
+                ->default('Monthly'),
         ];
     }
 

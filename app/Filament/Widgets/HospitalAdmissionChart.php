@@ -58,7 +58,7 @@ class HospitalAdmissionChart extends ApexChartWidget
                     'Monthly' => 'Monthly',
                     'Yearly' => 'Yearly',
                 ])
-                ->default('Daily'),
+                ->default('Monthly'),
         ];
     }
     protected function getOptions(): array
