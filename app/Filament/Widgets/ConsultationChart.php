@@ -54,7 +54,7 @@ class ConsultationChart extends ApexChartWidget
      protected function getFormSchema(): array
     {
         return [
-    
+
             Select::make('clinic_id')
                 ->options(Clinic::all()->pluck('name', 'id'))
                 ->label('Clinic')
@@ -74,7 +74,7 @@ class ConsultationChart extends ApexChartWidget
     {
         $this->getData();
 
-        return [ 
+        return [
             'chart' => [
                 'type' => 'area', // Change the chart type to 'area'
                 'stacked' => false, // Not stacking the areas
@@ -134,7 +134,7 @@ class ConsultationChart extends ApexChartWidget
             ],
             'tooltip' => [
                 'shared' => false, // Disable shared tooltips
-                // 
+                //
             ],
         ];
 
@@ -144,7 +144,7 @@ class ConsultationChart extends ApexChartWidget
     {
         // dd($this->filterFormData['clinic_id']);
         // dd();
-        
+
         $data = Consultation::withoutGlobalScopes([TenantScope::class, ConsultationScope::class])
                     ->where('clinic_id', $this->filterFormData['clinic_id'])
                     ->withPeriod($this->filterFormData['period'])
@@ -152,7 +152,7 @@ class ConsultationChart extends ApexChartWidget
                     ->each(function($item) {
                         $item->consultation_date = $item->date->format('Y-m-d');
                     });
-         
+
         $filteredData = [];
         if ($this->filterFormData['period'] === 'Daily') {
             $filteredData = $this->getDaily($data);
@@ -160,9 +160,11 @@ class ConsultationChart extends ApexChartWidget
             $filteredData = $this->getWeekly($data);
         } else if ($this->filterFormData['period'] === 'Monthly') {
             $filteredData = $this->getMonthly($data);
+        } else if ($this->filterFormData['period'] === 'Yearly') {
+            $filteredData = $this->getYearly($data);
         }
 
-        // dd($filteredData);
+//        dd($filteredData);
         $this->chartData = $filteredData->pluck('count');
         $this->chartLabel = $filteredData->pluck('label');
 
@@ -223,7 +225,7 @@ class ConsultationChart extends ApexChartWidget
             // toolbar: {
             //     autoSelected: "zoom"
             // }
-           
+
         }
         JS);
     }

@@ -43,7 +43,7 @@ class UserResource extends Resource
                     ->unique(ignoreRecord: true)
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('email') 
+                Forms\Components\TextInput::make('email')
                     ->unique(ignoreRecord: true)
                     ->maxLength(255),
                 Forms\Components\TextInput::make('password')
@@ -53,13 +53,13 @@ class UserResource extends Resource
                     ->maxLength(255),
                 Forms\Components\CheckboxList::make('roles')
                     ->relationship(
-                        name: 'roles', 
-                        titleAttribute: 'name', 
+                        name: 'roles',
+                        titleAttribute: 'name',
                         modifyQueryUsing: function($query) {
                             if (!auth()->user()->superAdmin()) {
                                 return $query->whereNotIn('name', ['Doctor', 'super_admin']);
                             }
-                        } 
+                        }
                     )
                     ->required()
                     // ->saveRelationshipsUsing(function (Model $record, $state) {
@@ -98,7 +98,10 @@ class UserResource extends Resource
             ])
             ->actions([
                 Impersonate::make()
-                ->redirectTo(route('filament.admin.resources.consultations.index', [Filament::getTenant()->id]))
+                ->redirectTo(function($record) {
+                    $clinic = $record->load('clinics')->clinics->firstWhere('id',Filament::getTenant())?->id ?? $record->load('clinics')->clinics->first()->id;
+                    return route('filament.admin.resources.consultations.index', [$clinic]);
+                })
                 ->button()
                 // ->icon('')
                 ->label('Login'),

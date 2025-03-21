@@ -20,6 +20,8 @@ class HospitalAdmissionChart extends ApexChartWidget
      */
     protected static ?string $chartId = 'hospitalAdmissionChart';
 
+    protected int | string | array $columnSpan = 1;
+
     protected static ?string $pollingInterval = '';
 
     protected static ?int $sort = 3;
@@ -28,7 +30,7 @@ class HospitalAdmissionChart extends ApexChartWidget
      *
      * @var string|null
      */
-    protected static ?string $heading = 'HospitalAdmissionChart';
+    protected static ?string $heading = 'Hospital Admission';
 
     /**
      * Chart options (series, labels, types, size, animations...)
@@ -63,7 +65,7 @@ class HospitalAdmissionChart extends ApexChartWidget
     {
         $this->getData();
 
-        return [ 
+        return [
             'chart' => [
                 'type' => 'area', // Change the chart type to 'area'
                 'stacked' => false, // Not stacking the areas
@@ -123,7 +125,7 @@ class HospitalAdmissionChart extends ApexChartWidget
             ],
             'tooltip' => [
                 'shared' => false, // Disable shared tooltips
-                // 
+                //
             ],
         ];
     }
@@ -132,7 +134,7 @@ class HospitalAdmissionChart extends ApexChartWidget
     {
         // dd($this->filterFormData['clinic_id']);
         // dd();
-        
+
         $data = HospitalAdmission::withPeriod($this->filterFormData['period'])
                     ->where('hospital', $this->filterFormData['hospital'])
                     ->get()
@@ -140,7 +142,7 @@ class HospitalAdmissionChart extends ApexChartWidget
                         $item->date = Carbon::parse($item->admission_date);
                         $item->year = $item->date->year;
                     });
-         
+
         $filteredData = [];
         if ($this->filterFormData['period'] === 'Daily') {
             $filteredData = $this->getDaily($data);
@@ -213,7 +215,7 @@ class HospitalAdmissionChart extends ApexChartWidget
             // toolbar: {
             //     autoSelected: "zoom"
             // }
-           
+
         }
         JS);
     }
