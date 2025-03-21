@@ -12,6 +12,7 @@ use Filament\Navigation\MenuItem;
 use App\Filament\Pages\Auth\Login;
 use Filament\Support\Colors\Color;
 use Filament\Http\Middleware\Authenticate;
+use Filament\FontProviders\LocalFontProvider;
 use App\Filament\Pages\Tenancy\RegisterClinic;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -84,6 +85,11 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
+            ->font(
+                'Inter',
+                url: asset('css/fonts/fonts.css'),
+                provider: LocalFontProvider::class,
+            )
             ->maxContentWidth('full')
             ->viteTheme('resources/css/filament/admin/theme.css');
     }
