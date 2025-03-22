@@ -176,13 +176,6 @@
             </h1>
         </header>
 
-        <!-- Patient Details Section -->
-        <!-- <div class="patient-details">
-            <p><strong>Name:</strong> <span class="underline" style="width: 15rem;">{{$patient->full_name}}</span> <strong>Date:</strong> <span class="underline">{{ now()->format('F j, Y')}}</span></p>
-            <p><strong>Address:</strong> <span class="underline">___________________________</span> <strong>Age:</strong> <span class="underline">______</span> <strong>Sex:</strong> <span class="underline">______</span></p>
-        </div> -->
-
-
         <table style="">
             <tr style="">
                 <td colspan="3">
