@@ -86,6 +86,7 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
+            ->unsavedChangesAlerts()
             ->font(
                 'Inter',
                 url: asset('css/fonts/fonts.css'),
