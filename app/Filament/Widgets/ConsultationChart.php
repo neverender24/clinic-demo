@@ -69,7 +69,7 @@ class ConsultationChart extends ApexChartWidget
                 ->default('Monthly'),
         ];
     }
-
+ 
     protected function getOptions(): array
     {
         $this->getData();
