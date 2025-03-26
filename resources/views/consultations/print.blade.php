@@ -73,7 +73,7 @@
         </div> -->
 
         <section class="content ">
-            <div class="grid grid-cols-5">
+            <div class="grid grid-cols-5 mt-2">
                 <div class="col-span-3 flex p-0">
                     <div class="font-bold">Name:</div> <div class="w-96 py-0 my-0 uppercase">{{$patient->full_name}}</div>
                 </div>
