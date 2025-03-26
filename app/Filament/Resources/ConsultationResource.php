@@ -300,7 +300,9 @@ class ConsultationResource extends Resource implements HasShieldPermissions
     public static function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn(Builder $query) => $query->withoutGlobalScope(ConsultationScope::class)->with(['medicines', 'patient']))
+            ->modifyQueryUsing(fn(Builder $query) => $query->withoutGlobalScope(ConsultationScope::class)
+                                                    ->with(['medicines', 'patient' => fn($query) => $query->withTrashed()])
+            )
             ->defaultSort('queueing_number')
             ->columns([
                 Tables\Columns\TextColumn::make('queueing_number')
@@ -311,10 +313,14 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('patient.full_name')
+                    ->color(fn($record) => $record->patient->trashed() ? 'danger' : '')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
                     ->searchable()
+                    // ->formatStateUsing(function($record) {
+                    //     dd($record);
+                    // })
                     ->sortable()
                     ->badge(),
                 Tables\Columns\TextColumn::make('created_at')

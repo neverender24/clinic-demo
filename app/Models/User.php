@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 use App\Trait\HasUserRole;
+use Filament\Facades\Filament;
 use Filament\Panel;
 use Illuminate\Support\Collection;
 use Spatie\Permission\Traits\HasRoles;
@@ -12,12 +13,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Filament\Models\Contracts\HasTenants;
 use Filament\Models\Contracts\FilamentUser;
+use Filament\Models\Contracts\HasAvatar;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-class User extends Authenticatable implements FilamentUser, HasTenants
+class User extends Authenticatable implements FilamentUser, HasTenants, HasAvatar
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasUserRole;
@@ -90,5 +92,11 @@ class User extends Authenticatable implements FilamentUser, HasTenants
             return true;
         }
         return $this->clinics()->whereKey($tenant)->exists();
+    }
+
+    public function getFilamentAvatarUrl(): ?string
+    {
+        // asset('storage/'.$record->clinic->watermarks)
+        return asset('storage/'.Filament::getTenant()->watermarks) ?? asset('images/user.svg');
     }
 }

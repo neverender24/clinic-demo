@@ -91,6 +91,7 @@ class AdminPanelProvider extends PanelProvider
                 url: asset('css/fonts/fonts.css'),
                 provider: LocalFontProvider::class,
             )
+            ->spa()
             ->maxContentWidth('full')
             ->viteTheme('resources/css/filament/admin/theme.css');
     }

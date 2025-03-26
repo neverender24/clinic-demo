@@ -28,7 +28,13 @@ class ListConsultations extends ListRecords
             'current_year' => Tab::make()
                 ->label(now()->year." Consultations")
                 ->modifyQueryUsing(fn (Builder $query) => $query->with(['medicines', 'patient'])->whereYear('date', now()->year)),
-            'all' => Tab::make()->modifyQueryUsing(fn (Builder $query) => $query->with(['medicines', 'patient'])),
+            'all' => Tab::make()
+                        ->modifyQueryUsing(fn (Builder $query) => $query->with([
+                                'medicines', 
+                                'patient'
+                            ])
+                            // ->whereHas('patient', fn($query) => $query->withTrashed())
+                        ),
         ];
     }
 }
