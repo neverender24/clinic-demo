@@ -75,13 +75,13 @@
         <section class="content ">
             <div class="grid grid-cols-5 mt-2">
                 <div class="col-span-3 flex p-0">
-                    <div class="font-bold">Name:</div> <div class="w-96 py-0 my-0 uppercase">{{$patient->full_name}}</div>
+                    <strong style="display: inline;">Name:</strong> <span style="display: inline;" class="ms-1"> {{$patient->full_name}}</span>
                 </div>
                 <div class="col-span-2">
                     <strong>Date:</strong> <span class="w-full border-b-1">{{ now()->format('F j, Y')}}</span>
                 </div>
                 <div class="col-span-3">
-                    <strong style="display: inline;">Address:</strong> <span style="display: inline;" class="">{{$patient->address}}</span>
+                    <strong style="display: inline;">Address:</strong> <span style="display: inline;" class=""> {{$patient->address}}</span>
                 </div>
                 <div class="col-span-1">
                     <strong>Age:</strong> <span class="">{{ Carbon\Carbon::parse($patient->birthday)->age}}</span>
