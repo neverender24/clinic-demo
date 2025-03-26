@@ -97,6 +97,11 @@ class User extends Authenticatable implements FilamentUser, HasTenants, HasAvata
     public function getFilamentAvatarUrl(): ?string
     {
         // asset('storage/'.$record->clinic->watermarks)
-        return asset('storage/'.Filament::getTenant()->watermarks) ?? asset('images/user.svg');
+        // dd(Filament::getTenant());
+        try {
+            return Filament::getTenant()->watermarks ? asset('storage/'.Filament::getTenant()->watermarks) : asset('images/user.svg');
+        } catch (\Throwable $th) {
+            return asset('images/user.svg');
+        }
     }
 }
