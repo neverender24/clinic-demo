@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Models\ConsultationMedicine;
 use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Tables;
@@ -238,6 +239,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                                         'lg' => 'full',
                                                     ]),
                                                 TextInput::make('remarks')
+                                                    ->datalist(fn() => ConsultationMedicine::distinct('remarks')->pluck('remarks')->toArray())
                                                     ->required()
                                                     ->columnSpan([
                                                         'md' => 'full',
