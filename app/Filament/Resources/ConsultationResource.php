@@ -261,7 +261,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                         ->hiddenLabel()
                                         // ->label('Prescription')
                                         ->columns(1)
-                                        ->defaultItems(1)
+                                        ->defaultItems(0)
                                         ->columnSpanFull()
                                 ])
                                 ->columnSpan(2)
