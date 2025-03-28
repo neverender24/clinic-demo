@@ -54,8 +54,7 @@
                         <span class="text-underline font-bold">{{$consultation_date}}.</span>
                         During the consultation, the patient presented with clinical sign and symptoms suggestive 
                         of the following medical condition/s: 
-                        <div class="border-b border-gray-900 font-bold"> {!! $diagnosis !!} </div>
-                        <div class="border-b border-gray-900"> </div>
+                        <div class="border-b border-gray-900 font-bold text-underline"> {!! $diagnosis !!} </div>
                     </p>
                     <p class="text-justify">
                         The anticipated duration of the patient's recovery is estimated to be approximately <span class="text-underline font-bold ">{{$approximate_days}} day/s</span>, 
@@ -68,8 +67,7 @@
                     </p>
                     <p>
                         <span class="font-bold">Remarks:</span>  
-                        <div class="border-b border-gray-900 font-bold"> {!!$medical_cert_remarks!!} </div>
-                        <div class="border-b border-gray-900">  </div>
+                        <div class="border-b border-gray-900 font-bold text-underline"> {!!$medical_cert_remarks!!} </div>
                     </p>
                     <p class="">
                         <br>

@@ -217,7 +217,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                                     // ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->name} - <b>{$record->brand}</b>")
                                                     ->allowHtml()
                                                     ->preload()
-                                                    ->searchable()
+                                                    ->searchable(['brand', 'name'])
                                                     ->required()
                                                     ->createOptionForm(function (Form $form) {
                                                         return MedicineResource::form($form)->extraAttributes(['class' => 'w-full']);
