@@ -121,8 +121,9 @@ class PatientResource extends Resource
                     ->listWithLineBreaks(),
                 Tables\Columns\TextColumn::make('address'),
                 Tables\Columns\TextColumn::make('hmos')
-                    ->searchable()
+                    // ->searchable()
                     ->badge()
+                    // ->color(fn($livewire) => dd($livewire))
                     ->color(fn($state) => now()->gte(Carbon::parse($state->pivot?->date_expiry)) ? 'danger' : 'success')
                     ->formatStateUsing(fn($state) => $state->name)
                     // ->colors(fn($record) => dd($record))

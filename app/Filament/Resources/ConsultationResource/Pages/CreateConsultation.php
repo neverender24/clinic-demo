@@ -34,7 +34,7 @@ class CreateConsultation extends CreateRecord
 
     protected function getRedirectUrl(): string
     {
-        return $this->getResource()::getUrl('index');
+        return $this->getResource()::getUrl('edit.consultation', [$this->record->id]);
     } 
 
 }

@@ -20,7 +20,9 @@
             width: 8.5in;
             height: 11in;
         }
+
     }
+    
 </style>
 <div class="flex justify-center paper-size" style="font-size: 11pt;">
     <div class="bg-white h-full pl-14 pr-10" style="width: 8.5in;">
@@ -46,27 +48,27 @@
                     <p class="">
                         <span class="">To whom it may concern,</span>
                     </p>
-                    <p>This certifies that 
-                        <span class="underline font-bold">{{$patient->full_name}}</span> 
+                    <p class="text-justify">This certifies that 
+                        <span class="text-underline font-bold">{{$patient->full_name}}</span> 
                         sought medical consultation on 
-                        <span class="underline font-bold">{{$consultation_date}}.</span>
+                        <span class="text-underline font-bold">{{$consultation_date}}.</span>
                         During the consultation, the patient presented with clinical sign and symptoms suggestive 
                         of the following medical condition/s: 
-                        <div class="border-b border-gray-900"> {!! $diagnosis !!} </div>
+                        <div class="border-b border-gray-900 font-bold"> {!! $diagnosis !!} </div>
                         <div class="border-b border-gray-900"> </div>
                     </p>
-                    <p>
-                        The anticipated duration of the patient's recovery is estimated to be approximately <span class="underline font-bold">{{$approximate_days}} day/s</span>, 
+                    <p class="text-justify">
+                        The anticipated duration of the patient's recovery is estimated to be approximately <span class="text-underline font-bold ">{{$approximate_days}} day/s</span>, 
                         after which the patient is expected to be fit for resuming regular activies, including work, 
- font-bold                        on or around <span class="underline font-bold">{{$estimated_date}}</span>.
+                        on or around <span class="text-underline font-bold inline-block">{{$estimated_date}}</span>.
                     </p>
-                    <p>
+                    <p class="text-justify">
                         Please be advised that this certificate is issued at the patient's request and for their specific
                         purposes. However, it is important to note that this document is not legally valid in a court of law.
                     </p>
                     <p>
                         <span class="font-bold">Remarks:</span>  
-                        <div class="border-b border-gray-900"> {!!$medical_cert_remarks!!} </div>
+                        <div class="border-b border-gray-900 font-bold"> {!!$medical_cert_remarks!!} </div>
                         <div class="border-b border-gray-900">  </div>
                     </p>
                     <p class="">

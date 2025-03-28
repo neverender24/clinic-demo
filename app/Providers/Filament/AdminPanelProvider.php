@@ -10,13 +10,20 @@ use App\Models\Clinic;
 use Filament\PanelProvider;
 use Filament\Navigation\MenuItem;
 use App\Filament\Pages\Auth\Login;
+use App\Filament\Pages\Dashboard;
 use Filament\Support\Colors\Color;
+use Filament\Navigation\NavigationItem;
+use App\Filament\Resources\UserResource;
 use Filament\Http\Middleware\Authenticate;
+use Filament\Navigation\NavigationBuilder;
 use Filament\FontProviders\LocalFontProvider;
 use App\Filament\Pages\Tenancy\RegisterClinic;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use App\Filament\Pages\Tenancy\EditTenantProfile;
+use App\Filament\Resources\ConsultationResource;
+use App\Filament\Resources\MedicineResource;
+use App\Filament\Resources\PatientResource;
 use Filament\Http\Middleware\AuthenticateSession;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Illuminate\Routing\Middleware\SubstituteBindings;
@@ -83,6 +90,19 @@ class AdminPanelProvider extends PanelProvider
                 FilamentApexChartsPlugin::make()
 
             ])
+            // ->navigation(function (NavigationBuilder $builder): NavigationBuilder {
+            //     return $builder->items([
+            //         // NavigationItem::make('Dashboard')
+            //         //     ->icon('heroicon-o-home')
+            //         //     ->isActiveWhen(fn (): bool => request()->routeIs('filament.admin.pages.dashboard'))
+            //         //     ->url(fn (): string => Dashboard::getUrl()),
+            //         ...Dashboard::getNavigationItems(),
+            //         ...UserResource::getNavigationItems(),
+            //         ...MedicineResource::getNavigationItems(),
+            //         ...ConsultationResource::getNavigationItems(),
+            //         ...PatientResource::getNavigationItems(),
+            //     ]);
+            // })
             ->authMiddleware([
                 Authenticate::class,
             ])
@@ -92,7 +112,7 @@ class AdminPanelProvider extends PanelProvider
                 url: asset('css/fonts/fonts.css'),
                 provider: LocalFontProvider::class,
             )
-            ->spa()
+            // ->spa()
             ->maxContentWidth('full')
             ->viteTheme('resources/css/filament/admin/theme.css');
     }

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ad91e3e5d77792908773dbfcab69a379",
+    "content-hash": "544fc757c4f6ba8f7a39458fc6bdf6f2",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -71,6 +71,54 @@
                 "source": "https://github.com/AnourValar/eloquent-serialize/tree/1.3.0"
             },
             "time": "2025-03-22T08:49:12+00:00"
+        },
+        {
+            "name": "asmit/filament-mention",
+            "version": "v1.0.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/AsmitNepali/filament-mention.git",
+                "reference": "efaffef7c2ae7f58ba6e831e4f59f020a20b6f13"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/AsmitNepali/filament-mention/zipball/efaffef7c2ae7f58ba6e831e4f59f020a20b6f13",
+                "reference": "efaffef7c2ae7f58ba6e831e4f59f020a20b6f13",
+                "shasum": ""
+            },
+            "require": {
+                "filament/support": "^3.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Asmit\\FilamentMention\\FilamentMentionServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Asmit\\FilamentMention\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "AsmitNepali",
+                    "homepage": "https://github.com/asmitnepali",
+                    "role": "Software Engineer"
+                }
+            ],
+            "description": "Mention editor",
+            "support": {
+                "issues": "https://github.com/AsmitNepali/filament-mention/issues",
+                "source": "https://github.com/AsmitNepali/filament-mention/tree/v1.0.4"
+            },
+            "time": "2025-02-21T02:12:20+00:00"
         },
         {
             "name": "bezhansalleh/filament-shield",

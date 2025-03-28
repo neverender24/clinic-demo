@@ -7,6 +7,14 @@
     @apply justify-center;
 } */
 
+.text-underline {
+    @apply ps-[2px] ;
+    @apply pe-[4px] ;
+    @apply border-b-[1px] ;
+    @apply border-gray-900;
+    /* @apply inline-block; */
+}
+
 .fi-fo-rich-editor-toolbar-btn svg {
     @apply w-3;
     @apply h-3;
