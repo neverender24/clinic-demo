@@ -66,7 +66,7 @@
             </h1>
         </header>
 
-        <section class="content pt-2`">
+        <section class="content mt-[10px]">
           {!! $data !!}
         </section>
         <footer class="footer h-full flex items-end">

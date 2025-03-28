@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources;
 
-use App\Models\ConsultationMedicine;
 use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Tables;
@@ -21,6 +20,7 @@ use Filament\Actions\StaticAction;
 use function Laravel\Prompts\form;
 use Filament\Forms\Components\Grid;
 use Filament\Tables\Filters\Filter;
+use App\Models\ConsultationMedicine;
 use Filament\Forms\Components\Select;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Section;
@@ -45,10 +45,12 @@ use Filament\Tables\Actions\Action as ActionsAction;
 use Filament\Forms\Components\View as ComponentsView;
 use App\Filament\Resources\ConsultationResource\Pages;
 use Torgodly\Html2Media\Tables\Actions\Html2MediaAction;
-use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
+use Asmit\FilamentMention\Forms\Components\RichMentionEditor;
 
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use App\Filament\Resources\ConsultationResource\RelationManagers;
 use App\Filament\Resources\ConsultationResource\Pages\ListConsultations;
+use Filament\Support\Enums\MaxWidth;
 
 class ConsultationResource extends Resource implements HasShieldPermissions
 {
@@ -403,7 +405,8 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                             Forms\Components\Grid::make(2)
                                 ->schema([
 
-                                    Forms\Components\TextInput::make('approximate_days'),
+                                    Forms\Components\TextInput::make('approximate_days')
+                                        ->label('Days of rest and recovery'),
                                     Forms\Components\DatePicker::make('estimated_date'),
                                 ]),
                             Forms\Components\RichEditor::make('medical_cert_remarks')
@@ -412,7 +415,6 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                         ->fillForm(fn($record) => $record->toArray())
                         ->action(function($data, $record) {
                             try {
-                                //code...
                                 $record->update($data);
                                 Notification::make()
                                 ->success()
@@ -428,14 +430,26 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                         ->label('Admitting Order Form')
                         ->icon('heroicon-s-document-text')
                         ->form([
-                            RichEditor::make('admitting_order_data')
-                            ->default(fn($record) => $record->admitting_order_data ?? '<p>&nbsp;To: <span style="text-decoration: underline;">&nbsp; &nbsp; &nbsp; &nbsp;</span></p><p><br></p><p><br></p><p><br></p><p>&nbsp;- Please admit patient to <span style="text-decoration: underline;"> &nbsp; &nbsp; &nbsp; &nbsp;</span>&nbsp;</p><p>&nbsp;- Secure consent to care&nbsp;</p><p>&nbsp;- Diet&nbsp;</p><p>&nbsp;- IVF&nbsp;</p><p>&nbsp;- Diagnostics:&nbsp;</p><p><br></p><p><br></p><p>&nbsp;- Medications:&nbsp;</p><p><br></p><p><br></p><p>&nbsp;- VS q4 and I &amp; O qShift&nbsp;</p><p>&nbsp;- Watchout for unusualities&nbsp;</p><p>&nbsp;- Kindly inform me once admitted&nbsp;</p><p>&nbsp;- Refer accordingly&nbsp;</p><p><br></p><p>- Special Instructions (if any):</p>')
+                            RichMentionEditor::make('admitting_order_data')
+                            ->mentionsItems(function () {
+                                return Patient::all()->map(function ($user) {
+                                    return [
+                                        'display_name' => $user->full_name,
+                                        'name' => $user->full_name,
+                                        'address' => $user->address,
+                                        'avatar' => asset('images/user.svg'),
+                                        'url' => 'admin/users/' . $user->id,
+                                    ];
+                                })->toArray();
+                            })
+                            ->default(fn($record) => transform($record->admitting_order_data, fn($value) => $value == '' || $value == null ? null: $value) 
+                                                            ?? '<p>&nbsp;To: <span class="text-underline">&nbsp; &nbsp; &nbsp; &nbsp;</span></p><p><br></p><p><br></p><p><br></p><p>&nbsp;- Please admit patient to <span class="text-underline"> &nbsp; &nbsp; &nbsp; &nbsp;</span>&nbsp;</p><p>&nbsp;- Secure consent to care&nbsp;</p><p>&nbsp;- Diet&nbsp;</p><p>&nbsp;- IVF&nbsp;</p><p>&nbsp;- Diagnostics:&nbsp;</p><p><br></p><p><br></p><p>&nbsp;- Medications:&nbsp;</p><p><br></p><p><br></p><p>&nbsp;- VS q4 and I &amp; O qShift&nbsp;</p><p>&nbsp;- Watchout for unusualities&nbsp;</p><p>&nbsp;- Kindly inform me once admitted&nbsp;</p><p>&nbsp;- Refer accordingly&nbsp;</p><p><br></p><p>- Special Instructions (if any):</p>')
                         ])
                         // ->fillForm(fn($record) => [
                         //     'admitting_order_data' => $record->admitting_order_data
                         // ])
                         ->action(function($data, $record) {
-//                            dd($data);
+                        //    dd($data);
                             try {
                                 //code...
                                 $record->update($data);
@@ -444,6 +458,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                 ->title('Success')
                                 ->body('The changes have been saved');
                             } catch (\Throwable $th) {
+                                dd($th->getMessage());
                                 Notification::make()
                                     ->title('Error')
                                     ->body($th->getMessage());
@@ -475,6 +490,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                         ->color('success')
                         ->icon('heroicon-o-printer')
                         ->format(format: 'letter')
+                        ->preview()
                         // ->action(fn($data) => dd($data))
                         // ->visible(fn($record) => filled($record->approximate_days) && filled($record->estimated_date) && filled($record->medical_cert_remarks))
                         ->content(fn($record): View => view('consultations.medcert', [
@@ -492,14 +508,17 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                     Html2MediaAction::make('print_admitting_order')
                         ->label('Admitting Order')
                         ->color('success')
+                        ->modalWidth(MaxWidth::MaxContent)
                         ->icon('heroicon-o-printer')
                         ->format('a5')
                         ->content(function($record): View {
+                            // dd($record->admitting_order_data);
                             return view('consultations.admitting-order', [
                                 'data' => $record->admitting_order_data,
                                 'header_image' => $record->clinic->header_image,
                             ]);
                         })
+                        ->preview()
                         // ->action(fn($data) => dd($data))
                         // ->visible(fn($record) => filled($record->approximate_days) && filled($record->estimated_date) && filled($record->medical_cert_remarks))
                         // ->content(fn($record): View => view('consultations.admitting-order', [
