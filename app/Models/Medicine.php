@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -23,6 +24,13 @@ class Medicine extends Model
     public function consultations(): BelongsToMany
     {
         return $this->belongsToMany(Consultation::class, 'consultation_medicine');
+    }
+
+    public function medfullname(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value, $attributes) => $attributes['name'] . ' ' . $attributes['brand'],
+        );
     }
    
 }
