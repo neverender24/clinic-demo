@@ -6,7 +6,7 @@ trait HasStatusAction
 {
     public static function statusLabel($record)
     {
-        return static::isDone($record) ? 'Back to Pending' : 'Done';
+        return static::isDone($record) ? 'Set to Pending' : 'Done';
     }
     
     public static function statusColor($record)

@@ -305,7 +305,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
     {
         return $table
             ->modifyQueryUsing(fn(Builder $query) => $query->withoutGlobalScope(ConsultationScope::class)
-                                                    ->with(['medicines', 'patient' => fn($query) => $query->withTrashed()])
+                                                    ->with(['clinic', 'medicines', 'patient' => fn($query) => $query->withTrashed()])
             )
             ->defaultSort('queueing_number')
             ->columns([
@@ -442,7 +442,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                     ];
                                 })->toArray();
                             })
-                            ->default(fn($record) => transform($record->admitting_order_data, fn($value) => $value == '' || $value == null ? null: $value) 
+                            ->default(fn($record) => transform($record->admitting_order_data, fn($value) => $value == '' || $value == null ? null: $value)
                                                             ?? '<p>&nbsp;To: <span class="text-underline">&nbsp; &nbsp; &nbsp; &nbsp;</span></p><p><br></p><p><br></p><p><br></p><p>&nbsp;- Please admit patient to <span class="text-underline"> &nbsp; &nbsp; &nbsp; &nbsp;</span>&nbsp;</p><p>&nbsp;- Secure consent to care&nbsp;</p><p>&nbsp;- Diet&nbsp;</p><p>&nbsp;- IVF&nbsp;</p><p>&nbsp;- Diagnostics:&nbsp;</p><p><br></p><p><br></p><p>&nbsp;- Medications:&nbsp;</p><p><br></p><p><br></p><p>&nbsp;- VS q4 and I &amp; O qShift&nbsp;</p><p>&nbsp;- Watchout for unusualities&nbsp;</p><p>&nbsp;- Kindly inform me once admitted&nbsp;</p><p>&nbsp;- Refer accordingly&nbsp;</p><p><br></p><p>- Special Instructions (if any):</p>')
                         ])
                         // ->fillForm(fn($record) => [
