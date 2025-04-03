@@ -53,7 +53,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->tenantProfile(EditTenantProfile::class)
             ->login(Login::class)
-            
+
             ->colors([
                 'primary' => Color::Blue,
                 'red' => Color::Red,

@@ -115,6 +115,7 @@ class HospitalAdmissionResource extends Resource
             ->filters([
                 //
             ])
+            ->paginationPageOptions([5, 10, 15, 20, 50, 100])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Html2MediaAction::make('print_admitting_order')

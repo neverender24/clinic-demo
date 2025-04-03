@@ -312,7 +312,8 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                 Tables\Columns\TextColumn::make('queueing_number')
                     ->label('Queue')
                     ->formatStateUsing(fn($state) => sprintf('%02d', $state))
-                    ->sortable(),
+                    ->sortable()
+                    ->visible(fn($livewire) => $livewire->activeTab == 'current'),
                 Tables\Columns\TextColumn::make('date')
                     ->date()
                     ->sortable(),
@@ -336,6 +337,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->paginationPageOptions([5, 10, 15, 20, 50, 100])
             ->filters([
                 Filter::make('date')
                     ->form([

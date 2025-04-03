@@ -21,10 +21,10 @@ class ListConsultations extends ListRecords
         ];
     }
 
-    protected function paginateTableQuery(Builder $query): Paginator
-    {
-        return $query->simplePaginate(($this->getTableRecordsPerPage() === 'all') ? $query->count() : $this->getTableRecordsPerPage());
-    }
+    // protected function paginateTableQuery(Builder $query): Paginator
+    // {
+    //     return $query->simplePaginate(($this->getTableRecordsPerPage() === 'all') ? $query->count() : $this->getTableRecordsPerPage());
+    // }
 
     public function getTabs(): array
     {

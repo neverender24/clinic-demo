@@ -57,7 +57,8 @@ class MedicineResource extends Resource
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime('F j, Y'),
             ])
-            ->paginated(false)
+            // ->paginated(false)
+            ->paginationPageOptions([5, 10, 15, 20, 50, 100])
             ->filters([
                 //
             ])

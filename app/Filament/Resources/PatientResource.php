@@ -52,7 +52,9 @@ class PatientResource extends Resource
                         Grid::make()
                             ->schema([
                                 Forms\Components\DatePicker::make('birthday')
-                                    ->required(),
+                                    ->required()
+                                    ->displayFormat('d/m/Y')
+                                    ->native(true),
                                 Forms\Components\Select::make('sex')
                                     ->options([
                                         'M' => 'Male',
@@ -145,6 +147,7 @@ class PatientResource extends Resource
             ->filters([
                 //
             ])
+            ->paginationPageOptions([5, 10, 15, 20, 50, 100])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
