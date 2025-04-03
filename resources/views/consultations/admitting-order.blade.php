@@ -66,7 +66,7 @@
             </h1>
 
             <div class="font-bold mt-5 text-center">
-                ADMITTING ORDERS
+                ADMITTING ORDERS 
             </div>
         </header>
 
