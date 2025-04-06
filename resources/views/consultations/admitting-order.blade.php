@@ -64,6 +64,10 @@
             <h1>
                 <hr>
             </h1>
+
+            <div class="font-bold mt-5 text-center">
+                ADMITTING ORDERS 
+            </div>
         </header>
 
         <section class="content mt-[10px]">
