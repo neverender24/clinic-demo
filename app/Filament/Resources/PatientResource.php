@@ -110,6 +110,7 @@ class PatientResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->defaultSort('last_name', )
             ->columns([
                 Tables\Columns\TextColumn::make('full_name')
                     ->searchable(),
