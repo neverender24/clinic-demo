@@ -29,6 +29,14 @@ class EditConsultation extends EditRecord
     {
         return [
             Actions\DeleteAction::make(),
+            
+        ];
+    }
+
+    protected function getFormActions(): array
+    {
+        return [
+            $this->getSaveFormAction(),
             Html2MediaAction::make('print_prescription')
                 ->label('Prescription')
                 ->color('success')
@@ -50,6 +58,7 @@ class EditConsultation extends EditRecord
                 // ->pagebreak('section', ['css', 'legacy'])
                 // ->margin([2, 2, 0, 2])
                 ->modalWidth('2xl'),
+            $this->getCancelFormAction(),
         ];
     }
 

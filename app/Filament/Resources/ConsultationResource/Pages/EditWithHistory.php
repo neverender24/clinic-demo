@@ -39,9 +39,12 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Torgodly\Html2Media\Actions\Html2MediaAction;
 use Filament\Infolists\Components\RepeatableEntry;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
+use Filament\Actions\Action as ActionsAction;
+use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
 use Filament\Infolists\Components\Actions\Action as InfolistAction;
+use Filament\Pages\Concerns\InteractsWithFormActions;
 
 class EditWithHistory extends Page implements HasForms, HasTable, HasInfolists
 {
@@ -54,6 +57,7 @@ class EditWithHistory extends Page implements HasForms, HasTable, HasInfolists
     use InteractsWithRecord;
     use InteractsWithInfolists;
     use HasHistoryAction;
+    use InteractsWithFormActions;
     // use HasPageShield;
 
     public $patient_id;
@@ -75,7 +79,6 @@ class EditWithHistory extends Page implements HasForms, HasTable, HasInfolists
     {
         return 'Edit Consultation';
     }
-
 
     public function mount(int | string $record): void
     {
@@ -361,6 +364,9 @@ class EditWithHistory extends Page implements HasForms, HasTable, HasInfolists
                 ->label('Prescription')
                 ->color('success')
                 ->icon('heroicon-o-printer')
+                ->extraAttributes([
+                    'class' => 'hidden'
+                ])
                 ->content(function($record): View {
                     // dd($record);
                     return view('consultations.print', [
@@ -382,4 +388,29 @@ class EditWithHistory extends Page implements HasForms, HasTable, HasInfolists
                 DeleteAction::make(),
         ];
     }
+
+    public function getPrintAction()
+    {
+        return Html2MediaAction::make('print_prescription')
+                ->label('Prescription')
+                ->color('success')
+                // ->content(function(): View {
+                //     $record = $this->record;
+                //     return view('consultations.print', [
+                //                 'medicines' => $record->medicines->chunk(6),
+                //                 'patient' => $record->patient,
+                //                 'next_follow_up_schedule' => $record->next_follow_up_schedule?->format('F j, Y'),
+                //                 'header_image' => $record->clinic->header_image,
+                //                 'header_image1' => public_path("storage/{$record->clinic->header_image}"),
+                //             ]
+                //         );
+                // })
+                // ->preview()
+                ->orientation()
+                ->format('a5')
+                // ->pagebreak('section', ['css', 'legacy'])
+                // ->margin([2, 2, 0, 2])
+                ->modalWidth('2xl');
+    }
+
 }

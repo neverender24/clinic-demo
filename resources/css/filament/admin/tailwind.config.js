@@ -8,6 +8,7 @@ export default {
         './resources/views/**/*.blade.php',
         './resources/views/filament/**/*.blade.php',
         './vendor/filament/**/*.blade.php',
-        './resources/views/infolists/**/*.blade.php'
+        './resources/views/infolists/**/*.blade.php',
+        // './resources/views/consultations/print.blade.php'
     ],
 }
