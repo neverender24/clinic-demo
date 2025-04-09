@@ -44,12 +44,17 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Tables\Actions\Action as ActionsAction;
 use Filament\Forms\Components\View as ComponentsView;
 use App\Filament\Resources\ConsultationResource\Pages;
+use App\Filament\Resources\ConsultationResource\Pages\CreateConsultation;
 use Torgodly\Html2Media\Tables\Actions\Html2MediaAction;
 use Asmit\FilamentMention\Forms\Components\RichMentionEditor;
 
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use App\Filament\Resources\ConsultationResource\RelationManagers;
 use App\Filament\Resources\ConsultationResource\Pages\ListConsultations;
+use App\Forms\Components\HistoryField;
+use Filament\Facades\Filament;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Set;
 use Filament\Support\Enums\MaxWidth;
 
 class ConsultationResource extends Resource implements HasShieldPermissions
@@ -100,13 +105,14 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                     ->required()
                                     ->columnSpan([
                                         'default' => 'full',
-                                        'md' => '1'
+                                        'xl' => '1'
                                     ]),
                                 Forms\Components\Select::make('patient_id')
                                     ->label('Patient')
                                     ->relationship('patient', 'full_name')
                                     // ->getSearchResultsUsing(fn (string $search) => Patient::query()->where('full_name', 'like', "%$search%")->pluck('full_name', 'id'))
                                     ->getOptionLabelsUsing(fn ($value) => Patient::find($value)->full_name)
+                                    ->afterStateUpdated(fn($state, Set $set, $livewire) => $livewire->getTable())
                                     ->preload()
                                     ->searchable()
 
@@ -126,39 +132,21 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                     ->required()
                                     ->columnSpan([
                                         'default' => 'full',
-                                        'md' => '3'
-                                    ]),
+                                        'xl' => 3
+                                    ])
+                                    ,
                                 Section::make()
                                     ->extraAttributes(['class' => 'mt-4'])
                                     ->schema([
                                         Forms\Components\RichEditor::make('chief_complaint')
                                         ->required()
                                         ->toolbarButtons(self::onlyAllowedToolbar())
-                                        // ->columnSpan(2)
-                                        // ->columnSpanFull()
-                                        // ->columnSpan(function() {
-                                        //     if (auth()->user()->doctor()) {
-                                        //         return 'full';
-                                        //     }
-                                        //     return '2';
-                                        // })
                                         ->visible(fn() => auth()->user()->can('addChiefComplaint', static::$model)),
                                         Forms\Components\RichEditor::make('test_results')
                                             ->label('Medical Data')
                                             ->required()
                                             ->toolbarButtons(self::onlyAllowedToolbar())
-                                            ->columnSpan([
-                                                'lg' => auth()->user()->doctor() ? 1 : 2
-                                            ])
-                                            // ->columnSpan(2)
-                                            // ->columnSpan(function() {
-                                            //     if (auth()->user()->doctor()) {
-                                            //         return 'full';
-                                            //     }
-                                            //     return '2';
-                                            // })
                                             ->visible(fn() => auth()->user()->can('addTestResult', static::$model)),
-
                                         Forms\Components\RichEditor::make('diagnosis')
                                             ->required()
                                             ->toolbarButtons(self::onlyAllowedToolbar())
@@ -166,31 +154,20 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                             ->visible(fn() => auth()->user()->hasAnyRole(['Doctor', 'super_admin'])),
                                         Forms\Components\RichEditor::make('management')
                                             ->required()
-                                            // ->toolbarButtons(self::onlyAllowedToolbar())
                                             ->visible(fn() => auth()->user()->hasAnyRole(['Doctor', 'super_admin']))
                                             ->columnSpan([
-                                                'lg' => 2,
-                                                'xl' =>2
+                                                'xl' => 'full'
                                             ]),
                                         DatePicker::make('next_follow_up_schedule')
-
                                             ->label('Patient\'s next follow up schedule (If necessary)')
-                                            ->columnSpan([
-                                                'lg' => 1,
-                                                'xl' =>1
-                                            ])
                                             ->visible(fn($livewire) => auth()->user()->can('addFollowupSchedule', $livewire->record))
                                             // ->extraAttributes(['class' => 'mt-4'])
                                     ])
-                                    // ->visible(fn() => auth()->user()->hasAnyRole(['Doctor', 'super_admin']))
                                     ->columns([
-                                        'lg' => 1,
-                                        'xl' => '2'
+                                        'xl' => 2
                                     ]),
                             ])
-                            ->columns([
-                                'default' => 4
-                            ])
+                            ->columns(4)
                             ->columnSpan(2),
                             Section::make('Prescriptions')
                                 ->schema([
@@ -268,22 +245,30 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                 ->visible(fn() => auth()->user()->hasRole('Doctor') || auth()->user()->superAdmin())
 
                     ])
-                    ->columnSpan(2)
-                    // ->columnSpan(function($operation) {
-                    //     if($operation == 'create') {
-                    //         return 2;
-                    //     }
-                    //     return 1;
-                    // })
-                    ,
-                // Grid::make('')
-                //     ->schema([
-                //         Livewire::make(ListRecords::class, data: fn($record) => ['patient_id' => $record->patient_id])
-                //     ])
-                //     ->visible(fn($operation) => $operation  == 'edit' )
-                //     ->columnSpan(1)
+                    ->columnSpan([
+                        'default' => auth()->user()->doctor() ? 2 : 3,
+                    ]),
+                    Grid::make(1)
+                        ->schema([
+                            Placeholder::make('patient_history')
+                                ->hiddenLabel()
+                                ->content(fn(): View => view('forms.components.history-field'))
+                                ->visible(fn() => auth()->user()->doctor())
+                                ->dehydrated(false)
+                            // HistoryField::make('patient_history')
+                            //     // ->default(fn($get) => [$get('patient_id')])
+                            //     // ->reactive()
+                            //     ->dehydrated()
+                        ])
+                        ->columnSpan([
+                            'default' => 1,
+                        ])
+                        ->visible(fn($operation) => $operation == 'create')
             ])
-            ->columns(2)
+            ->columns([
+                'default' => 3,
+                'lg' => 3
+            ])
             ->extraAttributes(['class' => '', 'id' => 'consutation-form']);
     }
 
@@ -585,6 +570,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
             // 'index' => Pages\CustomListConsultations::route('/'),
             'index' => Pages\ListConsultations::route('/'),
             'create' => Pages\CreateConsultation::route('/create'),
+            // 'create' => Pages\CreateConsultation::route('/create'),
             'edit' => Pages\EditConsultation::route('/{record}/edit'),
             'edit.consultation' => Pages\EditWithHistory::route('/{record}/edit-consultation'),
         ];

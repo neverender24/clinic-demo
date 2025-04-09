@@ -2,11 +2,11 @@
 
 namespace App\Filament\Resources\ConsultationResource\Pages;
 
-use App\Models\Scopes\ConsultationScope;
 use Carbon\Carbon;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use App\Models\Consultation;
+use App\Trait\HasHistoryAction;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\Page;
 use Illuminate\Support\Facades\DB;
@@ -18,10 +18,13 @@ use Filament\Infolists\Components\Grid;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
+use App\Models\Scopes\ConsultationScope;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
+use Filament\Forms\Components\RichEditor;
 use App\Infolists\Components\PatientEntry;
 use Filament\Infolists\Components\Section;
+use Illuminate\Contracts\Support\Htmlable;
 use App\Filament\Resources\PatientResource;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\IconEntry;
@@ -33,11 +36,9 @@ use App\Filament\Resources\ConsultationResource;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Infolists\Components\RepeatableEntry;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
-use Filament\Forms\Components\RichEditor;
 use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
 use Filament\Infolists\Components\Actions\Action as InfolistAction;
-use Illuminate\Contracts\Support\Htmlable;
 
 class EditWithHistory extends Page implements HasForms, HasTable, HasInfolists
 {
@@ -49,6 +50,7 @@ class EditWithHistory extends Page implements HasForms, HasTable, HasInfolists
     use InteractsWithForms;
     use InteractsWithRecord;
     use InteractsWithInfolists;
+    use HasHistoryAction;
     // use HasPageShield;
 
     public $patient_id;
@@ -115,11 +117,7 @@ class EditWithHistory extends Page implements HasForms, HasTable, HasInfolists
     public function table(Table $table): Table
     {
         return $table
-                ->query(fn() => Consultation::query()
-                                ->withoutGlobalScopes(scopes: [ConsultationScope::class])
-                                ->where('patient_id', $this->patient_id)
-                                ->whereDate('date', '<', $this->data['date'])
-                )
+                ->query(fn() => Consultation::query()->patientPreviousConsultations(patient_id:$this->patient_id, date: $this->data['date']))
                 ->columns([
                     TextColumn::make('date')
                         ->label('Date of Consultation')
@@ -309,37 +307,7 @@ class EditWithHistory extends Page implements HasForms, HasTable, HasInfolists
     //             ]);
     // }
 
-    protected function selectHistory($record)
-    {
-        // $record = collect($record)->except('date');
-
-        // $record->date = $this->record->date;
-
-        // $record->id = $this->record->id;
-
-        // dd($this->record);
-
-
-        // dd($record->chief_complaint);
-        $this->data['test_results'].=$record->test_results;
-        $this->data['chief_complaint'].=$record->chief_complaint;
-        $this->data['diagnosis'].=$record->diagnosis;
-        $this->data['management'].=$record->management;
-        // $this->data = $record->toArray();
-
-        // dd($this->data);
-
-    }
-
-    protected function copyPrescription($record)
-    {
-        $previous_meds = $record->map(fn($item) => collect($item->pivot)->except('consultation_id'))->values()->toArray();
-
-        $new_meds = array_merge($this->data['medicines'], $previous_meds);
-
-        $this->data['medicines'] = $new_meds;
-
-    }
+    
 
     public function submit()
     {

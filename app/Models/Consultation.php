@@ -67,6 +67,11 @@ class Consultation extends Model
         $query->where('date', $date);
     }
 
+    protected function scopePatientPreviousConsultations(Builder $query, $patient_id, $date)
+    {
+        $query->withoutGlobalScope(ConsultationScope::class)->where('patient_id', $patient_id)->whereDate('date', '<', $date);
+    }
+
     public function scopeWithPeriod(Builder $query, $period)
     {
         if($period == 'Weekly' || $period == 'Daily')
