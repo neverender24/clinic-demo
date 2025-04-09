@@ -4,10 +4,12 @@ namespace App\Filament\Resources\ConsultationResource\Pages;
 
 use Carbon\Carbon;
 use Filament\Forms\Form;
+use Illuminate\View\View;
 use Filament\Tables\Table;
 use App\Models\Consultation;
 use App\Trait\HasHistoryAction;
 use Filament\Infolists\Infolist;
+use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\Page;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\HtmlString;
@@ -34,6 +36,7 @@ use Filament\Infolists\Contracts\HasInfolists;
 use Filament\Forms\Concerns\InteractsWithForms;
 use App\Filament\Resources\ConsultationResource;
 use Filament\Tables\Concerns\InteractsWithTable;
+use Torgodly\Html2Media\Actions\Html2MediaAction;
 use Filament\Infolists\Components\RepeatableEntry;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Infolists\Concerns\InteractsWithInfolists;
@@ -77,7 +80,7 @@ class EditWithHistory extends Page implements HasForms, HasTable, HasInfolists
     public function mount(int | string $record): void
     {
         // dd($record);
-        $this->record = Consultation::with('consultationMedicines')->withoutGlobalScope(ConsultationScope::class)->findOrFail($record);
+        $this->record = Consultation::with('consultationMedicines')->withoutGlobalScope(ConsultationScope::class)->findOrFail($record)->load('medicines');
 
         $this->historyData = $this->record;
 
@@ -87,14 +90,26 @@ class EditWithHistory extends Page implements HasForms, HasTable, HasInfolists
 
         $this->patient_id = $this->record->patient_id;
 
-        $this->record->medicines = $this->record->consultationMedicines->map(fn($item) => [
-                                            "consultation_id" => $item->consultation_id,
-                                            "medicine_id" => $item->medicine_id,
-                                            "remarks" => $item->remarks,
-                                            "quantity" => $item->quantity
-                                        ]);
+        // $this->record->medicines = $this->record->consultationMedicines->map(fn($item) => [
+        //                                     "consultation_id" => $item->consultation_id,
+        //                                     "medicine_id" => $item->medicine_id,
+        //                                     "remarks" => $item->remarks,
+        //                                     "quantity" => $item->quantity,
+        //                                     "name" => $item->name,
+        //                                     "brand" => $item->brand
+        //                                 ]);
 
-        $this->form->fill(collect($this->record)->except('consultation_medicines')->toArray());
+        $meds = $this->record->consultationMedicines->map(fn($item) => [
+                                                "consultation_id" => $item->consultation_id,
+                                                "medicine_id" => $item->medicine_id,
+                                                "remarks" => $item->remarks,
+                                                "quantity" => $item->quantity
+                                            ]);
+        $data = collect($this->record)->except('consultation_medicines', 'medicines');
+
+        $formData = array_merge($data->toArray(), ['medicines' => $meds->toArray()]);
+    
+        $this->form->fill($formData);
 
     }
 
@@ -323,8 +338,11 @@ class EditWithHistory extends Page implements HasForms, HasTable, HasInfolists
                     ->title('Saved successfully')
                     ->success()
                     ->send();
-                    
-                redirect()->to($this->getResource()::getUrl('index'));
+                
+                $this->dispatch('refresh');
+
+                redirect()->to($this->getResource()::getUrl('edit.consultation', ['record' => $this->record]));
+                // redirect()->to($this->getResource()::getUrl('index'));
 
             } catch (\Throwable $th) {
                 Notification::make()
@@ -336,8 +354,32 @@ class EditWithHistory extends Page implements HasForms, HasTable, HasInfolists
         });
     }
 
-    public function cancelAction()
+    protected function getHeaderActions(): array
     {
+        return [
+            Html2MediaAction::make('print_prescription')
+                ->label('Prescription')
+                ->color('success')
+                ->icon('heroicon-o-printer')
+                ->content(function($record): View {
+                    // dd($record);
+                    return view('consultations.print', [
+                                'medicines' => $record->medicines->chunk(6),
+                                'patient' => $record->patient,
+                                'next_follow_up_schedule' => $record->next_follow_up_schedule?->format('F j, Y'),
+                                'header_image' => $record->clinic->header_image,
+                                'header_image1' => public_path("storage/{$record->clinic->header_image}"),
+                            ]
+                        );
+                })
 
+                // ->preview()
+                ->orientation()
+                ->format('a5')
+                // ->pagebreak('section', ['css', 'legacy'])
+                // ->margin([2, 2, 0, 2])
+                ->modalWidth('2xl'),
+                DeleteAction::make(),
+        ];
     }
 }

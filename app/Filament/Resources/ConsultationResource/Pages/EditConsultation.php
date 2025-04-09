@@ -2,11 +2,13 @@
 
 namespace App\Filament\Resources\ConsultationResource\Pages;
 
-use App\Filament\Resources\ConsultationResource;
 use Filament\Actions;
+use Illuminate\View\View;
+use function Filament\authorize;
 use Filament\Resources\Pages\EditRecord;
 
-use function Filament\authorize;
+use App\Filament\Resources\ConsultationResource;
+use Torgodly\Html2Media\Actions\Html2MediaAction;
 
 class EditConsultation extends EditRecord
 {
@@ -27,6 +29,27 @@ class EditConsultation extends EditRecord
     {
         return [
             Actions\DeleteAction::make(),
+            Html2MediaAction::make('print_prescription')
+                ->label('Prescription')
+                ->color('success')
+                ->icon('heroicon-o-printer')
+                ->content(function($record): View {
+                    return view('consultations.print', [
+                                'medicines' => $record->medicines->chunk(6),
+                                'patient' => $record->patient,
+                                'next_follow_up_schedule' => $record->next_follow_up_schedule?->format('F j, Y'),
+                                'header_image' => $record->clinic->header_image,
+                                'header_image1' => public_path("storage/{$record->clinic->header_image}"),
+                            ]
+                        );
+                })
+
+                // ->preview()
+                ->orientation()
+                ->format('a5')
+                // ->pagebreak('section', ['css', 'legacy'])
+                // ->margin([2, 2, 0, 2])
+                ->modalWidth('2xl'),
         ];
     }
 

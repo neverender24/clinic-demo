@@ -39,6 +39,7 @@ class CreateConsultation extends CreateRecord implements HasTable
         ];
     }
 
+
     public function getFormActions(): array
     {
         return [
@@ -70,7 +71,11 @@ class CreateConsultation extends CreateRecord implements HasTable
 
     protected function getRedirectUrl(): string
     {
-        return $this->getResource()::getUrl('edit.consultation', [$this->record->id]);
+        if (auth()->user()->doctor()) {
+            return $this->getResource()::getUrl('edit.consultation', [$this->record->id]);
+        } else {
+            return $this->getResource()::getUrl('edit', [$this->record->id]);
+        }
     } 
 
     public function table(Table $table): Table
