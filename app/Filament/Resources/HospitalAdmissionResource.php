@@ -118,6 +118,7 @@ class HospitalAdmissionResource extends Resource
             ->paginationPageOptions([5, 10, 15, 20, 50, 100])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                
                 // Html2MediaAction::make('print_admitting_order')
                 //     ->icon('heroicon-o-printer')
                 //     ->color('success')

@@ -51,7 +51,6 @@ class EditConsultation extends EditRecord
                             ]
                         );
                 })
-
                 // ->preview()
                 ->orientation()
                 ->format('a5')
