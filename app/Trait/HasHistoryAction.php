@@ -14,7 +14,7 @@ trait HasHistoryAction
 
     public function copyPrescription($record)
     {
-        $previous_meds = $record->map(fn($item) => collect($item->pivot)->except('consultation_id'))->values()->toArray();
+        $previous_meds = $record->where('active', 1)->map(fn($item) => collect($item->pivot)->except('consultation_id'))->values()->toArray();
 
         $new_meds = array_merge($this->data['medicines'], $previous_meds);
 

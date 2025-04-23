@@ -48,6 +48,8 @@ class MedicineResource extends Resource
             ->modifyQueryUsing(fn(Builder $query) => $query->with('consultations'))
             ->defaultSort('name')
             ->columns([
+                Tables\Columns\ToggleColumn::make('active')
+                    ->offColor('danger'),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
                     ->html(),

@@ -33,6 +33,7 @@ class MostPrescribedDrugs extends BaseWidget
     {
         $this->medicines = Medicine::with(['consultations' => fn($query) => $query->withoutGlobalScope(ConsultationScope::class)])
                             ->whereHas('consultations', fn($query) => $query->withoutGlobalScope(ConsultationScope::class))
+                            ->where('active',1)
                             ->get();
 
 //                             dd($this->medicines);

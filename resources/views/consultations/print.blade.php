@@ -126,7 +126,7 @@
                         <div class="grid grid-cols-6">
                             <div class="col-span-5 gap-y-0 leading">
                                 <span class="inline">{!! $medicine->name !!}</span>
-                                <div class="font-bold">({!! $medicine->brand !!})</div>
+                                <div class="font-bold {{ $medicine->brand ? '' : 'hidden'}}">({!! $medicine->brand !!})</div>
                                 <div>Sig. {{$medicine->pivot?->remarks}}</div>
                             </div>
                             <div>

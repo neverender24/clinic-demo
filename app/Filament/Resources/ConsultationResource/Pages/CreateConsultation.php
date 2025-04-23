@@ -18,6 +18,7 @@ use App\Infolists\Components\PatientEntry;
 use Filament\Infolists\Components\Section;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Infolists\Components\Fieldset;
+use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Actions\Action as FilamentAction;
 use App\Filament\Resources\ConsultationResource;
@@ -145,6 +146,19 @@ class CreateConsultation extends CreateRecord implements HasTable
                                     RepeatableEntry::make('medicines')
                                     ->hiddenLabel()
                                     ->schema([
+                                        TextEntry::make('active')
+                                            ->hiddenLabel()
+                                            // ->icon(fn($state) => match ($state) {
+                                            //     1 => 'heroicon-o-check-badge',
+                                            //     0 => 'heroicon-o-x-mark',
+                                            // })
+                                            ->formatStateUsing(fn($state) => $state ? 'Active' : 'Inactive')
+                                            ->color(fn($state) => $state ? 'primary' : 'danger')
+                                            ->iconColor(fn($state) => $state ? 'primary' : 'danger')
+                                            ->icon(fn($state) => $state ? 'heroicon-o-check-badge' : 'heroicon-o-x-mark')
+                                            // ->trueIcon()
+                                            // ->falseIcon()
+                                            ,
                                         TextEntry::make('full_name_of_medicine')
                                         ->formatStateUsing(function($state){
                                             return $state;

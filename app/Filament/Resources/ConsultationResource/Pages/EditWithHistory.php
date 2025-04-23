@@ -385,7 +385,8 @@ class EditWithHistory extends Page implements HasForms, HasTable, HasInfolists
                 // ->pagebreak('section', ['css', 'legacy'])
                 // ->margin([2, 2, 0, 2])
                 ->modalWidth('2xl'),
-                DeleteAction::make(),
+                DeleteAction::make()
+                    ->successRedirectUrl(route('filament.admin.resources.consultations.index', [1])),
         ];
     }
 
