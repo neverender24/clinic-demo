@@ -23,7 +23,7 @@ class Medicine extends Model
 
     public function consultations(): BelongsToMany
     {
-        return $this->belongsToMany(Consultation::class, 'consultation_medicine');
+        return $this->belongsToMany(Consultation::class, 'consultation_medicine')->withoutGlobalScopes();
     }
 
     public function medfullname(): Attribute

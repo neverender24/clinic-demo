@@ -45,11 +45,14 @@ class MedicineResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn(Builder $query) => $query->with('consultations'))
             ->defaultSort('name')
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->searchable()
                     ->html(),
                 Tables\Columns\TextColumn::make('brand')
+                    ->searchable()
                     ->html(),
                 Tables\Columns\TextColumn::make('type')
                     ->html(),
@@ -75,6 +78,7 @@ class MedicineResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make()
                     ->modalWidth('lg'),
+                Tables\Actions\DeleteAction::make()
             ]);
     }
 

@@ -48,7 +48,8 @@ class MedicinePolicy
      */
     public function delete(User $user, Medicine $medicine): bool
     {
-        return $user->can('delete_medicine');
+        // dd($medicine->consultations);
+        return $user->can('delete_medicine') && $medicine->consultations->count() == 0;
     }
 
     /**
