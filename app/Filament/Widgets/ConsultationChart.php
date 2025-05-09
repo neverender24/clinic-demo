@@ -56,7 +56,12 @@ class ConsultationChart extends ApexChartWidget
         return [
 
             Select::make('clinic_id')
-                ->options(Clinic::all()->pluck('name', 'id'))
+                ->options(function() {
+
+                    $hospital = Clinic::all()->pluck('name', 'id');
+
+                    return ['All' => 'All'] + $hospital->toArray();
+                })
                 ->label('Clinic')
                 ->default(Filament::getTenant()->id),
             Select::make('period')
@@ -146,7 +151,7 @@ class ConsultationChart extends ApexChartWidget
         // dd();
 
         $data = Consultation::withoutGlobalScopes([TenantScope::class, ConsultationScope::class])
-                    ->where('clinic_id', $this->filterFormData['clinic_id'])
+                    ->when($this->filterFormData['clinic_id'] != 'All', fn($query) => $query->where('clinic_id', $this->filterFormData['clinic_id']))
                     ->withPeriod($this->filterFormData['period'])
                     ->get()
                     ->each(function($item) {

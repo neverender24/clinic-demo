@@ -48,7 +48,11 @@ class HospitalAdmissionChart extends ApexChartWidget
     {
         return [
             Select::make('hospital')
-                ->options(HospitalAdmission::distinct('hospital')->pluck('hospital', 'hospital'))
+                ->options(function() {
+                    $hospitals = HospitalAdmission::distinct('hospital')->pluck('hospital', 'hospital');
+
+                    return ['All' => 'All'] + $hospitals->toArray();
+                })
                 ->label('Hospital')
                 ->default(HospitalAdmission::first()?->hospital),
             Select::make('period')
@@ -136,7 +140,7 @@ class HospitalAdmissionChart extends ApexChartWidget
         // dd();
 
         $data = HospitalAdmission::withPeriod($this->filterFormData['period'])
-                    ->where('hospital', $this->filterFormData['hospital'])
+                    ->when($this->filterFormData['hospital'] != 'All' , fn($query) => $query->where('hospital', $this->filterFormData['hospital']))
                     ->get()
                     ->each(function($item) {
                         $item->date = Carbon::parse($item->admission_date);

@@ -258,7 +258,13 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                 ->hiddenLabel()
                                 ->content(fn(): View => view('forms.components.history-field'))
                                 ->visible(fn() => auth()->user()->doctor())
-                                ->dehydrated(false)
+                                ->dehydrated(false),
+                            // Placeholder::make('patient_history')
+                            //     ->hiddenLabel()
+                            //     ->content(fn(): View => view('forms.components.history-field'))
+                            //     ->visible(fn() => auth()->user()->doctor())
+                            //     ->dehydrated(false),
+
                             // HistoryField::make('patient_history')
                             //     // ->default(fn($get) => [$get('patient_id')])
                             //     // ->reactive()
