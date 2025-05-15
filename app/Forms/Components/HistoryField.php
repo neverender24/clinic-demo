@@ -11,6 +11,7 @@ use Filament\Tables\Table;
 
 class HistoryField extends Field
 {
-    protected string $view = 'forms.components.history-field';
+    protected string $view = 'filament.hospital_admission.history';
 
+    public $patient_id = 1;
 }

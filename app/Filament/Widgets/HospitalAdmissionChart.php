@@ -54,7 +54,9 @@ class HospitalAdmissionChart extends ApexChartWidget
                     return ['All' => 'All'] + $hospitals->toArray();
                 })
                 ->label('Hospital')
-                ->default(HospitalAdmission::first()?->hospital),
+                ->default('All')
+                // ->default(HospitalAdmission::first()?->hospital)
+                ,
             Select::make('period')
                 ->options([
                     'Daily' => 'Daily',

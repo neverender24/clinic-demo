@@ -66,6 +66,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
     protected static ?string $navigationIcon = 'healthicons-o-telemedicine';
 
     protected static bool $shouldRegisterNavigation = true;
+    
 
     public static function  getPermissionPrefixes(): array
     {
@@ -112,7 +113,11 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                     ->relationship('patient', 'full_name')
                                     // ->getSearchResultsUsing(fn (string $search) => Patient::query()->where('full_name', 'like', "%$search%")->pluck('full_name', 'id'))
                                     ->getOptionLabelsUsing(fn ($value) => Patient::find($value)->full_name)
-                                    ->afterStateUpdated(fn($state, Set $set, $livewire) => $livewire->getTable())
+                                    ->afterStateUpdated(function($livewire) {
+                                        $livewire->getTable();
+                                        $livewire->getTable2();
+                                    }
+                                    )
                                     ->preload()
                                     ->searchable()
 
@@ -259,13 +264,13 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                 ->content(fn(): View => view('forms.components.history-field'))
                                 ->visible(fn() => auth()->user()->doctor())
                                 ->dehydrated(false),
-                            // Placeholder::make('patient_history')
-                            //     ->hiddenLabel()
-                            //     ->content(fn(): View => view('forms.components.history-field'))
-                            //     ->visible(fn() => auth()->user()->doctor())
-                            //     ->dehydrated(false),
-
-                            // HistoryField::make('patient_history')
+                            Placeholder::make('hospital_admission')
+                                ->hiddenLabel()
+                                ->content(fn($get) => view('filament.hospital_admission.history', data: ['patient_id1'=>$get('patient_id')]))
+                                ->visible(fn() => auth()->user()->doctor())
+                                ->live()
+                                ->dehydrated(false),
+                            // HistoryField::make('hospital_admission')
                             //     // ->default(fn($get) => [$get('patient_id')])
                             //     // ->reactive()
                             //     ->dehydrated()
@@ -273,7 +278,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                         ->columnSpan([
                             'default' => 1,
                         ])
-                        ->visible(fn($operation) => $operation == 'create')
+                        ->visible(fn($operation) => $operation == 'create'),
             ])
             ->columns([
                 'default' => 3,

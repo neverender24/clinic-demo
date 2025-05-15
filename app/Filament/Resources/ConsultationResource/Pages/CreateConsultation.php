@@ -22,6 +22,7 @@ use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Actions\Action as FilamentAction;
 use App\Filament\Resources\ConsultationResource;
+use App\Models\HospitalAdmission;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry\TextEntrySize;
@@ -32,6 +33,8 @@ class CreateConsultation extends CreateRecord implements HasTable
     use HasHistoryAction;
 
     protected static string $resource = ConsultationResource::class;
+
+    public $hospital_admission = 'test';
 
     public function getExtraBodyAttributes(): array
     {
@@ -60,6 +63,10 @@ class CreateConsultation extends CreateRecord implements HasTable
         return $data;
     }
 
+    public function getTable2(): void
+    {
+        $this->hospital_admission = HospitalAdmission::where('patient_id', $this->data['patient_id'])->get();
+    }
     // public function create(bool $another = false): void
     // {
     //     dd('test');
