@@ -29,7 +29,6 @@ class ListHospitalAdmission extends Component implements HasTable, HasForms
 
     public function table(Table $table): Table
     {
-        dump($this->patient_id);
         return $table
                 ->query(fn() => HospitalAdmission::query()->where('patient_id', $this->patient_id))
                 ->header(fn(): View => view('filament.hospital_admission.history-heading'))

@@ -9,7 +9,7 @@ export default defineConfig({
         }),
     ],
     server: {
-        host: true, // allows external access
-        cors: true
+        // host: true, // allows external access
+        // cors: true
     }
 });

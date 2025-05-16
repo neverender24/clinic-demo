@@ -52,6 +52,7 @@ use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use App\Filament\Resources\ConsultationResource\RelationManagers;
 use App\Filament\Resources\ConsultationResource\Pages\ListConsultations;
 use App\Forms\Components\HistoryField;
+use App\Models\HospitalAdmission;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Set;
@@ -115,7 +116,6 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                     ->getOptionLabelsUsing(fn ($value) => Patient::find($value)->full_name)
                                     ->afterStateUpdated(function($livewire) {
                                         $livewire->getTable();
-                                        $livewire->getTable2();
                                     }
                                     )
                                     ->preload()
@@ -266,7 +266,8 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                 ->dehydrated(false),
                             Placeholder::make('hospital_admission')
                                 ->hiddenLabel()
-                                ->content(fn($get) => view('filament.hospital_admission.history', data: ['patient_id1'=>$get('patient_id')]))
+                                ->content(fn($get) => view('filament.hospital_admission.history', data: ['hospital_admissions'=> HospitalAdmission::with('clinic')
+                                                                                                                            ->where('patient_id', 52)->get()]))
                                 ->visible(fn() => auth()->user()->doctor())
                                 ->live()
                                 ->dehydrated(false),
@@ -287,6 +288,11 @@ class ConsultationResource extends Resource implements HasShieldPermissions
             ->extraAttributes(['class' => '', 'id' => 'consutation-form']);
     }
 
+    public function testClick()
+    {
+        dd('test');
+    }
+    
     protected static function onlyAllowedToolbar(): array
     {
         return [

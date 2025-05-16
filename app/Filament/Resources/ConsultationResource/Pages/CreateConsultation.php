@@ -26,6 +26,7 @@ use App\Models\HospitalAdmission;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry\TextEntrySize;
+use Filament\Notifications\Notification;
 
 class CreateConsultation extends CreateRecord implements HasTable
 {
@@ -43,6 +44,19 @@ class CreateConsultation extends CreateRecord implements HasTable
         ];
     }
 
+    #[On('update-from-admission')]
+    public function copyData($data)
+    {
+        $this->data['diagnosis'] .= $data['final_diagnosis'];
+        $this->data['test_results'] .= $data['remarks'];
+
+        Notification::make()
+            ->success()
+            ->title('Copied')
+            ->body('Please click cancel to close the dialog box')
+            ->icon('heroicon-o-check')
+            ->send();
+    }
 
     public function getFormActions(): array
     {
