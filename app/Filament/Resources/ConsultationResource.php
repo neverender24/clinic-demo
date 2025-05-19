@@ -267,7 +267,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                             Placeholder::make('hospital_admission')
                                 ->hiddenLabel()
                                 ->content(fn($get) => view('filament.hospital_admission.history', data: ['hospital_admissions'=> HospitalAdmission::with('clinic')
-                                                                                                                            ->where('patient_id', 52)->get()]))
+                                                                                                                            ->where('patient_id', $get('patient_id'))->get()]))
                                 ->visible(fn() => auth()->user()->doctor())
                                 ->live()
                                 ->dehydrated(false),
@@ -288,11 +288,6 @@ class ConsultationResource extends Resource implements HasShieldPermissions
             ->extraAttributes(['class' => '', 'id' => 'consutation-form']);
     }
 
-    public function testClick()
-    {
-        dd('test');
-    }
-    
     protected static function onlyAllowedToolbar(): array
     {
         return [

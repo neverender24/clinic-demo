@@ -45,10 +45,17 @@ class CreateConsultation extends CreateRecord implements HasTable
     }
 
     #[On('update-from-admission')]
-    public function copyData($data)
+    public function copyData($data, $field = "all")
     {
-        $this->data['diagnosis'] .= $data['final_diagnosis'];
-        $this->data['test_results'] .= $data['remarks'];
+        $data['test_results'] = $data['remarks'];
+        $data['diagnosis'] = $data['final_diagnosis'];
+        if ($field == 'all') {
+            # code...
+            $this->data['diagnosis'] .= $data['final_diagnosis'];
+            $this->data['test_results'] .= $data['remarks'];
+        } else {
+            $this->data[$field] .= $data[$field];
+        }
 
         Notification::make()
             ->success()
@@ -56,6 +63,10 @@ class CreateConsultation extends CreateRecord implements HasTable
             ->body('Please click cancel to close the dialog box')
             ->icon('heroicon-o-check')
             ->send();
+
+        if ($field == 'all') {
+            $this->dispatch('modal-close');
+        }
     }
 
     public function getFormActions(): array
