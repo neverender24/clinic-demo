@@ -63,7 +63,9 @@ class ConsultationChart extends ApexChartWidget
                     return ['All' => 'All'] + $hospital->toArray();
                 })
                 ->label('Clinic')
-                ->default(Filament::getTenant()->id),
+                ->default('All')
+                // ->default(Filament::getTenant()->id)
+                ,
             Select::make('period')
                 ->options([
                     'Daily' => 'Daily',
