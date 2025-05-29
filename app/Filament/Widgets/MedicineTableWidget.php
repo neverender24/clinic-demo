@@ -13,7 +13,7 @@ use Dom\Text;
 class MedicineTableWidget extends BaseWidget
 {
 
-    use HasWidgetShield;
+    // use HasWidgetShield;
     protected static ?int $sort = 4;
 protected int | string | array $columnSpan = 'full';
     public function table(Table $table): Table
