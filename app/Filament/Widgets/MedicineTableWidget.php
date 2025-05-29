@@ -24,6 +24,7 @@ protected int | string | array $columnSpan = 'full';
             )
             ->columns([
                 TextColumn::make("name")->searchable(),
+                TextColumn::make("brand")->searchable(),
                 TextColumn::make("consultations_count")->counts('consultations')->sortable(),
             ])->defaultSort('consultations_count', 'desc');
     }
