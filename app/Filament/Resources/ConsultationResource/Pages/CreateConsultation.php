@@ -22,9 +22,11 @@ use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Actions\Action as FilamentAction;
 use App\Filament\Resources\ConsultationResource;
+use App\Models\HospitalAdmission;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry\TextEntrySize;
+use Filament\Notifications\Notification;
 
 class CreateConsultation extends CreateRecord implements HasTable
 {
@@ -33,6 +35,8 @@ class CreateConsultation extends CreateRecord implements HasTable
 
     protected static string $resource = ConsultationResource::class;
 
+    public $hospital_admission = 'test';
+
     public function getExtraBodyAttributes(): array
     {
         return [
@@ -40,6 +44,30 @@ class CreateConsultation extends CreateRecord implements HasTable
         ];
     }
 
+    #[On('update-from-admission')]
+    public function copyData($data, $field = "all")
+    {
+        $data['test_results'] = $data['remarks'];
+        $data['diagnosis'] = $data['final_diagnosis'];
+        if ($field == 'all') {
+            # code...
+            $this->data['diagnosis'] .= $data['final_diagnosis'];
+            $this->data['test_results'] .= $data['remarks'];
+        } else {
+            $this->data[$field] .= $data[$field];
+        }
+
+        Notification::make()
+            ->success()
+            ->title('Copied')
+            ->body('Please click cancel to close the dialog box')
+            ->icon('heroicon-o-check')
+            ->send();
+
+        if ($field == 'all') {
+            $this->dispatch('modal-close');
+        }
+    }
 
     public function getFormActions(): array
     {
@@ -60,6 +88,10 @@ class CreateConsultation extends CreateRecord implements HasTable
         return $data;
     }
 
+    public function getTable2(): void
+    {
+        $this->hospital_admission = HospitalAdmission::where('patient_id', $this->data['patient_id'])->get();
+    }
     // public function create(bool $another = false): void
     // {
     //     dd('test');
