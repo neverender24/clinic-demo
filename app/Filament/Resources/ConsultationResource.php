@@ -193,12 +193,24 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                                     ->relationship(
                                                         'medicine', 
                                                         'name',
-                                                        modifyQueryUsing: fn(Builder $query) => $query->where('active', 1)
+                                                        // modifyQueryUsing: fn(Builder $query) => $query->where('active', 1)
                                                     )
                                                     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->name}".($record->brand ? ' - '."<b>{$record->brand}</b>" : ''))
                                                     ->allowHtml()
                                                     ->preload()
                                                     ->searchable(['brand', 'name'])
+                                                    // ->searchable(function (Builder $query, $search): Builder {
+                                                    //     return $query
+                                                    //         ->where('brand', 'like', "%{$search}%")
+                                                    //             ->orWhere('name', 'like', "%{$search}%");
+                                                            
+                                                    // })
+                                                    ->getSearchResultsUsing(fn (string $search) => 
+                                                        Medicine::where(function($q) use ($search) {
+                                                            $q->where('brand', 'like', "%{$search}%")
+                                                               ->orWhere('name', 'like', "%{$search}%");
+                                                        })->where('active', 1)->limit(50)->pluck('name', 'id')->toArray()
+                                                    )
                                                     ->required()
                                                     ->createOptionForm(function (Form $form) {
                                                         return MedicineResource::form($form)->extraAttributes(['class' => 'w-full']);
