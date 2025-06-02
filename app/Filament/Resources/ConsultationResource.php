@@ -203,7 +203,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                                     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->name}".($record->brand ? ' - '."<b>{$record->brand}</b>" : ''))
                                                     ->allowHtml()
                                                     ->preload()
-                                                    ->searchable(['brand', 'name'])
+                                                    ->searchable()
                                                     // ->searchable(function (Builder $query, $search): Builder {
                                                     //     return $query
                                                     //         ->where('brand', 'like', "%{$search}%")
