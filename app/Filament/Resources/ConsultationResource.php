@@ -57,6 +57,7 @@ use Filament\Facades\Filament;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Set;
 use Filament\Support\Enums\MaxWidth;
+use Illuminate\Support\HtmlString;
 
 class ConsultationResource extends Resource implements HasShieldPermissions
 {
@@ -195,14 +196,14 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                             ->schema([
                                                 Select::make('medicine_id')
                                                     ->label('Medicine')
-                                                    ->relationship(
-                                                        'medicine', 
-                                                        'name',
-                                                        // modifyQueryUsing: fn(Builder $query) => $query->where('active', 1)
-                                                    )
+                                                    // ->relationship(
+                                                    //     'medicine', 
+                                                    //     'name',
+                                                    //     // modifyQueryUsing: fn(Builder $query) => $query->where('active', 1)
+                                                    // )
                                                     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->name}".($record->brand ? ' - '."<b>{$record->brand}</b>" : ''))
                                                     ->allowHtml()
-                                                    ->preload()
+                                                    // ->preload()
                                                     ->searchable()
                                                     // ->searchable(function (Builder $query, $search): Builder {
                                                     //     return $query
@@ -214,8 +215,23 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                                         Medicine::where(function($q) use ($search) {
                                                             $q->where('brand', 'like', "%{$search}%")
                                                                ->orWhere('name', 'like', "%{$search}%");
-                                                        })->where('active', 1)->limit(50)->pluck('name', 'id')->toArray()
+                                                        })
+                                                        ->where('active', 1)
+                                                        ->limit(20)
+                                                        ->get()
+                                                        ->map(fn($item) => [
+                                                            'id' => $item->id,
+                                                            'name' => "
+                                                                <div class='flex flex-col'>
+                                                                    <div>$item->name</div>
+                                                                    <div class='text-indigo-500'>$item->brand</div>
+                                                                </div>
+                                                            "
+                                                        ])
+                                                        ->pluck('name', 'id')
+                                                        ->toArray()
                                                     )
+                                                    ->allowHtml()
                                                     ->required()
                                                     ->createOptionForm(function (Form $form) {
                                                         return MedicineResource::form($form)->extraAttributes(['class' => 'w-full']);
