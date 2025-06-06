@@ -196,11 +196,11 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                             ->schema([
                                                 Select::make('medicine_id')
                                                     ->label('Medicine')
-                                                    // ->relationship(
-                                                    //     'medicine', 
-                                                    //     'name',
-                                                    //     // modifyQueryUsing: fn(Builder $query) => $query->where('active', 1)
-                                                    // )
+                                                    ->relationship(
+                                                        'medicine', 
+                                                        // 'name',
+                                                        // modifyQueryUsing: fn(Builder $query) => $query->where('active', 1)
+                                                    )
                                                     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->name}".($record->brand ? ' - '."<b>{$record->brand}</b>" : ''))
                                                     ->allowHtml()
                                                     // ->preload()
