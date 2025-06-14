@@ -188,7 +188,8 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                                         ->link()
                                                         ->size('lg');
                                         })
-                                        ->reorderable()
+                                        ->reorderable(false)
+                                        // ->reorderable()
                                         ->schema([
                                             Grid::make([
                                                 'lg' => 4

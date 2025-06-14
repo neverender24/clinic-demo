@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Filament\Facades\Filament;
-use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Models\Activity;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 

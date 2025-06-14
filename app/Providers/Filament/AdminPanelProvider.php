@@ -21,6 +21,7 @@ use Rmsramos\Activitylog\ActivitylogPlugin;
 use App\Filament\Resources\MedicineResource;
 use Filament\FontProviders\LocalFontProvider;
 use App\Filament\Pages\Tenancy\RegisterClinic;
+use App\Filament\Resources\ActivityLogResource;
 use Illuminate\Session\Middleware\StartSession;
 use App\Filament\Resources\ConsultationResource;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -54,7 +55,6 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->tenantProfile(EditTenantProfile::class)
             ->login(Login::class)
-
             ->colors([
                 'primary' => Color::Blue,
                 'red' => Color::Red,
@@ -85,6 +85,7 @@ class AdminPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ])
+
             ->sidebarFullyCollapsibleOnDesktop()
             ->plugins([
                 FilamentShieldPlugin::make(),
