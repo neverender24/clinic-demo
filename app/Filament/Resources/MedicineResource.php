@@ -81,6 +81,13 @@ class MedicineResource extends Resource
                 Tables\Actions\EditAction::make()
                     ->modalWidth('lg'),
                 Tables\Actions\DeleteAction::make()
+                    ->hidden(fn($record) => $record->consultations->count() > 0),
+                Tables\Actions\Action::make('delete_disable')
+                    ->label('Delete')
+                    ->disabled()
+                    ->color('danger')
+                    ->icon('heroicon-m-trash')
+                    ->visible(fn($record) => $record->consultations->count() > 0)
             ]);
     }
 

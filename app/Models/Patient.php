@@ -2,16 +2,18 @@
 
 namespace App\Models;
 
+use Spatie\Activitylog\LogOptions;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Patient extends Model
 {
     use SoftDeletes;
-    
+    use LogsActivity;
     protected $guarded = [];
 
     protected $casts = [
@@ -41,5 +43,11 @@ class Patient extends Model
     public function hospitalAdmissions(): HasMany
     {
         return $this->hasMany(HospitalAdmission::class);
+    }
+    
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+                    ->logAll();
     }
 }

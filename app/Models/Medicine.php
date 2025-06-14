@@ -2,13 +2,18 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Casts\Attribute;
+use Spatie\Activitylog\LogOptions;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Medicine extends Model
 {
+    use SoftDeletes; 
+    use LogsActivity;
     protected $fillable = [
         'name',
         'user_id',
@@ -33,4 +38,9 @@ class Medicine extends Model
         );
     }
    
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+                    ->logAll();
+    }
 }
