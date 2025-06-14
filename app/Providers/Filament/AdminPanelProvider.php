@@ -8,22 +8,23 @@ use App\Models\User;
 use Filament\Widgets;
 use App\Models\Clinic;
 use Filament\PanelProvider;
+use App\Filament\Pages\Dashboard;
 use Filament\Navigation\MenuItem;
 use App\Filament\Pages\Auth\Login;
-use App\Filament\Pages\Dashboard;
 use Filament\Support\Colors\Color;
 use Filament\Navigation\NavigationItem;
 use App\Filament\Resources\UserResource;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Navigation\NavigationBuilder;
+use App\Filament\Resources\PatientResource;
+use Rmsramos\Activitylog\ActivitylogPlugin;
+use App\Filament\Resources\MedicineResource;
 use Filament\FontProviders\LocalFontProvider;
 use App\Filament\Pages\Tenancy\RegisterClinic;
 use Illuminate\Session\Middleware\StartSession;
+use App\Filament\Resources\ConsultationResource;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use App\Filament\Pages\Tenancy\EditTenantProfile;
-use App\Filament\Resources\ConsultationResource;
-use App\Filament\Resources\MedicineResource;
-use App\Filament\Resources\PatientResource;
 use Filament\Http\Middleware\AuthenticateSession;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Illuminate\Routing\Middleware\SubstituteBindings;
@@ -87,7 +88,11 @@ class AdminPanelProvider extends PanelProvider
             ->sidebarFullyCollapsibleOnDesktop()
             ->plugins([
                 FilamentShieldPlugin::make(),
-                FilamentApexChartsPlugin::make()
+                FilamentApexChartsPlugin::make(),
+                ActivitylogPlugin::make()
+                    ->label('Log')
+                    ->pluralLabel('Logs')
+                    ->navigationGroup('Administration'),
 
             ])
             // ->navigation(function (NavigationBuilder $builder): NavigationBuilder {

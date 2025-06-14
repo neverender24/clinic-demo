@@ -9,17 +9,19 @@ use App\Models\Patient;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
+use Filament\Actions\StaticAction;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
 use Filament\Support\Enums\Alignment;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Section;
+use App\Models\Scopes\ConsultationScope;
 use Filament\Forms\Components\DatePicker;
 use App\Filament\Resources\PatientResource\Pages;
 use App\Filament\Resources\PatientResource\RelationManagers;
 use App\Filament\Resources\PatientResource\RelationManagers\ConsultationsRelationManager;
 use App\Filament\Resources\PatientResource\RelationManagers\HospitalAdmissionsRelationManager;
-use Filament\Actions\StaticAction;
+use App\Models\Scopes\TenantScope;
 
 class PatientResource extends Resource
 {
@@ -110,6 +112,9 @@ class PatientResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn($query) => $query->with([
+                'consultations' => fn($q) => $q->withoutGlobalScopes([ConsultationScope::class, TenantScope::class])
+            ]))
             ->defaultSort('last_name', )
             ->columns([
                 Tables\Columns\TextColumn::make('full_name')
@@ -151,7 +156,14 @@ class PatientResource extends Resource
             ->paginationPageOptions([5, 10, 15, 20, 50, 100])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DeleteAction::make()
+                    ->hidden(fn($record) => $record->consultations->count() > 0),
+                Tables\Actions\Action::make('delete_disable')
+                    ->label('Delete')
+                    ->disabled()
+                    ->color('danger')
+                    ->icon('heroicon-m-trash')
+                    ->visible(fn($record) => $record->consultations->count() > 0)
             ]);
     }
 
