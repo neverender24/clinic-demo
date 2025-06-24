@@ -499,6 +499,9 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                     ->body($th->getMessage());
                             }
                         }),
+                        Tables\Actions\Action::make('custom_docs')
+                            ->icon('heroicon-s-document-text')
+                            ->url(fn($record) => static::getUrl('custom.doc', [$record])),
                     Html2MediaAction::make('print_prescription')
                         ->label('Prescription')
                         ->color('success')
@@ -620,6 +623,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
             'create' => Pages\CreateConsultation::route('/create'),
             // 'create' => Pages\CreateConsultation::route('/create'),
             'edit' => Pages\EditConsultation::route('/{record}/edit'),
+            'custom.doc' => Pages\CustomDoc::route('/{record}/custom-doc'),
             'edit.consultation' => Pages\EditWithHistory::route('/{record}/edit-consultation'),
         ];
     }

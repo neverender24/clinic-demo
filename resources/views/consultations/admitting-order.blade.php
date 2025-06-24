@@ -66,7 +66,11 @@
             </h1>
 
             <div class="font-bold mt-5 text-center">
+             @isset($title)
+                {{$title}}
+             @else
                 ADMITTING ORDERS 
+             @endisset   
             </div>
         </header>
 
