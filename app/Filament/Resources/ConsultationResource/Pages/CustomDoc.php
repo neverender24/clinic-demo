@@ -18,6 +18,8 @@ use Filament\Tables\Actions\CreateAction;
 use App\Models\CustomDoc as ModelsCustomDoc;
 use Filament\Forms\Concerns\InteractsWithForms;
 use App\Filament\Resources\ConsultationResource;
+use App\Models\Consultation;
+use App\Models\Scopes\ConsultationScope;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Torgodly\Html2Media\Tables\Actions\Html2MediaAction;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
@@ -36,8 +38,9 @@ class CustomDoc extends Page implements HasTable, HasForms
 
     public function mount($record) 
     {
-        $this->record = $this->resolveRecord($record);
+        $this->record = Consultation::withoutGlobalScope(ConsultationScope::class)->findOrFail($record);
     }
+    
 
     public function getTitle(): string|Htmlable
     {
