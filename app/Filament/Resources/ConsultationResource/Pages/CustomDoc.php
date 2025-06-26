@@ -24,6 +24,7 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Torgodly\Html2Media\Tables\Actions\Html2MediaAction;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
 use Asmit\FilamentMention\Forms\Components\RichMentionEditor;
+use Filament\Tables\Actions\DeleteAction;
 use Illuminate\Contracts\Support\Htmlable;
 
 class CustomDoc extends Page implements HasTable, HasForms
@@ -96,6 +97,7 @@ class CustomDoc extends Page implements HasTable, HasForms
                 ->actions([
                     EditAction::make()
                         ->form(fn($form) => $this->form($form)),
+                    DeleteAction::make(),
                     Html2MediaAction::make('print')
                         ->label(fn($record) => 'Print ')
                         ->color('success')
