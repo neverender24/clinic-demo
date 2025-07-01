@@ -11,7 +11,8 @@ return [
         'default_sort_column'    => 'id',
         'default_sort_direction' => 'desc',
         'navigation_count_badge' => false,
-        'resource'               => \Rmsramos\Activitylog\Resources\ActivitylogResource::class,
+        // 'resource'               => \Rmsramos\Activitylog\Resources\ActivitylogResource::class,
+        'resource'               => \App\Filament\Resources\ActivitylogResource::class,
     ],
     'datetime_format' => 'd/m/Y H:i:s',
 ];

@@ -189,6 +189,8 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                                         ->size('lg');
                                         })
                                         ->reorderable()
+                                        ->default(fn ($state) => is_array($state) ? $state : [])
+                                        // ->reorderable()
                                         ->schema([
                                             Grid::make([
                                                 'lg' => 4
@@ -201,18 +203,20 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                                         // 'name',
                                                         // modifyQueryUsing: fn(Builder $query) => $query->where('active', 1)
                                                     )
+                                                    // ->preload()
                                                     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->name}".($record->brand ? ' - '."<b>{$record->brand}</b>" : ''))
                                                     ->allowHtml()
                                                     // ->preload()
-                                                    ->searchable()
+                                                    ->searchable(['name', 'brand'])
                                                     // ->searchable(function (Builder $query, $search): Builder {
                                                     //     return $query
                                                     //         ->where('brand', 'like', "%{$search}%")
                                                     //             ->orWhere('name', 'like', "%{$search}%");
                                                             
                                                     // })
-                                                    ->getSearchResultsUsing(fn (string $search) => 
-                                                        Medicine::where(function($q) use ($search) {
+                                                    ->getSearchResultsUsing(function (string $search) {
+                                                        // dd($search);
+                                                        return Medicine::where(function($q) use ($search) {
                                                             $q->where('brand', 'like', "%{$search}%")
                                                                ->orWhere('name', 'like', "%{$search}%");
                                                         })
@@ -229,8 +233,8 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                                             "
                                                         ])
                                                         ->pluck('name', 'id')
-                                                        ->toArray()
-                                                    )
+                                                        ->toArray();
+                                                    })
                                                     ->allowHtml()
                                                     ->required()
                                                     ->createOptionForm(function (Form $form) {

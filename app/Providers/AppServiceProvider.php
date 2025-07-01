@@ -5,9 +5,11 @@ namespace App\Providers;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\Permission;
+use App\Models\ActivityLog;
 use Filament\Resources\Resource;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+use Spatie\Activitylog\Models\Activity;
 use Filament\Support\Facades\FilamentAsset;
 
 class AppServiceProvider extends ServiceProvider
@@ -18,6 +20,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         //
+         $this->app->bind(Activity::class, ActivityLog::class);
     }
 
     /**
@@ -36,5 +39,6 @@ class AppServiceProvider extends ServiceProvider
             ->setRoleClass(Role::class);
 
         //
+       
     }
 }

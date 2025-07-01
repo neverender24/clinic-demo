@@ -82,7 +82,7 @@ class EditWithHistory extends Page implements HasForms, HasTable, HasInfolists
 
     public function mount(int | string $record): void
     {
-        // dd($record);
+        
         $this->record = Consultation::with('consultationMedicines')->withoutGlobalScope(ConsultationScope::class)->findOrFail($record)->load('medicines');
 
         $this->historyData = $this->record;
@@ -110,9 +110,10 @@ class EditWithHistory extends Page implements HasForms, HasTable, HasInfolists
                                             ]);
         $data = collect($this->record)->except('consultation_medicines', 'medicines');
 
-        $formData = array_merge($data->toArray(), ['medicines' => $meds->toArray()]);
+        $formData = array_merge($data->toArray(), ['medicines' => $meds->toArray() ?? []]);
     
         $this->form->fill($formData);
+        
 
     }
 
