@@ -99,7 +99,7 @@ class CreateConsultation extends CreateRecord implements HasTable
     
     protected function checkLastQueue($date)
     {
-        return Consultation::currentConsultations($date)->max('queueing_number');
+        return Consultation::whereDate('date', $date)->max('queueing_number');
     }
 
     protected function getRedirectUrl(): string

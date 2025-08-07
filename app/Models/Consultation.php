@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Carbon;
 
-#[ScopedBy([TenantScope::class, ConsultationScope::class])]
+#[ScopedBy([TenantScope::class])]
 class Consultation extends Model
 {
     protected $guarded = ['medicines'];
@@ -63,9 +63,9 @@ class Consultation extends Model
         $this->save();
     }
 
-    protected function scopeCurrentConsultations(Builder $query, $date)
+    protected function scopeCurrentConsultations(Builder $query)
     {
-        $query->where('date', $date);
+        $query->where('date', now()->toDateString());
     }
 
     protected function scopePatientPreviousConsultations(Builder $query, $patient_id, $date)

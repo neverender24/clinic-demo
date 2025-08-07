@@ -248,13 +248,14 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                                                 return $data;
                                                             });
                                                     })
-                                                    // ->editOptionForm(function (Form $form) {
-                                                    //     return MedicineResource::form($form)->extraAttributes(['class' => 'w-full']);
-                                                    // })
-                                                    // ->editOptionAction(function(Action $action, $state) {
-                                                    //     return $action
-                                                    //             ->visible(fn($state) => Medicine::with('consultations')->find($state)->consultations->isEmpty());
-                                                    // })
+                                                    ->editOptionForm(function (Form $form) {
+                                                        return MedicineResource::form($form)->extraAttributes(['class' => 'w-full']);
+                                                    })
+                                                    ->editOptionAction(function(Action $action, $state) {
+                                                        Medicine::with('consultations')->find($state);
+                                                        return $action
+                                                                ->visible(fn($state) => Medicine::with('consultations')->find($state)->consultations->isEmpty());
+                                                    })
                                                     ->columnSpan([
                                                         'lg' => 'full',
                                                     ]),
@@ -337,8 +338,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
     public static function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn(Builder $query) => $query->withoutGlobalScope(ConsultationScope::class)
-                                                    ->with(['clinic', 'medicines', 'patient' => fn($query) => $query->withTrashed()])
+            ->modifyQueryUsing(fn(Builder $query) => $query->with(['clinic', 'medicines', 'patient' => fn($query) => $query->withTrashed()])
             )
             ->defaultSort('queueing_number')
             ->columns([

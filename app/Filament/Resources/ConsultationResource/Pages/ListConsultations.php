@@ -30,7 +30,7 @@ class ListConsultations extends ListRecords
     {
         return [
             'current' => Tab::make()
-                ->modifyQueryUsing(fn(Builder $query) => $query->with(['medicines', 'patient'])->where('date', now()->format('Y-m-d'))),
+                ->modifyQueryUsing(fn(Builder $query) => $query->with(['medicines', 'patient'])->currentConsultations()),
             'current_year' => Tab::make()
                 ->label(now()->year." Consultations")
                 ->modifyQueryUsing(fn (Builder $query) => $query->with(['medicines', 'patient'])->whereYear('date', now()->year)),
