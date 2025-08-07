@@ -248,13 +248,13 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                                                 return $data;
                                                             });
                                                     })
-                                                    ->editOptionForm(function (Form $form) {
-                                                        return MedicineResource::form($form)->extraAttributes(['class' => 'w-full']);
-                                                    })
-                                                    ->editOptionAction(function(Action $action, $state) {
-                                                        return $action
-                                                                ->visible(fn($state) => Medicine::with('consultations')->find($state)->consultations->isEmpty());
-                                                    })
+                                                    // ->editOptionForm(function (Form $form) {
+                                                    //     return MedicineResource::form($form)->extraAttributes(['class' => 'w-full']);
+                                                    // })
+                                                    // ->editOptionAction(function(Action $action, $state) {
+                                                    //     return $action
+                                                    //             ->visible(fn($state) => Medicine::with('consultations')->find($state)->consultations->isEmpty());
+                                                    // })
                                                     ->columnSpan([
                                                         'lg' => 'full',
                                                     ]),
