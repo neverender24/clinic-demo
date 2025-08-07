@@ -254,7 +254,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                                     ->editOptionAction(function(Action $action, $state) {
                                                         Medicine::with('consultations')->find($state);
                                                         return $action
-                                                                ->visible(fn($state) => Medicine::with('consultations')->find($state)->consultations->isEmpty());
+                                                                ->visible(fn($state) => Medicine::with('consultations')->find($state)?->consultations->isEmpty());
                                                     })
                                                     ->columnSpan([
                                                         'lg' => 'full',
