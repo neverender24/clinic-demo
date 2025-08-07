@@ -114,6 +114,6 @@ class CustomDoc extends Page implements HasTable, HasForms
                         })
                         ->preview()
                 ]);
-    }
+    } 
     
 }
