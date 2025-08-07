@@ -200,7 +200,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                                     ->label('Medicine')
                                                     ->relationship(
                                                         'medicine', 
-                                                        // 'name',
+                                                        'name',
                                                         // modifyQueryUsing: fn(Builder $query) => $query->where('active', 1)
                                                     )
                                                     // ->preload()
