@@ -632,6 +632,6 @@ class ConsultationResource extends Resource implements HasShieldPermissions
 
     public static function getNavigationBadge(): ?string
     {
-        return transform(static::getModel()::query()->where('status', 'Pending')->count(), fn($value) => $value > 0 ? $value : null);
+        return transform(static::getModel()::query()->where('status', 'Pending')->currentConsultations()->count(), fn($value) => $value > 0 ? $value : null);
     }
 }
