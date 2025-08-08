@@ -58,6 +58,7 @@ use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Set;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Support\HtmlString;
+use Illuminate\Support\Number;
 
 class ConsultationResource extends Resource implements HasShieldPermissions
 {
@@ -437,18 +438,33 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                         ->icon('heroicon-s-document-text')
                         // ->visible(fn($record) => !filled($record->approximate_days) && !filled($record->estimated_date) && !filled($record->medical_cert_remarks))
                         ->form([
+                            Fieldset::make('Date of rest')
+                                ->schema([
+                                    Forms\Components\DatePicker::make('estimated_date')
+                                        ->label('From'),
+                                    Forms\Components\DatePicker::make('estimated_date_to')
+                                        ->label('To')
+                                        ->validationAttribute('End of date to rest'),
+                                ]),
                             Forms\Components\Grid::make(2)
                                 ->schema([
 
                                     Forms\Components\TextInput::make('approximate_days')
-                                        ->label('Days of rest and recovery'),
-                                    Forms\Components\DatePicker::make('estimated_date'),
+                                        ->label('Days of rest and recovery')
+                                        ->numeric(),
+                                    Forms\Components\DatePicker::make('return_date')
+                                        ->afterOrEqual('estimated_date_to')
+                                        ->validationMessages([
+                                            'after_or_equal' => 'The value must be after the \'Date to\' in the Date of Rest.'
+                                        ]),
                                 ]),
+                           
                             Forms\Components\RichEditor::make('medical_cert_remarks')
                                 ->label('Remarks'),
                         ])
                         ->fillForm(fn($record) => $record->toArray())
                         ->action(function($data, $record) {
+                            // dd($data);
                             try {
                                 $record->update($data);
                                 Notification::make()
@@ -539,9 +555,13 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                             'watermark' => asset('storage/'.$record->clinic->watermarks),
                             'consultation_date' => $record->date?->format('F d, Y'),
                             'medical_cert_remarks' => $record->medical_cert_remarks,
+                            'approximate_days_in_word' => Number::spell(intval($record->approximate_days)),
                             'approximate_days' => $record->approximate_days,
                             'estimated_date' => $record->estimated_date ? $record->estimated_date->format('F j, Y') : '',
-                            'diagnosis' => $record->diagnosis
+                            'estimated_date_to' => $record->estimated_date ? $record->estimated_date->format('F j, Y') : null,
+                            'return_date' => $record->return_date ? Carbon::parse($record->return_date)->format('F j, Y') : null,
+                            'diagnosis' => $record->diagnosis,
+                            'chief_complaint' => str_replace(['</p>', '<p>'], '', $record->chief_complaint)
                         ])),
                     Html2MediaAction::make('print_admitting_order')
                         ->label('Admitting Order')

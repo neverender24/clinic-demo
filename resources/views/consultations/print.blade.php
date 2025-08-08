@@ -91,7 +91,7 @@
                 </div>
             </div>
             <div>
-            <img src="{{asset('images/clinic/rx.png')}}" alt="Rx" class="w-20">
+                <img src="{{asset('images/clinic/rx.png')}}" alt="Rx" class="w-20">
             </div>
             
             <!-- <table style="">
