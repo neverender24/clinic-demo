@@ -83,7 +83,7 @@ class EditWithHistory extends Page implements HasForms, HasTable, HasInfolists
     public function mount(int | string $record): void
     {
         
-        $this->record = Consultation::with('consultationMedicines')->withoutGlobalScope(ConsultationScope::class)->findOrFail($record)->load('medicines');
+        $this->record = Consultation::with('consultationMedicines')->findOrFail($record)->load('medicines');
 
         $this->historyData = $this->record;
 

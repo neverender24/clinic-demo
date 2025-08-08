@@ -39,7 +39,7 @@ class CustomDoc extends Page implements HasTable, HasForms
 
     public function mount($record) 
     {
-        $this->record = Consultation::withoutGlobalScope(ConsultationScope::class)->findOrFail($record);
+        $this->record = Consultation::findOrFail($record);
     }
     
 
@@ -114,6 +114,6 @@ class CustomDoc extends Page implements HasTable, HasForms
                         })
                         ->preview()
                 ]);
-    }
+    } 
     
 }
