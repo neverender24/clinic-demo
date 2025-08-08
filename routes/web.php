@@ -9,3 +9,4 @@ Route::get('/', Login::class);
 
 Route::get('print-prescription/{id}', [ConsultationController::class, 'print']);
 
+Route::get('medcert/{id}', [ConsultationController::class, 'medcert']);

@@ -34,58 +34,79 @@
         </div>
         <div class="relative min-h-screen">
             <!-- Absolute background image -->
-            <div class="absolute inset-0 bg-no-repeat bg-center opacity-15" style="background-image: url('{{$watermark}}');"></div>
+            
+            {{-- <div class="absolute inset-0 bg-no-repeat bg-center opacity-15" style="background-image: url('{{$watermark}}');"></div> --}}
             
             <!-- Your child content, unaffected by parent opacity -->
             <div class="relative">
-                <div class="text-content px-5 py-5">
-                    <p class="text-end">
-                        <span class="font-bold">Date:</span>
-                        <span class="underline">{{now()->format('F j, Y')}}</span>
-                    </p>
+                <div class="text-content px-5 py-5 flex flex-col">
+                    <div class="flex justify-between">
+                        <div class=" flex p-0">
+                            <strong style="display: inline;">Name:</strong> <span style="display: inline;" class="ms-1"> {{$patient->full_name}}</span>
+                        </div>
+                        <div class="basis-1/4">
+                            <strong>Date:</strong> <span class="w-full border-b-1">{{ now()->format('F j, Y')}}</span>
+                        </div>
+                    </div>
+                    <div class="flex justify-between">
+                        <div class="col-span-3">
+                            <strong style="display: inline;">Address:</strong> <span style="display: inline;" class=""> {{$patient->address}}</span>
+                        </div>
+                        <div class="basis-1/4 flex justify-between
+                        ">
+                            <div class="col-span-1">
+                                <strong>Age:</strong> <span class="">{{ Carbon\Carbon::parse($patient->birthday)->age}}</span>
+                            </div>
+                            <div class="col-span-1">
+                                <strong>Sex:</strong> <span class="">{{ $patient->sex }}</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="text-content px-5 py-5 space-y-6">
                     <p class="">
-                        <span class="">To whom it may concern,</span>
+                        {{-- <span class="">To whom it may concern,</span> --}}
                     </p>
-                    <p class="text-justify">This certifies that 
-                        <span class="text-underline font-bold">{{$patient->full_name}}</span> 
-                        sought medical consultation on 
-                        <span class="text-underline font-bold">{{$consultation_date}}.</span>
-                        During the consultation, the patient presented with clinical sign and symptoms suggestive 
-                        of the following medical condition/s: 
-                        <div class="border-b border-gray-900 font-bold text-underline"> {!! $diagnosis !!} </div>
+                    <p class="text-justify">This certifies that the above mentioned patient
+                        was seen and evaulated at this clinic/hospital on <u>{{$consultation_date}}</u> due to <u>{!!$chief_complaint!!}</u>
                     </p>
-                    <p class="text-justify">
-                        The anticipated duration of the patient's recovery is estimated to be approximately <span class="text-underline font-bold ">{{$approximate_days}} day/s</span>, 
-                        after which the patient is expected to be fit for resuming regular activies, including work, 
-                        on or around <span class="text-underline font-bold inline-block">{{$estimated_date}}</span>.
-                    </p>
-                    <p class="text-justify">
-                        Please be advised that this certificate is issued at the patient's request and for their specific
-                        purposes. However, it is important to note that this document is not legally valid in a court of law.
+                    <div class="flex gap-x-3">
+                        <div class="ms-2"> Diagnosis: </div>
+                        <div class="font-bold"> {!! $diagnosis !!} </div>
+                    </div>
+                    <p>
+                        This patient is aadvised to have <u>{{$approximate_days_in_word}} ({{$approximate_days}})</u> days of rest, from {{$estimated_date}} to {{$estimated_date_to}}
+                        to allow for complete recovery.
                     </p>
                     <p>
-                        <span class="font-bold">Remarks:</span>  
-                        <div class="border-b border-gray-900 font-bold text-underline"> {!!$medical_cert_remarks!!} </div>
+                        The patient is fit to return to work/school on {{$return_date}}
                     </p>
-                    <p class="">
-                        <br>
-                        <br>
-                        <div class="col-span-3 physician-signature gap-y-0  flex justify-end">
-                            <div>
-                                <span class="font-bold ">Attending Physician:</span>
-                                <p class="mt-10 font-bold">BEN JAY C. PORCADILLA, RMT, MD, FPCP</p>
-                                <p>License no: 0132066</p>
-                                <p>PTR no: 2173419</p>
-                                <p>S2 License no: _____________________</p>
-                            </div>
+                    <div class="flex flex-col gap-y-0.5">
+                        <div>Remarks: </div>
+                        <div>
+                            {!!$medical_cert_remarks!!}
                         </div>
-
+                    </div>
+                    <p>
+                        This certification is issued upon the request of the patient for record purposes and for whatever legal purpose it may serve.
                     </p>
                 </div>
                 <!-- More child elements -->
             </div>
+            <p class="">
+                <br>
+                <br>
+                <div class="col-span-3 physician-signature gap-y-0  flex justify-end">
+                    <div>
+                        <span class="font-bold ">Attending Physician:</span>
+                        <p class="mt-10 font-bold">BEN JAY C. PORCADILLA, RMT, MD, FPCP</p>
+                        <p>License no: 0132066</p>
+                        <p>PTR no: 2173419</p>
+                        <p>S2 License no: _____________________</p>
+                    </div>
+                </div>
+
+            </p>
         </div>
         <!-- <div class="relative bg-no-repeat bg-cover opacity-15 min-h-screen" style="background-image: url('');">
             <div class="absolute inset-0">

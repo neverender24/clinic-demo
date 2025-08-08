@@ -11,8 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('activity_log', function (Blueprint $table) {
-            $table->integer('clinic_id');
+        Schema::table('consultations', function (Blueprint $table) {
+            $table->date('estimated_date_to')->nullable();
+            $table->date('return_date')->nullable();
         });
     }
 
@@ -21,8 +22,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('activity_log', function (Blueprint $table) {
-            $table->dropColumn('clinic_id');
+        Schema::table('consultations', function (Blueprint $table) {
+            $table->dropColumn('estimated_date_to');
+            // $table->dropColumn('return_date');
         });
     }
 };
