@@ -34,10 +34,7 @@
         </div>
         <div class="relative min-h-screen">
             <!-- Absolute background image -->
-           <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
-                <img src="{{$watermark}}" alt="Watermark"
-                    style="width: 4in; opacity: 0.08;" />
-            </div>
+            
             {{-- <div class="absolute inset-0 bg-no-repeat bg-center opacity-15" style="background-image: url('{{$watermark}}');"></div> --}}
             
             <!-- Your child content, unaffected by parent opacity -->
@@ -93,23 +90,23 @@
                     <p>
                         This certification is issued upon the request of the patient for record purposes and for whatever legal purpose it may serve.
                     </p>
-                    <p class="">
-                        <br>
-                        <br>
-                        <div class="col-span-3 physician-signature gap-y-0  flex justify-end">
-                            <div>
-                                <span class="font-bold ">Attending Physician:</span>
-                                <p class="mt-10 font-bold">BEN JAY C. PORCADILLA, RMT, MD, FPCP</p>
-                                <p>License no: 0132066</p>
-                                <p>PTR no: 2173419</p>
-                                <p>S2 License no: _____________________</p>
-                            </div>
-                        </div>
-
-                    </p>
                 </div>
                 <!-- More child elements -->
             </div>
+            <p class="">
+                <br>
+                <br>
+                <div class="col-span-3 physician-signature gap-y-0  flex justify-end">
+                    <div>
+                        <span class="font-bold ">Attending Physician:</span>
+                        <p class="mt-10 font-bold">BEN JAY C. PORCADILLA, RMT, MD, FPCP</p>
+                        <p>License no: 0132066</p>
+                        <p>PTR no: 2173419</p>
+                        <p>S2 License no: _____________________</p>
+                    </div>
+                </div>
+
+            </p>
         </div>
         <!-- <div class="relative bg-no-repeat bg-cover opacity-15 min-h-screen" style="background-image: url('');">
             <div class="absolute inset-0">

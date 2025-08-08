@@ -544,7 +544,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                         ->color('success')
                         ->icon('heroicon-o-printer')
                         ->format(format: 'letter')
-                        ->preview()
+                        // ->preview()
                         // ->action(fn($data) => dd($data))
                         // ->visible(fn($record) => filled($record->approximate_days) && filled($record->estimated_date) && filled($record->medical_cert_remarks))
                         ->content(fn($record): View => view('consultations.medcert', [
