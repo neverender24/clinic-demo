@@ -558,7 +558,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                             'approximate_days_in_word' => Number::spell(intval($record->approximate_days)),
                             'approximate_days' => $record->approximate_days,
                             'estimated_date' => $record->estimated_date ? $record->estimated_date->format('F j, Y') : '',
-                            'estimated_date_to' => $record->estimated_date ? $record->estimated_date->format('F j, Y') : null,
+                            'estimated_date_to' => $record->estimated_date_to ? Carbon::parse($record->estimated_date_to)->format('F j, Y') : null,
                             'return_date' => $record->return_date ? Carbon::parse($record->return_date)->format('F j, Y') : null,
                             'diagnosis' => $record->diagnosis,
                             'chief_complaint' => str_replace(['</p>', '<p>'], '', $record->chief_complaint)
