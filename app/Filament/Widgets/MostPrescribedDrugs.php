@@ -31,8 +31,8 @@ class MostPrescribedDrugs extends BaseWidget
 
     protected function getStats(): array
     {
-        $this->medicines = Medicine::with(['consultations' => fn($query) => $query->withoutGlobalScope(ConsultationScope::class)])
-                            ->whereHas('consultations', fn($query) => $query->withoutGlobalScope(ConsultationScope::class))
+        $this->medicines = Medicine::with(['consultations'])
+                            ->whereHas('consultations')
                             ->where('active',1)
                             ->get();
 

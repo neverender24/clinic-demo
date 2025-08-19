@@ -152,7 +152,7 @@ class ConsultationChart extends ApexChartWidget
         // dd($this->filterFormData['clinic_id']);
         // dd();
 
-        $data = Consultation::withoutGlobalScopes([TenantScope::class, ConsultationScope::class])
+        $data = Consultation::withoutGlobalScopes([TenantScope::class])
                     ->when($this->filterFormData['clinic_id'] != 'All', fn($query) => $query->where('clinic_id', $this->filterFormData['clinic_id']))
                     ->withPeriod($this->filterFormData['period'])
                     ->get()

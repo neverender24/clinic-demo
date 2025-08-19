@@ -113,7 +113,7 @@ class PatientResource extends Resource
     {
         return $table
             ->modifyQueryUsing(fn($query) => $query->with([
-                'consultations' => fn($q) => $q->withoutGlobalScopes([ConsultationScope::class, TenantScope::class])
+                'consultations' => fn($q) => $q->withoutGlobalScopes([TenantScope::class])
             ]))
             ->defaultSort('last_name', )
             ->columns([
