@@ -148,20 +148,24 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                         Forms\Components\RichEditor::make('chief_complaint')
                                         ->required()
                                         ->toolbarButtons(self::onlyAllowedToolbar())
+                                        ->fileAttachmentsDirectory('chief-complaint/'.now()->format('m-y'))
                                         ->visible(fn() => auth()->user()->can('addChiefComplaint', static::$model)),
                                         Forms\Components\RichEditor::make('test_results')
                                             ->label('Medical Data')
                                             ->required()
                                             ->toolbarButtons(self::onlyAllowedToolbar())
+                                            ->fileAttachmentsDirectory('test-results/'.now()->format('m-y'))
                                             ->visible(fn() => auth()->user()->can('addTestResult', static::$model)),
                                         Forms\Components\RichEditor::make('diagnosis')
                                             ->required()
                                             ->toolbarButtons(self::onlyAllowedToolbar())
                                             ->columnSpanFull()
+                                            ->fileAttachmentsDirectory('diagnosis/'.now()->format('m-y'))
                                             ->visible(fn() => auth()->user()->hasAnyRole(['Doctor', 'super_admin'])),
                                         Forms\Components\RichEditor::make('management')
                                             ->required()
                                             ->visible(fn() => auth()->user()->hasAnyRole(['Doctor', 'super_admin']))
+                                            ->fileAttachmentsDirectory('management/'.now()->format('m-y'))
                                             ->columnSpan([
                                                 'xl' => 'full'
                                             ]),
@@ -544,7 +548,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                         ->color('success')
                         ->icon('heroicon-o-printer')
                         ->format(format: 'letter')
-                        // ->preview()
+                        ->preview()
                         // ->action(fn($data) => dd($data))
                         // ->visible(fn($record) => filled($record->approximate_days) && filled($record->estimated_date) && filled($record->medical_cert_remarks))
                         ->content(fn($record): View => view('consultations.medcert', [
