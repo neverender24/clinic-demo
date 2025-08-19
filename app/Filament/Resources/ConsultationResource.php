@@ -57,6 +57,7 @@ use Filament\Facades\Filament;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Set;
 use Filament\Support\Enums\MaxWidth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Number;
 
@@ -469,13 +470,17 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                         ->fillForm(fn($record) => $record->toArray())
                         ->action(function($data, $record) {
                             // dd($data);
+                            DB::beginTransaction();
                             try {
                                 $record->update($data);
+                                $this->dispatch('refreshTable');
+                                DB::commit();
                                 Notification::make()
                                 ->success()
                                 ->title('Success')
                                 ->body('The changes have been saved');
                             } catch (\Throwable $th) {
+                                DB::rollBack();
                                 Notification::make()
                                     ->title('Error')
                                     ->body($th->getMessage());
@@ -548,7 +553,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                         ->color('success')
                         ->icon('heroicon-o-printer')
                         ->format(format: 'letter')
-                        ->preview()
+                        // ->preview()
                         // ->action(fn($data) => dd($data))
                         // ->visible(fn($record) => filled($record->approximate_days) && filled($record->estimated_date) && filled($record->medical_cert_remarks))
                         ->content(fn($record): View => view('consultations.medcert', [
@@ -580,7 +585,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                 'header_image' => $record->clinic->header_image,
                             ]);
                         })
-                        ->preview()
+                        // ->preview()
                         // ->action(fn($data) => dd($data))
                         // ->visible(fn($record) => filled($record->approximate_days) && filled($record->estimated_date) && filled($record->medical_cert_remarks))
                         // ->content(fn($record): View => view('consultations.admitting-order', [
