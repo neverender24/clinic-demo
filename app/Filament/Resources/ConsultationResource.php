@@ -473,7 +473,6 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                             DB::beginTransaction();
                             try {
                                 $record->update($data);
-                                $this->dispatch('refreshTable');
                                 DB::commit();
                                 Notification::make()
                                 ->success()
@@ -508,16 +507,18 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                         // ->fillForm(fn($record) => [
                         //     'admitting_order_data' => $record->admitting_order_data
                         // ])
-                        ->action(function($data, $record) {
-                        //    dd($data);
+                        ->action(function($data, $record, $livewire) {
+                            DB::beginTransaction();
                             try {
                                 //code...
                                 $record->update($data);
+                                DB::commit();
                                 Notification::make()
                                 ->success()
                                 ->title('Success')
                                 ->body('The changes have been saved');
                             } catch (\Throwable $th) {
+                                DB::rollBack();
                                 dd($th->getMessage());
                                 Notification::make()
                                     ->title('Error')
@@ -553,7 +554,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                         ->color('success')
                         ->icon('heroicon-o-printer')
                         ->format(format: 'letter')
-                        // ->preview()
+                        ->preview()
                         // ->action(fn($data) => dd($data))
                         // ->visible(fn($record) => filled($record->approximate_days) && filled($record->estimated_date) && filled($record->medical_cert_remarks))
                         ->content(fn($record): View => view('consultations.medcert', [
@@ -586,7 +587,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                 'patient' => $record->patient,
                             ]);
                         })
-                        // ->preview()
+                        ->preview()
                         // ->action(fn($data) => dd($data))
                         // ->visible(fn($record) => filled($record->approximate_days) && filled($record->estimated_date) && filled($record->medical_cert_remarks))
                         // ->content(fn($record): View => view('consultations.admitting-order', [
