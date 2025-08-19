@@ -27,7 +27,7 @@ class ConsultationController extends Controller
 
     public function medcert( $id)
     {
-        $record = Consultation::withoutGlobalScopes([TenantScope::class, ConsultationScope::class])->with('medicines', 'patient')->find($id);
+        $record = Consultation::withoutGlobalScopes([TenantScope::class])->with('medicines', 'patient')->find($id);
         return view('consultations.medcert', [
             'medicines' => $record->medicines,
             'patient' => $record->patient,

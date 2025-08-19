@@ -22,6 +22,12 @@
         }
 
     }
+    u {
+        text-decoration: none; /* remove default underline */
+        border-bottom: 2px solid #000;
+        line-height: 1; /* reduce gap */
+        display: inline-block; /* avoid descender space issues */
+    }
     
 </style>
 <div class="flex justify-center paper-size" style="font-size: 11pt;">
@@ -75,16 +81,16 @@
                         <div class="font-bold"> {!! $diagnosis !!} </div>
                     </div>
                     <p>
-                        This patient is advised to have <u>{{$approximate_days_in_word}} ({{$approximate_days}})</u> days of rest, from {{$estimated_date}} to {{$estimated_date_to}}
+                        This patient is advised to have <u>{{$approximate_days_in_word}} ({{$approximate_days}})</u> days of rest, from <u>{{$estimated_date}}</u> to <u>{{$estimated_date_to}}</u>
                         to allow for complete recovery.
                     </p>
                     <p>
-                        The patient is fit to return to work/school on {{$return_date}}
+                        The patient is fit to return to work/school on <u>{{$return_date}}</u>
                     </p>
                     <div class="flex flex-col gap-y-0.5">
                         <div>Remarks: </div>
                         <div>
-                            {!!$medical_cert_remarks!!}
+                            <u>{!!$medical_cert_remarks!!}</u>
                         </div>
                     </div>
                     <p class="italic">

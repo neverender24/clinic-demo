@@ -574,9 +574,10 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                             return view('consultations.admitting-order', [
                                 'data' => $record->admitting_order_data,
                                 'header_image' => $record->clinic->header_image,
+                                'patient' => $record->patient,
                             ]);
                         })
-                        ->preview()
+                        // ->preview()
                         // ->action(fn($data) => dd($data))
                         // ->visible(fn($record) => filled($record->approximate_days) && filled($record->estimated_date) && filled($record->medical_cert_remarks))
                         // ->content(fn($record): View => view('consultations.admitting-order', [

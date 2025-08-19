@@ -80,7 +80,7 @@ class CustomDoc extends Page implements HasTable, HasForms
     public function table(Table $table): Table
     {
         return $table
-                ->query(ModelsCustomDoc::where('consultation_id', $this->record->id))
+                ->query(ModelsCustomDoc::with('consultation.patient')->where('consultation_id', $this->record->id))
                 ->columns([
                     TextColumn::make('doc_name')
                         ->label('Document')
@@ -106,10 +106,12 @@ class CustomDoc extends Page implements HasTable, HasForms
                         ->format('a5')
                         ->content(function($record): View {
                             // dd($record->admitting_order_data);
+                            // dd($record);
                             return view('consultations.admitting-order', [
                                 'data' => $record->content,
                                 'header_image' => $this->record->clinic->header_image,
-                                'title' => $record->doc_name
+                                'title' => $record->doc_name,
+                                'patient' => $record->consultation->patient
                             ]);
                         })
                         ->preview()

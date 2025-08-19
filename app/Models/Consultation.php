@@ -70,7 +70,7 @@ class Consultation extends Model
 
     protected function scopePatientPreviousConsultations(Builder $query, $patient_id, $date)
     {
-        $query->withoutGlobalScope(ConsultationScope::class)->where('patient_id', $patient_id)->whereDate('date', '<', $date);
+        $query->where('patient_id', $patient_id)->whereDate('date', '<', $date);
     }
 
     public function scopeWithPeriod(Builder $query, $period)
