@@ -57,6 +57,7 @@ use Filament\Facades\Filament;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Set;
 use Filament\Support\Enums\MaxWidth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Number;
 
@@ -148,20 +149,24 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                         Forms\Components\RichEditor::make('chief_complaint')
                                         ->required()
                                         ->toolbarButtons(self::onlyAllowedToolbar())
+                                        ->fileAttachmentsDirectory('chief-complaint/'.now()->format('m-y'))
                                         ->visible(fn() => auth()->user()->can('addChiefComplaint', static::$model)),
                                         Forms\Components\RichEditor::make('test_results')
                                             ->label('Medical Data')
                                             ->required()
                                             ->toolbarButtons(self::onlyAllowedToolbar())
+                                            ->fileAttachmentsDirectory('test-results/'.now()->format('m-y'))
                                             ->visible(fn() => auth()->user()->can('addTestResult', static::$model)),
                                         Forms\Components\RichEditor::make('diagnosis')
                                             ->required()
                                             ->toolbarButtons(self::onlyAllowedToolbar())
                                             ->columnSpanFull()
+                                            ->fileAttachmentsDirectory('diagnosis/'.now()->format('m-y'))
                                             ->visible(fn() => auth()->user()->hasAnyRole(['Doctor', 'super_admin'])),
                                         Forms\Components\RichEditor::make('management')
                                             ->required()
                                             ->visible(fn() => auth()->user()->hasAnyRole(['Doctor', 'super_admin']))
+                                            ->fileAttachmentsDirectory('management/'.now()->format('m-y'))
                                             ->columnSpan([
                                                 'xl' => 'full'
                                             ]),
@@ -465,18 +470,22 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                         ->fillForm(fn($record) => $record->toArray())
                         ->action(function($data, $record) {
                             // dd($data);
+                            DB::beginTransaction();
                             try {
                                 $record->update($data);
+                                DB::commit();
                                 Notification::make()
                                 ->success()
                                 ->title('Success')
                                 ->body('The changes have been saved');
                             } catch (\Throwable $th) {
+                                DB::rollBack();
                                 Notification::make()
                                     ->title('Error')
                                     ->body($th->getMessage());
                             }
-                        }),
+                        })
+                        ->after(fn($livewire) =>  $livewire->dispatch('refreshTable')),
                     Tables\Actions\Action::make('admitting_order')
                         ->label('Admitting Order Form')
                         ->icon('heroicon-s-document-text')
@@ -499,16 +508,18 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                         // ->fillForm(fn($record) => [
                         //     'admitting_order_data' => $record->admitting_order_data
                         // ])
-                        ->action(function($data, $record) {
-                        //    dd($data);
+                        ->action(function($data, $record, $livewire) {
+                            DB::beginTransaction();
                             try {
                                 //code...
                                 $record->update($data);
+                                DB::commit();
                                 Notification::make()
                                 ->success()
                                 ->title('Success')
                                 ->body('The changes have been saved');
                             } catch (\Throwable $th) {
+                                DB::rollBack();
                                 dd($th->getMessage());
                                 Notification::make()
                                     ->title('Error')
@@ -544,7 +555,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                         ->color('success')
                         ->icon('heroicon-o-printer')
                         ->format(format: 'letter')
-                        // ->preview()
+                        ->preview()
                         // ->action(fn($data) => dd($data))
                         // ->visible(fn($record) => filled($record->approximate_days) && filled($record->estimated_date) && filled($record->medical_cert_remarks))
                         ->content(fn($record): View => view('consultations.medcert', [
@@ -577,7 +588,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                 'patient' => $record->patient,
                             ]);
                         })
-                        // ->preview()
+                        ->preview()
                         // ->action(fn($data) => dd($data))
                         // ->visible(fn($record) => filled($record->approximate_days) && filled($record->estimated_date) && filled($record->medical_cert_remarks))
                         // ->content(fn($record): View => view('consultations.admitting-order', [

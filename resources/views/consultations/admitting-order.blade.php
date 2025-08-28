@@ -1,34 +1,37 @@
-<style>
-    @page {
-        size: A5;
-        margin: 20mm;
-    }
-
-    body {
-        font-family: Arial, sans-serif;
-    }
-
-    /* Remove fixed height so content can flow */
-    .prescription-container {
-        width: 148mm;
-        /* height: 210mm; removed */
-    }
-
-    @media print {
-        .prescription-container {
-            width: 148mm;
+    <style>
+        @page {
+            size: A5;
+            margin: 20mm;
         }
-    }
 
-    /* Fix underline gap for date fields */
-    .underline-tight {
-        display: inline-block;
-        border-bottom: 2px solid #000;
-        line-height: 1;
-        padding-bottom: 0;
-    }
-</style>
+        body {
+            font-family: Arial, sans-serif;
+        }
 
+        .prescription-container {
+            width: 100%;
+            height: auto !important;
+            min-height: auto !important;
+            overflow: visible !important;
+
+            /* allow natural page breaking */
+            page-break-inside: auto;
+            page-break-after: auto;
+        }
+
+        .header, .footer {
+            page-break-inside: avoid;
+        }
+
+        .content {
+            page-break-inside: auto;
+        }
+
+        p {
+            page-break-inside: avoid;
+            margin: 4px 0;
+        }
+    </style>
 <div class="prescription-container bg-white shadow text-[9pt] p-[10mm]" id="prescription">
     <!-- Header -->
     <header class="header">
