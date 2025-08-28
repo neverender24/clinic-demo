@@ -484,7 +484,8 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                     ->title('Error')
                                     ->body($th->getMessage());
                             }
-                        }),
+                        })
+                        ->after(fn($livewire) =>  $livewire->dispatch('refreshTable')),
                     Tables\Actions\Action::make('admitting_order')
                         ->label('Admitting Order Form')
                         ->icon('heroicon-s-document-text')
