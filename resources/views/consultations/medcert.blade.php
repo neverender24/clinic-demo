@@ -94,7 +94,7 @@
                         to allow for complete recovery.
                     </p>
                     <p>
-                        The patient is fit to return to work/school on <u>{{$return_date}}</u>
+                        The patient is fit to return to work/school on <u>{{!$return_date : 'N/A' : $return_date}}</u>
                     </p>
                     <div class="flex flex-col gap-y-0.5">
                         <div>Remarks: </div>
