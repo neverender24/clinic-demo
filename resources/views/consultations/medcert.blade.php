@@ -76,12 +76,21 @@
                     <p class="text-justify">This certifies that the above-mentioned patient
                         was seen and evaluated at this clinic/hospital on <u>{{$consultation_date}}</u> due to <u>{!!$chief_complaint!!}</u>
                     </p>
-                    <div class="flex gap-x-3">
-                        <div class="ms-2"> Diagnosis: </div>
-                        <div class="font-bold"> {!! $diagnosis !!} </div>
+                    {{-- <div class="flex">
+                        <div class=""> Diagnosis: </div>  <span class="border-b border-b-1 border-gray-950">testsdfdsf</span>
+                        
+                    </div> --}}
+                    <div class="flex gap-2 items-center">
+                        <div>Diagnosis:</div>
+                        <u >{!! strip_tags($diagnosis, '<b><i><u>') !!}</u>
                     </div>
                     <p>
-                        This patient is advised to have <u>{{$approximate_days_in_word}} ({{$approximate_days}})</u> days of rest, from <u>{{$estimated_date}}</u> to <u>{{$estimated_date_to}}</u>
+                        This patient is advised to have
+                        {{-- @if ()
+                            
+                        @endif  --}}
+                        <u>{{($approximate_days == 'N/A' ? '' : $approximate_days_in_word)}} {{$approximate_days}}</u> days of rest, from <u>{{(!$estimated_date ? 'N/A' : $estimated_date)}}</u>
+                         to <u>{{(!$estimated_date_to ? 'N/A' : $estimated_date_to)}}</u>
                         to allow for complete recovery.
                     </p>
                     <p>

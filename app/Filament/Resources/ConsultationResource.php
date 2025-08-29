@@ -555,7 +555,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                         ->color('success')
                         ->icon('heroicon-o-printer')
                         ->format(format: 'letter')
-                        ->preview()
+                        // ->preview()
                         // ->action(fn($data) => dd($data))
                         // ->visible(fn($record) => filled($record->approximate_days) && filled($record->estimated_date) && filled($record->medical_cert_remarks))
                         ->content(fn($record): View => view('consultations.medcert', [
@@ -567,7 +567,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                             'consultation_date' => $record->date?->format('F d, Y'),
                             'medical_cert_remarks' => $record->medical_cert_remarks,
                             'approximate_days_in_word' => Number::spell(intval($record->approximate_days)),
-                            'approximate_days' => $record->approximate_days,
+                            'approximate_days' => transform($record->approximate_days, fn($value) => "($value)", 'N/A'),
                             'estimated_date' => $record->estimated_date ? $record->estimated_date->format('F j, Y') : '',
                             'estimated_date_to' => $record->estimated_date_to ? Carbon::parse($record->estimated_date_to)->format('F j, Y') : null,
                             'return_date' => $record->return_date ? Carbon::parse($record->return_date)->format('F j, Y') : null,
