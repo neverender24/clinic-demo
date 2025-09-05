@@ -80,9 +80,10 @@
                         <div class=""> Diagnosis: </div>  <span class="border-b border-b-1 border-gray-950">testsdfdsf</span>
                         
                     </div> --}}
-                    <div class="flex gap-2 items-center">
-                        <div>Diagnosis:</div>
-                        <u >{!! strip_tags($diagnosis, '<b><i><u>') !!}</u>
+                    <div class="diagnosis">
+                        Diagnosis:
+                        <br>
+                        {!!$diagnosis!!}
                     </div>
                     <p>
                         This patient is advised to have
