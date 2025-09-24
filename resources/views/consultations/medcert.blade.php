@@ -50,7 +50,7 @@
                         <div class=" flex p-0">
                             <strong style="display: inline;">Name:</strong> <span style="display: inline;" class="ms-1"> {{$patient->full_name}}</span>
                         </div>
-                        <div class="basis-1/4">
+                        <div class="">
                             <strong>Date:</strong> <span class="w-full border-b-1">{{ now()->format('F j, Y')}}</span>
                         </div>
                     </div>
