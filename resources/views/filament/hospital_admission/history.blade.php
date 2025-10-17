@@ -1,7 +1,7 @@
 <div x-data="myData">
     <div class="mt-3">
         <div x-load="" x-load-src="http://localhost:8000/js/filament/tables/components/table.js?v=3.3.14.0" class="fi-ta">
-            <div class="fi-ta-ctn divide-y divide-gray-200 overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:divide-white/10 dark:bg-gray-900 dark:ring-white/10">
+            <div class="fi-ta-ctn divide-y divide-gray-200 overflow-hidden rounded-xl bg-white shadow-xs ring-1 ring-gray-950/5 dark:divide-white/10 dark:bg-gray-900 dark:ring-white/10">
                 <div class="fi-ta-header-ctn divide-y divide-gray-200 dark:divide-white/10">
 
 
@@ -46,7 +46,7 @@
                 <div class="fi-ta-content relative divide-y divide-gray-200 overflow-x-auto dark:divide-white/10 dark:border-t-white/10">
                     @foreach($hospital_admissions as $row)
                     <!--[if BLOCK]><![endif]-->
-                    <div style="--cols-default: repeat(1, minmax(0, 1fr));" class="grid grid-cols-[--cols-default] gap-y-px bg-gray-200 dark:bg-white/5">
+                    <div style="--cols-default: repeat(1, minmax(0, 1fr));" class="grid grid-cols-(--cols-default) gap-y-px bg-gray-200 dark:bg-white/5">
                         <!--[if BLOCK]><![endif]-->
                         <!--[if BLOCK]><![endif]--><!--[if ENDBLOCK]><![endif]-->
 
@@ -62,12 +62,12 @@
                                         <div class="ps-4 sm:ps-6 pe-4 sm:pe-6 block w-full">
                                             <!--[if BLOCK]><![endif]-->
                                             <!--[if BLOCK]><![endif]-->
-                                            <div style="--col-span-default: span 1 / span 1;" class="col-[--col-span-default] flex-1 w-full">
+                                            <div style="--col-span-default: span 1 / span 1;" class="col-(--col-span-default) flex-1 w-full">
                                                 <!--[if BLOCK]><![endif]-->
                                                 <div class="fi-ta-split flex items-center gap-3">
                                                     <!--[if BLOCK]><![endif]-->
                                                     <!--[if BLOCK]><![endif]-->
-                                                    <div style="--col-span-default: span 1 / span 1;" class="col-[--col-span-default] flex-1 w-full">
+                                                    <div style="--col-span-default: span 1 / span 1;" class="col-(--col-span-default) flex-1 w-full">
                                                         <!--[if BLOCK]><![endif]-->
                                                         <div class="fi-ta-col-wrp">
                                                             <!--[if BLOCK]><![endif]-->
@@ -87,9 +87,9 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div style="--col-span-default: span 1 / span 1;" class="col-[--col-span-default] flex-1 w-full">
+                                                    <div style="--col-span-default: span 1 / span 1;" class="col-(--col-span-default) flex-1 w-full">
                                                         <div class="flex flex-col items-start">
-                                                            <div style="--col-span-default: span 1 / span 1;" class="col-[--col-span-default] flex-1 w-full">
+                                                            <div style="--col-span-default: span 1 / span 1;" class="col-(--col-span-default) flex-1 w-full">
                                                                 <div class="fi-ta-col-wrp">
                                                                     <div class="flex w-full disabled:pointer-events-none justify-start text-start">
                                                                         <div class="fi-ta-text grid w-full gap-y-1">
@@ -111,7 +111,7 @@
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <div style="--col-span-default: span 1 / span 1;" class="col-[--col-span-default] flex-1 w-full">
+                                                            <div style="--col-span-default: span 1 / span 1;" class="col-(--col-span-default) flex-1 w-full">
                                                                 <div class="fi-ta-col-wrp">
                                                                     <div class="flex w-full disabled:pointer-events-none justify-start text-start">
                                                                         <div class="fi-ta-text grid w-full gap-y-1">
@@ -139,7 +139,7 @@
                                         </div>
                                     </div>
                                     <div class="fi-ta-actions flex shrink-0 items-center gap-3 flex-wrap sm:flex-nowrap justify-start md:justify-end md:ps-3 ps-4 sm:ps-6 pe-4 sm:pe-6">
-                                        <button @click="showModal({{$row}})" type="button" class="fi-link group/link relative inline-flex items-center justify-center outline-none fi-size-sm fi-link-size-sm gap-1 fi-color-custom fi-color-primary fi-ac-action fi-ac-link-action">
+                                        <button @click="showModal({{$row}})" type="button" class="fi-link group/link relative inline-flex items-center justify-center outline-hidden fi-size-sm fi-link-size-sm gap-1 fi-color-custom fi-color-primary fi-ac-action fi-ac-link-action">
 
                                             <svg fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="animate-spin fi-link-icon h-4 w-4 text-custom-600 dark:text-custom-400" style="--c-400:var(--primary-400);--c-600:var(--primary-600);" wire:loading.delay.default="" wire:target="mountTableAction('view', '2')">
                                                 <path clip-rule="evenodd" d="M12 19C15.866 19 19 15.866 19 12C19 8.13401 15.866 5 12 5C8.13401 5 5 8.13401 5 12C5 15.866 8.13401 19 12 19ZM12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" fill-rule="evenodd" fill="currentColor" opacity="0.2"></path>
@@ -187,7 +187,7 @@
       -->
                     <div class="relative transform overflow-hidden rounded-lg bg-white dark:bg-gray-800/80 px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
                         <div class=" flex flex-col text-md">
-                            <div class="text-lg uppercase border-b border-b-1 bdc-gray-500/60 dark:bdc-white/60 mb-3 pb-2">
+                            <div class="text-lg uppercase border-b border-b bdc-gray-500/60 dark:bdc-white/60 mb-3 pb-2">
                                 🏥 Hospital Admission Details
                             </div>
                             <div>
@@ -213,7 +213,7 @@
                                         <dt class="text-sm/6 font-medium text-white">
                                             Diagnosis:
                                             <div>
-                                                <a x-show="!copied || field_copied !== 'diagnosis'" hreff="#" @click="copyData(admission,'diagnosis')" class="inline-flex items-center rounded-md bg-indigo-600 px-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 hover:cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                                                <a x-show="!copied || field_copied !== 'diagnosis'" hreff="#" @click="copyData(admission,'diagnosis')" class="inline-flex items-center rounded-md bg-indigo-600 px-2.5 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 hover:cursor-pointer focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z" />
                                                 </svg>
@@ -230,7 +230,7 @@
                                         <dt class="text-sm/6 font-medium text-white">
                                             Remarks:
                                             <div>
-                                                <a x-show="!copied || field_copied !== 'test_results'" hreff="#" @click="copyData(admission,'test_results')" class="inline-flex items-center rounded-md bg-indigo-600 px-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 hover:cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                                                <a x-show="!copied || field_copied !== 'test_results'" hreff="#" @click="copyData(admission,'test_results')" class="inline-flex items-center rounded-md bg-indigo-600 px-2.5 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 hover:cursor-pointer focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z" />
                                                 </svg>
@@ -246,8 +246,8 @@
                             </div>
                         </div>
                         <div class="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
-                            <button type="button" @click="copyData(admission,'all')" class="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2">Copy All</button>
-                            <button type="button" @click="closeModal" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:col-start-1 sm:mt-0">Cancel</button>
+                            <button type="button" @click="copyData(admission,'all')" class="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2">Copy All</button>
+                            <button type="button" @click="closeModal" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:col-start-1 sm:mt-0">Cancel</button>
                         </div>
                     </div>
                 </div>

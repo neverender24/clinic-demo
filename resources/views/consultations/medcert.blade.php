@@ -51,7 +51,7 @@
                             <strong style="display: inline;">Name:</strong> <span style="display: inline;" class="ms-1"> {{$patient->full_name}}</span>
                         </div>
                         <div class="">
-                            <strong>Date:</strong> <span class="w-full border-b-1">{{ now()->format('F j, Y')}}</span>
+                            <strong>Date:</strong> <span class="w-full border-b">{{ now()->format('F j, Y')}}</span>
                         </div>
                     </div>
                     <div class="flex justify-between">
@@ -77,7 +77,7 @@
                         was seen and evaluated at this clinic/hospital on <u>{{$consultation_date}}</u> due to <u>{!!$chief_complaint!!}</u>
                     </p>
                     {{-- <div class="flex">
-                        <div class=""> Diagnosis: </div>  <span class="border-b border-b-1 border-gray-950">testsdfdsf</span>
+                        <div class=""> Diagnosis: </div>  <span class="border-b border-b border-gray-950">testsdfdsf</span>
                         
                     </div> --}}
                     <div class="diagnosis">

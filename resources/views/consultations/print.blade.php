@@ -57,7 +57,7 @@
 </style>
 
 @foreach($medicines as $row)
-<div class="prescription-container bg-white shadow flex flex-col text-[9pt] p-[10mm]" id="prescription">
+<div class="prescription-container bg-white shadow-sm flex flex-col text-[9pt] p-[10mm]" id="prescription">
         <!-- Heading Section -->
         <header class="header">
             <img src="{{asset('storage/'.$header_image)}}" alt="Clinic Logo" class="logo">
@@ -78,7 +78,7 @@
                     <strong style="display: inline;">Name:</strong> <span style="display: inline;" class="ms-1"> {{$patient->full_name}}</span>
                 </div>
                 <div class="col-span-2">
-                    <strong>Date:</strong> <span class="w-full border-b-1">{{ now()->format('F j, Y')}}</span>
+                    <strong>Date:</strong> <span class="w-full border-b">{{ now()->format('F j, Y')}}</span>
                 </div>
                 <div class="col-span-3">
                     <strong style="display: inline;">Address:</strong> <span style="display: inline;" class=""> {{$patient->address}}</span>

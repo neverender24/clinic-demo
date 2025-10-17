@@ -32,7 +32,7 @@
             margin: 4px 0;
         }
     </style>
-<div class="prescription-container bg-white shadow text-[9pt] p-[10mm]" id="prescription">
+<div class="prescription-container bg-white shadow-sm text-[9pt] p-[10mm]" id="prescription">
     <!-- Header -->
     <header class="header">
         <img src="{{ asset('storage/'.$header_image) }}" alt="Clinic Logo" class="logo">

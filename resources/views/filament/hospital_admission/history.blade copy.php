@@ -25,7 +25,7 @@
                                     Discharge Date
                                 </span>
                             </legend>
-                            <!-- <button type="button" class="relative inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Create new job</button> -->
+                            <!-- <button type="button" class="relative inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Create new job</button> -->
                         </div>
                     </div>
                     <div class="mt-8 flow-root">
@@ -44,9 +44,9 @@
                                             <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-200 sm:pl-0 w-20
                                             ">{{ $row->clinic->name }}</td>
                                             <td>
-                                                <div style="--col-span-default: span 1 / span 1;" class="col-[--col-span-default] flex-1 w-full">
+                                                <div style="--col-span-default: span 1 / span 1;" class="col-(--col-span-default) flex-1 w-full">
                                                     <div class="flex flex-col items-start">
-                                                        <div style="--col-span-default: span 1 / span 1;" class="col-[--col-span-default] flex-1 w-full">
+                                                        <div style="--col-span-default: span 1 / span 1;" class="col-(--col-span-default) flex-1 w-full">
                                                             <div class="fi-ta-col-wrp">
                                                                 <div class="flex w-full disabled:pointer-events-none justify-start text-start">
                                                                     <div class="fi-ta-text grid w-full gap-y-1">
@@ -68,7 +68,7 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div style="--col-span-default: span 1 / span 1;" class="col-[--col-span-default] flex-1 w-full">
+                                                        <div style="--col-span-default: span 1 / span 1;" class="col-(--col-span-default) flex-1 w-full">
                                                             <div class="fi-ta-col-wrp">
                                                                 <div class="flex w-full disabled:pointer-events-none justify-start text-start">
                                                                     <div class="fi-ta-text grid w-full gap-y-1">

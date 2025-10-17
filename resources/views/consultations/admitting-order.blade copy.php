@@ -20,7 +20,7 @@
     
 </style>
 
-<div class="prescription-container bg-white shadow pl-14 pr-10 gap-x-0 flex flex-col text-[12pt] py-4" id="admitting-order">
+<div class="prescription-container bg-white shadow-sm pl-14 pr-10 gap-x-0 flex flex-col text-[12pt] py-4" id="admitting-order">
     <!-- Heading Section -->
     <header class="header">
         <img src="{{asset('storage/'.$header_image)}}" alt="Clinic Logo" class="logo">
