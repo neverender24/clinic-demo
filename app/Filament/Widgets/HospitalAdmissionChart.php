@@ -2,17 +2,19 @@
 
 namespace App\Filament\Widgets;
 
+use Carbon\Carbon;
 use Filament\Support\RawJs;
+use Filament\Schemas\Schema;
 use App\Trait\HasPeriodFilter;
 use Filament\Facades\Filament;
 use App\Models\HospitalAdmission;
-use Carbon\Carbon;
 use Filament\Forms\Components\Select;
 use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
+use Filament\Widgets\ChartWidget\Concerns\HasFiltersSchema;
 
 class HospitalAdmissionChart extends ApexChartWidget
 {
-    use HasPeriodFilter;
+    use HasPeriodFilter, HasFiltersSchema;
     /**
      * Chart Id
      *
@@ -43,8 +45,12 @@ class HospitalAdmissionChart extends ApexChartWidget
 
      protected $chartLabel;
 
+    public function filtersSchema(Schema $schema): Schema
+    {
+        return $schema->components($this->getFormSchema());
+    }
 
-     protected function getFormSchema(): array
+    protected function getFormSchema(): array
     {
         return [
             Select::make('hospital')
@@ -101,7 +107,7 @@ class HospitalAdmissionChart extends ApexChartWidget
                 'size' => 0, // Remove markers
             ],
             'title' => [
-                'text' => "Showing {$this->filterFormData['period']} Hospital Admission", // Chart title
+                'text' => "Showing {$this->filters['period']} Hospital Admission", // Chart title
                 'align' => 'left',
             ],
             'fill' => [
@@ -138,11 +144,11 @@ class HospitalAdmissionChart extends ApexChartWidget
 
     protected function getData(): void
     {
-        // dd($this->filterFormData['clinic_id']);
+        // dd($this->filters['clinic_id']);
         // dd();
 
-        $data = HospitalAdmission::withPeriod($this->filterFormData['period'])
-                    ->when($this->filterFormData['hospital'] != 'All' , fn($query) => $query->where('hospital', $this->filterFormData['hospital']))
+        $data = HospitalAdmission::withPeriod($this->filters['period'])
+                    ->when($this->filters['hospital'] != 'All' , fn($query) => $query->where('hospital', $this->filters['hospital']))
                     ->get()
                     ->each(function($item) {
                         $item->date = Carbon::parse($item->admission_date);
@@ -150,13 +156,13 @@ class HospitalAdmissionChart extends ApexChartWidget
                     });
 
         $filteredData = [];
-        if ($this->filterFormData['period'] === 'Daily') {
+        if ($this->filters['period'] === 'Daily') {
             $filteredData = $this->getDaily($data);
-        } else if ($this->filterFormData['period'] === 'Weekly') {
+        } else if ($this->filters['period'] === 'Weekly') {
             $filteredData = $this->getWeekly($data);
-        } else if ($this->filterFormData['period'] === 'Monthly') {
+        } else if ($this->filters['period'] === 'Monthly') {
             $filteredData = $this->getMonthly($data);
-        } else if($this->filterFormData['period'] === 'Yearly') {
+        } else if($this->filters['period'] === 'Yearly') {
             $filteredData = $this->getYearly($data);
         }
 

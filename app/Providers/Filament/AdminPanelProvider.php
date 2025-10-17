@@ -88,7 +88,8 @@ class AdminPanelProvider extends PanelProvider
 
             ->sidebarFullyCollapsibleOnDesktop()
             ->plugins([
-                FilamentShieldPlugin::make(),
+                FilamentShieldPlugin::make()
+                    ->scopeToTenant(false),
                 FilamentApexChartsPlugin::make(),
                 // ActivitylogPlugin::make()
                 //     ->label('Log')

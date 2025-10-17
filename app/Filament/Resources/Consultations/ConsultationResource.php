@@ -52,7 +52,6 @@ use Filament\Forms\Components\View as ComponentsView;
 use App\Filament\Resources\ConsultationResource\Pages;
 use App\Filament\Resources\Consultations\Pages\CreateConsultation;
 use Torgodly\Html2Media\Tables\Actions\Html2MediaAction;
-use Asmit\FilamentMention\Forms\Components\RichMentionEditor;
 
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use App\Filament\Resources\ConsultationResource\RelationManagers;
@@ -495,18 +494,18 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                         ->label('Admitting Order Form')
                         ->icon('heroicon-s-document-text')
                         ->schema([
-                            RichMentionEditor::make('admitting_order_data')
-                            ->mentionsItems(function () {
-                                return Patient::all()->map(function ($user) {
-                                    return [
-                                        'display_name' => $user->full_name,
-                                        'name' => $user->full_name,
-                                        'address' => $user->address,
-                                        'avatar' => asset('images/user.svg'),
-                                        'url' => 'admin/users/' . $user->id,
-                                    ];
-                                })->toArray();
-                            })
+                            RichEditor::make('admitting_order_data')
+                            // ->mentionsItems(function () {
+                            //     return Patient::all()->map(function ($user) {
+                            //         return [
+                            //             'display_name' => $user->full_name,
+                            //             'name' => $user->full_name,
+                            //             'address' => $user->address,
+                            //             'avatar' => asset('images/user.svg'),
+                            //             'url' => 'admin/users/' . $user->id,
+                            //         ];
+                            //     })->toArray();
+                            // })
                             ->default(fn($record) => transform($record->admitting_order_data, fn($value) => $value == '' || $value == null ? null: $value)
                                                             ?? '<p>&nbsp;To: <span class="text-underline">&nbsp; &nbsp; &nbsp; &nbsp;</span></p><p><br></p><p><br></p><p><br></p><p>&nbsp;- Please admit patient to <span class="text-underline"> &nbsp; &nbsp; &nbsp; &nbsp;</span>&nbsp;</p><p>&nbsp;- Secure consent to care&nbsp;</p><p>&nbsp;- Diet&nbsp;</p><p>&nbsp;- IVF&nbsp;</p><p>&nbsp;- Diagnostics:&nbsp;</p><p><br></p><p><br></p><p>&nbsp;- Medications:&nbsp;</p><p><br></p><p><br></p><p>&nbsp;- VS q4 and I &amp; O qShift&nbsp;</p><p>&nbsp;- Watchout for unusualities&nbsp;</p><p>&nbsp;- Kindly inform me once admitted&nbsp;</p><p>&nbsp;- Refer accordingly&nbsp;</p><p><br></p><p>- Special Instructions (if any):</p>')
                         ])

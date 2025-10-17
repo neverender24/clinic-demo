@@ -4,21 +4,23 @@ namespace App\Filament\Widgets;
 
 use Carbon\Carbon;
 use App\Models\Clinic;
+use Filament\Support\RawJs;
 use App\Models\Consultation;
+use Filament\Schemas\Schema;
+use App\Trait\HasPeriodFilter;
 use Filament\Facades\Filament;
 use App\Models\Scopes\TenantScope;
 use Filament\Forms\Components\Select;
 use App\Models\Scopes\ConsultationScope;
-use App\Trait\HasPeriodFilter;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
-use Filament\Support\RawJs;
+use Filament\Widgets\ChartWidget\Concerns\HasFiltersSchema;
 use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
 
 class ConsultationChart extends ApexChartWidget
 {
 
-    use HasPeriodFilter;
+    use HasPeriodFilter, HasFiltersSchema;
 
     // protected static ?string $pollingInterval = '';
 
@@ -50,6 +52,11 @@ class ConsultationChart extends ApexChartWidget
      protected $chartData;
 
      protected $chartLabel;
+
+    public function filtersSchema(Schema $schema): Schema
+    {
+        return $schema->components($this->getFormSchema());
+    }
 
      protected function getFormSchema(): array
     {
@@ -111,7 +118,7 @@ class ConsultationChart extends ApexChartWidget
                 'size' => 0, // Remove markers
             ],
             'title' => [
-                'text' => "Showing {$this->filterFormData['period']} Consultations", // Chart title
+                'text' => "Showing {$this->filters['period']} Consultations", // Chart title
                 'align' => 'left',
             ],
             'fill' => [
@@ -149,25 +156,25 @@ class ConsultationChart extends ApexChartWidget
 
     protected function getData(): void
     {
-        // dd($this->filterFormData['clinic_id']);
+        // dd($this->filters['clinic_id']);
         // dd();
 
         $data = Consultation::withoutGlobalScopes([TenantScope::class])
-                    ->when($this->filterFormData['clinic_id'] != 'All', fn($query) => $query->where('clinic_id', $this->filterFormData['clinic_id']))
-                    ->withPeriod($this->filterFormData['period'])
+                    ->when($this->filters['clinic_id'] != 'All', fn($query) => $query->where('clinic_id', $this->filters['clinic_id']))
+                    ->withPeriod($this->filters['period'])
                     ->get()
                     ->each(function($item) {
                         $item->consultation_date = $item->date->format('Y-m-d');
                     });
 
         $filteredData = [];
-        if ($this->filterFormData['period'] === 'Daily') {
+        if ($this->filters['period'] === 'Daily') {
             $filteredData = $this->getDaily($data);
-        } else if ($this->filterFormData['period'] === 'Weekly') {
+        } else if ($this->filters['period'] === 'Weekly') {
             $filteredData = $this->getWeekly($data);
-        } else if ($this->filterFormData['period'] === 'Monthly') {
+        } else if ($this->filters['period'] === 'Monthly') {
             $filteredData = $this->getMonthly($data);
-        } else if ($this->filterFormData['period'] === 'Yearly') {
+        } else if ($this->filters['period'] === 'Yearly') {
             $filteredData = $this->getYearly($data);
         }
 
