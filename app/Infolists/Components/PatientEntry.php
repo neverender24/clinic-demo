@@ -23,10 +23,10 @@ class PatientEntry extends TextEntry
         return $this;
     }
 
-    public function getSize(mixed $state): TextSize | string | null
-    {
-        return $this->evaluate($this->size, [
-            'state' => $state,
-        ]);
-    }
+    // public function getSize(mixed $state): TextSize | string | null
+    // {
+    //     return $this->evaluate($this->size, [
+    //         'state' => $state,
+    //     ]);
+    // }
 }
