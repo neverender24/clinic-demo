@@ -16,10 +16,10 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
-use App\Filament\Resources\PatientResource;
+use App\Filament\Resources\Patients\PatientResource;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Concerns\InteractsWithForms;
-use App\Filament\Resources\ConsultationResource;
+use App\Filament\Resources\Consultations\ConsultationResource;
 use Filament\Tables\Concerns\InteractsWithTable;
 
 class ListOfConsultation extends Component implements HasTable, HasForms, HasActions

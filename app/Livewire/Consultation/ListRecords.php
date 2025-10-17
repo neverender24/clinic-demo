@@ -15,7 +15,7 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Concerns\InteractsWithForms;
-use App\Filament\Resources\ConsultationResource;
+use App\Filament\Resources\Consultations\ConsultationResource;
 use Filament\Tables\Concerns\InteractsWithTable;
 
 class ListRecords extends Component  implements HasForms, HasTable, HasActions
