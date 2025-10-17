@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use Throwable;
 use App\Models\Medicine;
 use App\Models\Scopes\ConsultationScope;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
@@ -22,7 +23,7 @@ class MostPrescribedDrugs extends BaseWidget
                 return 'Most Prescribed Drugs';
 
             }
-        } catch (\Throwable $th) {
+        } catch (Throwable $th) {
             //throw $th;
         }
 

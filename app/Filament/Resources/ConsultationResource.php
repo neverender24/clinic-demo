@@ -2,12 +2,24 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Actions\Action;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Schemas\Components\Fieldset;
+use Throwable;
+use Filament\Support\Enums\Width;
+use App\Filament\Resources\ConsultationResource\Pages\EditConsultation;
+use App\Filament\Resources\ConsultationResource\Pages\CustomDoc;
+use App\Filament\Resources\ConsultationResource\Pages\EditWithHistory;
 use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Tables;
 use App\Models\Patient;
 use App\Models\Medicine;
-use Filament\Forms\Form;
 use Illuminate\View\View;
 use Filament\Tables\Table;
 use Livewire\Attributes\On;
@@ -16,15 +28,11 @@ use Livewire\Attributes\Url;
 use App\Trait\HasStatusAction;
 use Filament\Resources\Resource;
 use Filament\Actions\ActionGroup;
-use Filament\Actions\StaticAction;
 use function Laravel\Prompts\form;
-use Filament\Forms\Components\Grid;
 use Filament\Tables\Filters\Filter;
 use App\Models\ConsultationMedicine;
 use Filament\Forms\Components\Select;
 use Filament\Forms\ComponentContainer;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Livewire;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Tabs\Tab;
@@ -38,10 +46,8 @@ use Filament\Tables\Filters\QueryBuilder;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use App\Livewire\Consultation\ListRecords;
-use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\MarkdownEditor;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Tables\Actions\Action as ActionsAction;
 use Filament\Forms\Components\View as ComponentsView;
 use App\Filament\Resources\ConsultationResource\Pages;
 use App\Filament\Resources\ConsultationResource\Pages\CreateConsultation;
@@ -56,7 +62,6 @@ use App\Models\HospitalAdmission;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Set;
-use Filament\Support\Enums\MaxWidth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Number;
@@ -67,7 +72,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
 
     protected static ?string $model = Consultation::class;
 
-    protected static ?string $navigationIcon = 'healthicons-o-telemedicine';
+    protected static string | \BackedEnum | null $navigationIcon = 'healthicons-o-telemedicine';
 
     protected static bool $shouldRegisterNavigation = true;
     
@@ -97,22 +102,22 @@ class ConsultationResource extends Resource implements HasShieldPermissions
         ];
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Grid::make()
                     ->schema([
                         Section::make()
                             ->schema([
-                                Forms\Components\DatePicker::make('date')
+                                DatePicker::make('date')
                                     ->default(now())
                                     ->required()
                                     ->columnSpan([
                                         'default' => 'full',
                                         'xl' => '1'
                                     ]),
-                                Forms\Components\Select::make('patient_id')
+                                Select::make('patient_id')
                                     ->label('Patient')
                                     ->relationship('patient', 'full_name')
                                     // ->getSearchResultsUsing(fn (string $search) => Patient::query()->where('full_name', 'like', "%$search%")->pluck('full_name', 'id'))
@@ -124,14 +129,14 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                     ->preload()
                                     ->searchable()
 
-                                    ->createOptionForm(function (Form $form) {
-                                        return PatientResource::form($form)->extraAttributes(['class' => 'w-full']);
+                                    ->createOptionForm(function (Schema $schema) {
+                                        return PatientResource::form($schema)->extraAttributes(['class' => 'w-full']);
                                     })
                                     ->createOptionAction(function(Action $action) {
                                         return $action
                                             ->modalWidth('xl')
                                             ->modalHeading('Create Patient')
-                                            ->mutateFormDataUsing(function(array $data) {
+                                            ->mutateDataUsing(function(array $data) {
                                                 $data['user_id'] = auth()->id();
                                                 return $data;
                                             });
@@ -146,24 +151,24 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                 Section::make()
                                     ->extraAttributes(['class' => 'mt-4'])
                                     ->schema([
-                                        Forms\Components\RichEditor::make('chief_complaint')
+                                        RichEditor::make('chief_complaint')
                                         ->required()
                                         ->toolbarButtons(self::onlyAllowedToolbar())
                                         ->fileAttachmentsDirectory('chief-complaint/'.now()->format('m-y'))
                                         ->visible(fn() => auth()->user()->can('addChiefComplaint', static::$model)),
-                                        Forms\Components\RichEditor::make('test_results')
+                                        RichEditor::make('test_results')
                                             ->label('Medical Data')
                                             ->required()
                                             ->toolbarButtons(self::onlyAllowedToolbar())
                                             ->fileAttachmentsDirectory('test-results/'.now()->format('m-y'))
                                             ->visible(fn() => auth()->user()->can('addTestResult', static::$model)),
-                                        Forms\Components\RichEditor::make('diagnosis')
+                                        RichEditor::make('diagnosis')
                                             ->required()
                                             ->toolbarButtons(self::onlyAllowedToolbar())
                                             ->columnSpanFull()
                                             ->fileAttachmentsDirectory('diagnosis/'.now()->format('m-y'))
                                             ->visible(fn() => auth()->user()->hasAnyRole(['Doctor', 'super_admin'])),
-                                        Forms\Components\RichEditor::make('management')
+                                        RichEditor::make('management')
                                             ->required()
                                             ->visible(fn() => auth()->user()->hasAnyRole(['Doctor', 'super_admin']))
                                             ->fileAttachmentsDirectory('management/'.now()->format('m-y'))
@@ -186,7 +191,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                     Repeater::make('medicines')
                                         ->relationship('consultationMedicines')
                                         ->label('Prescription')
-                                        ->addAction(function(StaticAction $action) {
+                                        ->addAction(function(Action $action) {
                                             return $action
                                                         ->label('Add medicine to prescription')
                                                         ->icon('healthicons-o-medicines')
@@ -243,19 +248,19 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                                     })
                                                     ->allowHtml()
                                                     ->required()
-                                                    ->createOptionForm(function (Form $form) {
-                                                        return MedicineResource::form($form)->extraAttributes(['class' => 'w-full']);
+                                                    ->createOptionForm(function (Schema $schema) {
+                                                        return MedicineResource::form($schema)->extraAttributes(['class' => 'w-full']);
                                                     })
                                                     ->createOptionAction(function(Action $action) {
                                                         return $action
                                                             ->modalHeading('Add Medicine')
-                                                            ->mutateFormDataUsing(function(array $data) {
+                                                            ->mutateDataUsing(function(array $data) {
                                                                 $data['user_id'] = auth()->id();
                                                                 return $data;
                                                             });
                                                     })
-                                                    ->editOptionForm(function (Form $form) {
-                                                        return MedicineResource::form($form)->extraAttributes(['class' => 'w-full']);
+                                                    ->editOptionForm(function (Schema $schema) {
+                                                        return MedicineResource::form($schema)->extraAttributes(['class' => 'w-full']);
                                                     })
                                                     ->editOptionAction(function(Action $action, $state) {
                                                         Medicine::with('consultations')->find($state);
@@ -348,30 +353,30 @@ class ConsultationResource extends Resource implements HasShieldPermissions
             )
             ->defaultSort('queueing_number')
             ->columns([
-                Tables\Columns\TextColumn::make('queueing_number')
+                TextColumn::make('queueing_number')
                     ->label('Queue')
                     ->formatStateUsing(fn($state) => sprintf('%02d', $state))
                     ->sortable()
                     ->visible(fn($livewire) => $livewire->activeTab == 'current'),
-                Tables\Columns\TextColumn::make('date')
+                TextColumn::make('date')
                     ->date()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('patient.full_name')
+                TextColumn::make('patient.full_name')
                     ->color(fn($record) => $record->patient->trashed() ? 'danger' : '')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('status')
+                TextColumn::make('status')
                     ->searchable()
                     // ->formatStateUsing(function($record) {
                     //     dd($record);
                     // })
                     ->sortable()
                     ->badge(),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -379,7 +384,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
             ->paginationPageOptions([5, 10, 15, 20, 50, 100])
             ->filters([
                 Filter::make('date')
-                    ->form([
+                    ->schema([
                         Select::make('month')
                             ->options(function() {
                                 $months = [];
@@ -425,46 +430,46 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                     //     return $livewire->activeTab !== 'current';
                     // })
             ])
-            ->actions([
-                Tables\Actions\EditAction::make()
+            ->recordActions([
+                EditAction::make()
                     ->disabled(fn($record) => $record->status->value == 'Done'),
-                Tables\Actions\DeleteAction::make()
+                DeleteAction::make()
                     ->disabled(fn($record) => $record->status->value == 'Done'),
-                Tables\Actions\Action::make('edit_history')
+                Action::make('edit_history')
                     ->visible(fn($record) => auth()->user()->can('edit_as_doctor_consultation'))
                     ->disabled(fn($record) => $record->status->value == 'Done')
                     ->label(fn() => auth()->user()->superAdmin() ? 'Edit as Doctor' : 'Edit')
                     ->icon('heroicon-m-pencil-square')
                     ->url(fn($record) => route('filament.admin.resources.consultations.edit.consultation', [$record->clinic_id, $record->id])),
-                Tables\Actions\ActionGroup::make([
-                    Tables\Actions\Action::make('medical_cert_form')
+                ActionGroup::make([
+                    Action::make('medical_cert_form')
                         ->label('Medical Certificate Form')
                         ->color('primary')
                         ->icon('heroicon-s-document-text')
                         // ->visible(fn($record) => !filled($record->approximate_days) && !filled($record->estimated_date) && !filled($record->medical_cert_remarks))
-                        ->form([
+                        ->schema([
                             Fieldset::make('Date of rest')
                                 ->schema([
-                                    Forms\Components\DatePicker::make('estimated_date')
+                                    DatePicker::make('estimated_date')
                                         ->label('From'),
-                                    Forms\Components\DatePicker::make('estimated_date_to')
+                                    DatePicker::make('estimated_date_to')
                                         ->label('To')
                                         ->validationAttribute('End of date to rest'),
                                 ]),
-                            Forms\Components\Grid::make(2)
+                            Grid::make(2)
                                 ->schema([
 
-                                    Forms\Components\TextInput::make('approximate_days')
+                                    TextInput::make('approximate_days')
                                         ->label('Days of rest and recovery')
                                         ->numeric(),
-                                    Forms\Components\DatePicker::make('return_date')
+                                    DatePicker::make('return_date')
                                         ->afterOrEqual('estimated_date_to')
                                         ->validationMessages([
                                             'after_or_equal' => 'The value must be after the \'Date to\' in the Date of Rest.'
                                         ]),
                                 ]),
                            
-                            Forms\Components\RichEditor::make('medical_cert_remarks')
+                            RichEditor::make('medical_cert_remarks')
                                 ->label('Remarks'),
                         ])
                         ->fillForm(fn($record) => $record->toArray())
@@ -478,7 +483,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                 ->success()
                                 ->title('Success')
                                 ->body('The changes have been saved');
-                            } catch (\Throwable $th) {
+                            } catch (Throwable $th) {
                                 DB::rollBack();
                                 Notification::make()
                                     ->title('Error')
@@ -486,10 +491,10 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                             }
                         })
                         ->after(fn($livewire) =>  $livewire->dispatch('refreshTable')),
-                    Tables\Actions\Action::make('admitting_order')
+                    Action::make('admitting_order')
                         ->label('Admitting Order Form')
                         ->icon('heroicon-s-document-text')
-                        ->form([
+                        ->schema([
                             RichMentionEditor::make('admitting_order_data')
                             ->mentionsItems(function () {
                                 return Patient::all()->map(function ($user) {
@@ -518,7 +523,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                 ->success()
                                 ->title('Success')
                                 ->body('The changes have been saved');
-                            } catch (\Throwable $th) {
+                            } catch (Throwable $th) {
                                 DB::rollBack();
                                 dd($th->getMessage());
                                 Notification::make()
@@ -526,7 +531,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                                     ->body($th->getMessage());
                             }
                         }),
-                        Tables\Actions\Action::make('custom_docs')
+                        Action::make('custom_docs')
                             ->icon('heroicon-s-document-text')
                             ->url(fn($record) => static::getUrl('custom.doc', [$record])),
                     Html2MediaAction::make('print_prescription')
@@ -577,7 +582,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                     Html2MediaAction::make('print_admitting_order')
                         ->label('Admitting Order')
                         ->color('success')
-                        ->modalWidth(MaxWidth::MaxContent)
+                        ->modalWidth(Width::MaxContent)
                         ->icon('heroicon-o-printer')
                         ->format('a5')
                         ->content(function($record): View {
@@ -628,7 +633,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
                     //     })
                     //     ->modalWidth('7xl')
                     //     ->slideOver(),
-                    Tables\Actions\Action::make('status')
+                    Action::make('status')
                         ->label(fn($record) => static::statusLabel($record))
                         ->color(fn($record) => static::statusColor($record))
                         ->icon(fn($record) => static::statusIcon($record))
@@ -651,12 +656,12 @@ class ConsultationResource extends Resource implements HasShieldPermissions
     {
         return [
             // 'index' => Pages\CustomListConsultations::route('/'),
-            'index' => Pages\ListConsultations::route('/'),
-            'create' => Pages\CreateConsultation::route('/create'),
+            'index' => ListConsultations::route('/'),
+            'create' => CreateConsultation::route('/create'),
             // 'create' => Pages\CreateConsultation::route('/create'),
-            'edit' => Pages\EditConsultation::route('/{record}/edit'),
-            'custom.doc' => Pages\CustomDoc::route('/{record}/custom-doc'),
-            'edit.consultation' => Pages\EditWithHistory::route('/{record}/edit-consultation'),
+            'edit' => EditConsultation::route('/{record}/edit'),
+            'custom.doc' => CustomDoc::route('/{record}/custom-doc'),
+            'edit.consultation' => EditWithHistory::route('/{record}/edit-consultation'),
         ];
     }
 

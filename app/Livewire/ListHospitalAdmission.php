@@ -2,6 +2,9 @@
 
 namespace App\Livewire;
 
+use Filament\Actions\Contracts\HasActions;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Action;
 use Livewire\Component;
 use Illuminate\View\View;
 use Filament\Tables\Table;
@@ -16,10 +19,10 @@ use Filament\Tables\Columns\Layout\Stack;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
-use Filament\Tables\Actions\Action;
 
-class ListHospitalAdmission extends Component implements HasTable, HasForms
+class ListHospitalAdmission extends Component implements HasTable, HasForms, HasActions
 {
+    use InteractsWithActions;
     use InteractsWithTable;
     use InteractsWithForms;
     // use InteractsWithRecord;
@@ -47,7 +50,7 @@ class ListHospitalAdmission extends Component implements HasTable, HasForms
                         ])
                     ])
                 ])
-                ->actions([
+                ->recordActions([
                     Action::make('view')
                 ])
                 ->paginated(false);

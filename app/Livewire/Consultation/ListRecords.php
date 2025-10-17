@@ -2,11 +2,13 @@
 
 namespace App\Livewire\Consultation;
 
+use Filament\Actions\Contracts\HasActions;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Action;
 use Livewire\Component;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use App\Models\Consultation;
-use Filament\Tables\Actions\Action;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
@@ -16,9 +18,10 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use App\Filament\Resources\ConsultationResource;
 use Filament\Tables\Concerns\InteractsWithTable;
 
-class ListRecords extends Component  implements HasForms, HasTable
+class ListRecords extends Component  implements HasForms, HasTable, HasActions
 {
 
+    use InteractsWithActions;
     use InteractsWithTable;
     use InteractsWithForms;
 
@@ -51,11 +54,11 @@ class ListRecords extends Component  implements HasForms, HasTable
                         ->label('Date of Consultation')
                         ->dateTime('F j, Y')
                 ])
-                ->actions([
+                ->recordActions([
                     Action::make('select')
                         ->action('selectHistory')
                 ])
-                ->actionsColumnLabel('Action')
+                ->recordActionsColumnLabel('Action')
                 ->heading('Previous Consultations');
     }
 

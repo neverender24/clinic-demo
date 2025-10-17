@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ConsultationResource\Pages;
 
+use Filament\Actions\DeleteAction;
 use Filament\Actions;
 use Illuminate\View\View;
 use function Filament\authorize;
@@ -15,7 +16,7 @@ class EditConsultation extends EditRecord
     protected static string $resource = ConsultationResource::class;
 
     // protected static string $view = 'filament.consultations.list-records';
-    
+
     public function mount(int|string $record): void
     {
         $this->record = $this->resolveRecord($record);
@@ -28,8 +29,8 @@ class EditConsultation extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
-            
+            DeleteAction::make(),
+
         ];
     }
 

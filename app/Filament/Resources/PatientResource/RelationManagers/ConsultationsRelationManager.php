@@ -2,9 +2,10 @@
 
 namespace App\Filament\Resources\PatientResource\RelationManagers;
 
+use Filament\Schemas\Schema;
+use Filament\Actions\CreateAction;
 use App\Filament\Resources\ConsultationResource;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -15,9 +16,9 @@ class ConsultationsRelationManager extends RelationManager
 {
     protected static string $relationship = 'consultations';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return ConsultationResource::form($form);
+        return ConsultationResource::form($schema);
     }
 
     public function table(Table $table): Table
@@ -29,8 +30,8 @@ class ConsultationsRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                CreateAction::make(),
             ])
-            ->actions(ConsultationResource::table($table)->getActions());
+            ->recordActions(ConsultationResource::table($table)->getActions());
     }
 }

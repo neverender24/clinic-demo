@@ -2,19 +2,28 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Grid;
+use Filament\Forms\Components\TagsInput;
+use Filament\Forms\Components\Repeater;
+use Filament\Actions\Action;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use App\Filament\Resources\PatientResource\Pages\ListPatients;
+use App\Filament\Resources\PatientResource\Pages\CreatePatient;
+use App\Filament\Resources\PatientResource\Pages\EditPatient;
 use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Tables;
 use App\Models\Patient;
-use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
-use Filament\Actions\StaticAction;
-use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
 use Filament\Support\Enums\Alignment;
 use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Section;
 use App\Models\Scopes\ConsultationScope;
 use Filament\Forms\Components\DatePicker;
 use App\Filament\Resources\PatientResource\Pages;
@@ -29,52 +38,52 @@ class PatientResource extends Resource
 
     protected static bool $isScopedToTenant = false;
 
-    protected static ?string $navigationIcon = 'healthicons-o-traumatism';
+    protected static string | \BackedEnum | null $navigationIcon = 'healthicons-o-traumatism';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Section::make('')
                     ->schema([
-                        Forms\Components\TextInput::make('last_name')
+                        TextInput::make('last_name')
                             ->required()
                             ->maxLength(45)
                             ->autocomplete(false)
                             ->autocapitalize('words'),
-                        Forms\Components\TextInput::make('first_name')
+                        TextInput::make('first_name')
                             ->required()
                             ->maxLength(45)
                             ->autocomplete(false)
                             ->autocapitalize('words'),
-                        Forms\Components\TextInput::make('middle_name')
+                        TextInput::make('middle_name')
                             ->maxLength(45)
                             ->autocomplete(false)
                             ->autocapitalize('words'),
                         Grid::make()
                             ->schema([
-                                Forms\Components\DatePicker::make('birthday')
+                                DatePicker::make('birthday')
                                     ->required()
                                     ->displayFormat('d/m/Y')
                                     ->native(true),
-                                Forms\Components\Select::make('sex')
+                                Select::make('sex')
                                     ->options([
                                         'M' => 'Male',
                                         'F' => 'Female'
                                     ]),
                             ])
                             ->columns(2),
-                        Forms\Components\TagsInput::make('contact_details')
+                        TagsInput::make('contact_details')
                             // ->separator(',')
                             ->hint('Can be a phone number, email, and/or any other contact detail'),
-                        Forms\Components\TextInput::make('address')
+                        TextInput::make('address')
                             // ->separator(',')
                             ,
-                        Forms\Components\Repeater::make('patientHmos')
+                        Repeater::make('patientHmos')
                             ->label('Patient HMOs')
                             // ->addActionLabel('Click here to add HMO')
                             // ->addActionAlignment(Alignment::Left)
-                            ->addAction(function(StaticAction $action) {
+                            ->addAction(function(Action $action) {
                                 return $action
                                             ->label('Click here to add HMO')
                                             ->icon('healthicons-o-social-work')
@@ -91,7 +100,7 @@ class PatientResource extends Resource
                                     ->searchable()
                                     ->preload()
                                     ->createOptionForm([
-                                        Forms\Components\TextInput::make('name')
+                                        TextInput::make('name')
                                             ->required()
                                             ->maxLength(255)
                                     ])
@@ -117,18 +126,18 @@ class PatientResource extends Resource
             ]))
             ->defaultSort('last_name', )
             ->columns([
-                Tables\Columns\TextColumn::make('full_name')
+                TextColumn::make('full_name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('birthday')
+                TextColumn::make('birthday')
                     ->date()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('sex')
+                TextColumn::make('sex')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('contact_details')
+                TextColumn::make('contact_details')
                     ->searchable()
                     ->listWithLineBreaks(),
-                Tables\Columns\TextColumn::make('address'),
-                Tables\Columns\TextColumn::make('hmos')
+                TextColumn::make('address'),
+                TextColumn::make('hmos')
                     // ->searchable()
                     ->badge()
                     // ->color(fn($livewire) => dd($livewire))
@@ -137,15 +146,15 @@ class PatientResource extends Resource
                     // ->colors(fn($record) => dd($record))
                     // ->color(fn($record) => dd($record->pivot))
                     ,
-                Tables\Columns\TextColumn::make('user.name')
+                TextColumn::make('user.name')
                     ->label('Created By')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -154,11 +163,11 @@ class PatientResource extends Resource
                 //
             ])
             ->paginationPageOptions([5, 10, 15, 20, 50, 100])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make()
+            ->recordActions([
+                EditAction::make(),
+                DeleteAction::make()
                     ->hidden(fn($record) => $record->consultations->count() > 0),
-                Tables\Actions\Action::make('delete_disable')
+                Action::make('delete_disable')
                     ->label('Delete')
                     ->disabled()
                     ->color('danger')
@@ -178,9 +187,9 @@ class PatientResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPatients::route('/'),
-            'create' => Pages\CreatePatient::route('/create'),
-            'edit' => Pages\EditPatient::route('/{record}/edit'),
+            'index' => ListPatients::route('/'),
+            'create' => CreatePatient::route('/create'),
+            'edit' => EditPatient::route('/{record}/edit'),
         ];
     }
 }

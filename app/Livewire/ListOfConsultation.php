@@ -2,10 +2,12 @@
 
 namespace App\Livewire;
 
+use Filament\Actions\Contracts\HasActions;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Schemas\Schema;
 use App\Models\Patient;
 use Filament\Forms\Get;
 use Livewire\Component;
-use Filament\Forms\Form;
 use Filament\Tables\Table;
 use App\Models\Consultation;
 use Filament\Forms\Components\Select;
@@ -20,9 +22,10 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use App\Filament\Resources\ConsultationResource;
 use Filament\Tables\Concerns\InteractsWithTable;
 
-class ListOfConsultation extends Component implements HasTable, HasForms
+class ListOfConsultation extends Component implements HasTable, HasForms, HasActions
 {
 
+    use InteractsWithActions;
     use InteractsWithTable;
     use InteractsWithForms;
 
@@ -55,7 +58,7 @@ class ListOfConsultation extends Component implements HasTable, HasForms
             ]);
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
         // return $form
         //     ->schema([
@@ -87,7 +90,7 @@ class ListOfConsultation extends Component implements HasTable, HasForms
         //     ->model(Consultation::class)
         //     ->statePath('data')
         //     ;
-        return ConsultationResource::form($form)
+        return ConsultationResource::form($schema)
                 ->model(Consultation::class)
                 ->statePath('data');
     }

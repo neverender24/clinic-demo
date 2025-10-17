@@ -22,7 +22,7 @@ class HospitalAdmissionChart extends ApexChartWidget
 
     protected int | string | array $columnSpan = 1;
 
-    protected static ?string $pollingInterval = '';
+    // protected static ?string $pollingInterval = '';
 
     protected static ?int $sort = 3;
     /**

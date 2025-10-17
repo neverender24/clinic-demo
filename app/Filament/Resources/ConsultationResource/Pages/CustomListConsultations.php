@@ -10,7 +10,7 @@ class CustomListConsultations extends Page
 {
     protected static string $resource = ConsultationResource::class;
 
-    protected static string $view = 'filament.resources.consultation-resource.pages.custom-list-consultations';
+    protected string $view = 'filament.resources.consultation-resource.pages.custom-list-consultations';
 
     public $consultation;
 

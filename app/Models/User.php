@@ -3,7 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-
+use Throwable;
+use Database\Factories\UserFactory;
 use App\Trait\HasUserRole;
 use Filament\Facades\Filament;
 use Filament\Panel;
@@ -21,7 +22,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class User extends Authenticatable implements FilamentUser, HasTenants, HasAvatar
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
+    /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable, HasUserRole;
 
     /**
@@ -100,7 +101,7 @@ class User extends Authenticatable implements FilamentUser, HasTenants, HasAvata
         // dd(Filament::getTenant());
         try {
             return Filament::getTenant()->watermarks ? asset('storage/'.Filament::getTenant()->watermarks) : asset('images/user.svg');
-        } catch (\Throwable $th) {
+        } catch (Throwable $th) {
             return asset('images/user.svg');
         }
     }

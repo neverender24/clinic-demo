@@ -2,9 +2,11 @@
 
 namespace App\Filament\Resources\PatientResource\RelationManagers;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
+use Filament\Actions\CreateAction;
 use App\Filament\Resources\HospitalAdmissionResource;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -15,11 +17,11 @@ class HospitalAdmissionsRelationManager extends RelationManager
 {
     protected static string $relationship = 'hospitalAdmissions';
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('hospital')
+        return $schema
+            ->components([
+                TextInput::make('hospital')
                     ->required()
                     ->maxLength(255),
             ]);
@@ -34,8 +36,8 @@ class HospitalAdmissionsRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                CreateAction::make(),
             ])
-            ->actions(HospitalAdmissionResource::table($table)->getActions());
+            ->recordActions(HospitalAdmissionResource::table($table)->getActions());
     }
 }

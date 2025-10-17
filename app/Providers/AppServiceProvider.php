@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Spatie\Permission\PermissionRegistrar;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\Permission;
@@ -34,7 +35,7 @@ class AppServiceProvider extends ServiceProvider
             }
         });
 
-        app(\Spatie\Permission\PermissionRegistrar::class)
+        app(PermissionRegistrar::class)
             ->setPermissionClass(Permission::class)
             ->setRoleClass(Role::class);
 

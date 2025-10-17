@@ -2,11 +2,20 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\CheckboxList;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use App\Filament\Resources\UserResource\Pages\ListUsers;
+use App\Filament\Resources\UserResource\Pages\CreateUser;
+use App\Filament\Resources\UserResource\Pages\EditUser;
 use Filament\Forms;
 use App\Models\User;
 use Filament\Tables;
 use App\Models\Clinic;
-use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Facades\Filament;
 use Filament\Resources\Resource;
@@ -17,41 +26,40 @@ use App\Filament\Resources\UserResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use STS\FilamentImpersonate\Tables\Actions\Impersonate;
 use App\Filament\Resources\UserResource\RelationManagers;
-use Filament\Tables\Actions\ActionGroup;
 
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-users';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-users';
 
-    protected static ?string $navigationGroup = 'Administration';
+    protected static string | \UnitEnum | null $navigationGroup = 'Administration';
 
     protected static bool $isScopedToTenant = false;
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('name')
+        return $schema
+            ->components([
+                TextInput::make('name')
                     ->maxLength(255),
                 Select::make('registeredClinics')
                     ->relationship(name: 'clinics', titleAttribute: 'name')
                     ->multiple()
                     ->preload(),
-                Forms\Components\TextInput::make('username')
+                TextInput::make('username')
                     ->unique(ignoreRecord: true)
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('email')
+                TextInput::make('email')
                     ->unique(ignoreRecord: true)
                     ->maxLength(255),
-                Forms\Components\TextInput::make('password')
+                TextInput::make('password')
                     ->dehydrated(fn($operation, $state) => $operation === 'create' || ($state !== null && strtolower($operation) === 'edit'))
                     ->password()
                     ->required(fn($operation) => strtolower($operation) === 'create')
                     ->maxLength(255),
-                Forms\Components\CheckboxList::make('roles')
+                CheckboxList::make('roles')
                     ->relationship(
                         name: 'roles',
                         titleAttribute: 'name',
@@ -73,22 +81,22 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('username')
+                TextColumn::make('username')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('clinic.name')
+                TextColumn::make('clinic.name')
                     ->searchable()
                     ->label('Assigned Clinic'),
-                Tables\Columns\TextColumn::make('roles.name')
+                TextColumn::make('roles.name')
                     ->badge()
                     ->color('primary')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -96,7 +104,7 @@ class UserResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
+            ->recordActions([
                 Impersonate::make()
                 ->redirectTo(function($record) {
                     $clinic = $record->load('clinics')->clinics->firstWhere('id',Filament::getTenant())?->id ?? $record->load('clinics')->clinics->first()->id;
@@ -106,8 +114,8 @@ class UserResource extends Resource
                 // ->icon('')
                 ->label('Login'),
                 ActionGroup::make([
-                    Tables\Actions\EditAction::make(),
-                    Tables\Actions\DeleteAction::make(),
+                    EditAction::make(),
+                    DeleteAction::make(),
                 ]),
             ]);
     }
@@ -122,9 +130,9 @@ class UserResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListUsers::route('/'),
-            'create' => Pages\CreateUser::route('/create'),
-            'edit' => Pages\EditUser::route('/{record}/edit'),
+            'index' => ListUsers::route('/'),
+            'create' => CreateUser::route('/create'),
+            'edit' => EditUser::route('/{record}/edit'),
         ];
     }
 }

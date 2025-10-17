@@ -2,8 +2,8 @@
 
 namespace App\Filament\Pages\Tenancy;
 
+use Filament\Schemas\Schema;
 use App\Models\Clinic;
-use Filament\Forms\Form;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Actions\Action;
@@ -26,11 +26,11 @@ class EditTenantProfile extends BaseEditTenantProfile
     //     return tru;
     // }
  
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
         // dd($this->record);
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('name')
                     ->required(),
                 TextInput::make('location')

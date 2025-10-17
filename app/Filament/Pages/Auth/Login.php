@@ -2,23 +2,22 @@
 
 namespace App\Filament\Pages\Auth;
 
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Component;
+use Filament\Auth\Http\Responses\LoginResponse;
 use Filament\Pages\Page;
-use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
-use Filament\Pages\Auth\Login as AuthLogin;
 use Illuminate\Validation\ValidationException;
-use Filament\Http\Responses\Auth\LoginResponse;
 
-class Login extends AuthLogin
+class Login extends \Filament\Auth\Pages\Login
 {
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
         
 
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 $this->getLoginFormComponent()
                     ->extraInputAttributes(['tabindex' => 1]),
                 $this->getPasswordFormComponent(),

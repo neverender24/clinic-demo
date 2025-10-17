@@ -90,10 +90,10 @@ class AdminPanelProvider extends PanelProvider
             ->plugins([
                 FilamentShieldPlugin::make(),
                 FilamentApexChartsPlugin::make(),
-                ActivitylogPlugin::make()
-                    ->label('Log')
-                    ->pluralLabel('Logs')
-                    ->navigationGroup('Administration'),
+                // ActivitylogPlugin::make()
+                //     ->label('Log')
+                //     ->pluralLabel('Logs')
+                //     ->navigationGroup('Administration'),
 
             ])
             // ->navigation(function (NavigationBuilder $builder): NavigationBuilder {

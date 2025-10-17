@@ -2,19 +2,20 @@
 
 namespace App\Filament\Resources\ConsultationResource\Pages;
 
+use Filament\Schemas\Schema;
+use Filament\Actions\CreateAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Support\Enums\Width;
 use App\Models\Patient;
-use Filament\Forms\Form;
 use Illuminate\View\View;
 use Filament\Tables\Table;
 use Filament\Resources\Pages\Page;
-use Filament\Support\Enums\MaxWidth;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Forms\Components\TextInput;
-use Filament\Tables\Actions\CreateAction;
 use App\Models\CustomDoc as ModelsCustomDoc;
 use Filament\Forms\Concerns\InteractsWithForms;
 use App\Filament\Resources\ConsultationResource;
@@ -24,7 +25,6 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Torgodly\Html2Media\Tables\Actions\Html2MediaAction;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
 use Asmit\FilamentMention\Forms\Components\RichMentionEditor;
-use Filament\Tables\Actions\DeleteAction;
 use Illuminate\Contracts\Support\Htmlable;
 
 class CustomDoc extends Page implements HasTable, HasForms
@@ -35,7 +35,7 @@ class CustomDoc extends Page implements HasTable, HasForms
 
     protected static string $resource = ConsultationResource::class;
 
-    protected static string $view = 'filament.resources.consultation-resource.pages.custom-doc';
+    protected string $view = 'filament.resources.consultation-resource.pages.custom-doc';
 
     public function mount($record) 
     {
@@ -48,10 +48,10 @@ class CustomDoc extends Page implements HasTable, HasForms
         return "Custom Documents";
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-                ->schema([
+        return $schema
+                ->components([
                     TextInput::make('doc_name')
                         ->label('New Document'),
                     Select::make('size')
@@ -87,21 +87,21 @@ class CustomDoc extends Page implements HasTable, HasForms
                 ])
                 ->headerActions([
                     CreateAction::make()
-                        ->form(fn($form) => $this->form($form))
-                        ->mutateFormDataUsing(function($data) {
+                        ->schema(fn($form) => $this->form($form))
+                        ->mutateDataUsing(function($data) {
                             $data['consultation_id'] = $this->record->id;
                             
                             return $data;
                         })
                 ])
-                ->actions([
+                ->recordActions([
                     EditAction::make()
-                        ->form(fn($form) => $this->form($form)),
+                        ->schema(fn($form) => $this->form($form)),
                     DeleteAction::make(),
                     Html2MediaAction::make('print')
                         ->label(fn($record) => 'Print ')
                         ->color('success')
-                        ->modalWidth(MaxWidth::MaxContent)
+                        ->modalWidth(Width::MaxContent)
                         ->icon('heroicon-o-printer')
                         ->format('a5')
                         ->content(function($record): View {

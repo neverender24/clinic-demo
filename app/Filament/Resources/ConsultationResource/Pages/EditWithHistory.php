@@ -2,21 +2,23 @@
 
 namespace App\Filament\Resources\ConsultationResource\Pages;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Support\Enums\TextSize;
+use Filament\Schemas\Components\Fieldset;
+use Throwable;
 use Carbon\Carbon;
-use Filament\Forms\Form;
 use Illuminate\View\View;
 use Filament\Tables\Table;
 use App\Models\Consultation;
 use App\Trait\HasHistoryAction;
-use Filament\Infolists\Infolist;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\Page;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\HtmlString;
-use Filament\Tables\Actions\Action;
 use App\Models\ConsultationMedicine;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Infolists\Components\Grid;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
@@ -25,10 +27,8 @@ use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Forms\Components\RichEditor;
 use App\Infolists\Components\PatientEntry;
-use Filament\Infolists\Components\Section;
 use Illuminate\Contracts\Support\Htmlable;
 use App\Filament\Resources\PatientResource;
-use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Forms\Components\MarkdownEditor;
@@ -50,7 +50,7 @@ class EditWithHistory extends Page implements HasForms, HasTable, HasInfolists
 {
     protected static string $resource = ConsultationResource::class;
 
-    protected static string $view = 'filament.resources.consultation-resource.pages.edit-with-history';
+    protected string $view = 'filament.resources.consultation-resource.pages.edit-with-history';
 
     use InteractsWithTable;
     use InteractsWithForms;
@@ -117,18 +117,18 @@ class EditWithHistory extends Page implements HasForms, HasTable, HasInfolists
 
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return ConsultationResource::form($form)
+        return ConsultationResource::form($schema)
             ->columns(1)
             ->statePath('data')
             ->model(Consultation::class);
     }
 
-    public function form2(Form $form): Form
+    public function form2(Schema $schema): Schema
     {
-        return $form
-                    ->schema([
+        return $schema
+                    ->components([
                         RichEditor::make('test')
                     ]);
     }
@@ -142,17 +142,17 @@ class EditWithHistory extends Page implements HasForms, HasTable, HasInfolists
                         ->label('Date of Consultation')
                         ->dateTime('F j, Y')
                 ])
-                ->actions([
+                ->recordActions([
                     // Action::make('select2')
                     //     ->action(function($record) {
                     //         $this->historyData = $record;
                     //         $this->dispatch('open-modal', id: 'history-modal');
                     //     }),
-                    Action::make('select_history')
+                    ActionsAction::make('select_history')
                         ->label('view')
                         ->modal()
                         ->modalWidth('7xl')
-                        ->infolist([
+                        ->schema([
                             Grid::make(5)
                             ->schema([
                                 Section::make()
@@ -162,7 +162,7 @@ class EditWithHistory extends Page implements HasForms, HasTable, HasInfolists
                                                 PatientEntry::make('patient.full_name')
                                                     ->inlineLabel(false)
                                                     ->hiddenLabel()
-                                                    ->size(TextEntry\TextEntrySize::Large)
+                                                    ->size(TextSize::Large)
                                                     ->icon('healthicons-o-traumatism')
                                                     ->iconColor('white')
                                                     ->formatStateUsing(fn($state) => strtoupper($state)),
@@ -220,13 +220,13 @@ class EditWithHistory extends Page implements HasForms, HasTable, HasInfolists
                         // ->modalContent(new HtmlString('test'))
                         ->modalHeading(fn($record) => 'Consultation Details '.Carbon::parse($record->date)->format('F j, Y'))
                         ->modalFooterActions([
-                            Action::make('copy_patient_details')
+                            ActionsAction::make('copy_patient_details')
                                 ->label('Copy Patient Record')
                                 ->action(fn($record) => $this->selectHistory($record))
                                 ->cancelParentActions()
                                 ->color('indigo')
                                 ->icon('healthicons-o-medical-records'),
-                            Action::make('copy_prescription')
+                            ActionsAction::make('copy_prescription')
                                 ->label('Copy Prescription')
                                 ->action(fn($record) => $this->copyPrescription($record->medicines))
                                 ->cancelParentActions()
@@ -236,17 +236,17 @@ class EditWithHistory extends Page implements HasForms, HasTable, HasInfolists
 
                         // ->action(fn($record) => $this->selectHistory($record))
                 ])
-                ->actionsColumnLabel('Action')
+                ->recordActionsColumnLabel('Action')
                 ->heading('Previous Consultations')
                 ->paginated(false);
     }
 
-    public function HistoryInfolist(Infolist $infolist): Infolist
+    public function HistoryInfolist(Schema $schema): Schema
     {
         // dd($this->record);
-        return $infolist
+        return $schema
                 ->record($this->historyData->load('medicines'))
-                ->schema([
+                ->components([
                     Grid::make(5)
                         ->schema([
                             Section::make()
@@ -256,7 +256,7 @@ class EditWithHistory extends Page implements HasForms, HasTable, HasInfolists
                                             PatientEntry::make('patient.full_name')
                                                 ->inlineLabel(false)
                                                 ->hiddenLabel()
-                                                ->size(TextEntry\TextEntrySize::Large)
+                                                ->size(TextSize::Large)
                                                 ->icon('healthicons-o-traumatism')
                                                 ->iconColor('white')
                                                 ->formatStateUsing(fn($state) => strtoupper($state)),
@@ -309,7 +309,7 @@ class EditWithHistory extends Page implements HasForms, HasTable, HasInfolists
                                         ])
                                     ])
                                     ->headerActions([
-                                        Action::make('Copy')
+                                        ActionsAction::make('Copy')
                                             ->action(fn($record) => $this->copyPrescription($record->medicines))
                                     ])
                                     ->columnSpan(2)
@@ -342,13 +342,13 @@ class EditWithHistory extends Page implements HasForms, HasTable, HasInfolists
                     ->title('Saved successfully')
                     ->success()
                     ->send();
-                
+
                 $this->dispatch('refresh');
 
                 redirect()->to($this->getResource()::getUrl('edit.consultation', ['record' => $this->record]));
                 // redirect()->to($this->getResource()::getUrl('index'));
 
-            } catch (\Throwable $th) {
+            } catch (Throwable $th) {
                 Notification::make()
                     ->title('Error')
                     ->body($th->getMessage())

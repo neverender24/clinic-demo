@@ -2,15 +2,22 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Columns\ToggleColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Actions\CreateAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\Action;
+use App\Filament\Resources\MedicineResource\Pages\ListMedicines;
 use App\Filament\Resources\MedicineResource\Pages;
 use App\Filament\Resources\MedicineResource\RelationManagers;
 use App\Models\Medicine;
 use Filament\Forms;
 use Filament\Forms\Components\Tabs\Tab;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -19,20 +26,20 @@ class MedicineResource extends Resource
 {
     protected static ?string $model = Medicine::class;
 
-    protected static ?string $navigationIcon = 'healthicons-o-medicines';
+    protected static string | \BackedEnum | null $navigationIcon = 'healthicons-o-medicines';
 
     protected static bool $isScopedToTenant = false;
 
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('name')
+        return $schema
+            ->components([
+                TextInput::make('name')
                     ->label('Generic Name')
                     ->required()
                     ->columnSpanFull(),
-                Forms\Components\TextInput::make('brand')
+                TextInput::make('brand')
                     ->label('Brand Name')
                    // ->required()
                     ->columnSpanFull(),
@@ -48,19 +55,19 @@ class MedicineResource extends Resource
             ->modifyQueryUsing(fn(Builder $query) => $query->with('consultations'))
             ->defaultSort('name')
             ->columns([
-                Tables\Columns\ToggleColumn::make('active')
+                ToggleColumn::make('active')
                     ->offColor('danger'),
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->searchable()
                     ->html(),
-                Tables\Columns\TextColumn::make('brand')
+                TextColumn::make('brand')
                     ->searchable()
                     ->html(),
-                Tables\Columns\TextColumn::make('type')
+                TextColumn::make('type')
                     ->html(),
-                Tables\Columns\TextColumn::make('user.name')
+                TextColumn::make('user.name')
                     ->label('Created By'),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime('F j, Y'),
             ])
             // ->paginated(false)
@@ -71,18 +78,18 @@ class MedicineResource extends Resource
             ->headerActions([
                 CreateAction::make()
                     ->modalWidth('lg')
-                    ->mutateFormDataUsing(function($data) {
+                    ->mutateDataUsing(function($data) {
                         $data['user_id'] = auth()->id();
 
                         return $data;
                     })
             ])
-            ->actions([
-                Tables\Actions\EditAction::make()
+            ->recordActions([
+                EditAction::make()
                     ->modalWidth('lg'),
-                Tables\Actions\DeleteAction::make()
+                DeleteAction::make()
                     ->hidden(fn($record) => $record->consultations->count() > 0),
-                Tables\Actions\Action::make('delete_disable')
+                Action::make('delete_disable')
                     ->label('Delete')
                     ->disabled()
                     ->color('danger')
@@ -101,7 +108,7 @@ class MedicineResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListMedicines::route('/'),
+            'index' => ListMedicines::route('/'),
             // 'create' => Pages\CreateMedicine::route('/create'),
             // 'edit' => Pages\EditMedicine::route('/{record}/edit'),
         ];

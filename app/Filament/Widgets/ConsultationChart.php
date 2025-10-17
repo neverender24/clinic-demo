@@ -20,7 +20,7 @@ class ConsultationChart extends ApexChartWidget
 
     use HasPeriodFilter;
 
-    protected static ?string $pollingInterval = '';
+    // protected static ?string $pollingInterval = '';
 
     protected static ?int $sort = 2;
 

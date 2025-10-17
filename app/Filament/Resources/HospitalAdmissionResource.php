@@ -2,17 +2,26 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Grid;
+use Filament\Actions\Action;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\RichEditor;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\Resources\HospitalAdmissionResource\Pages\ListHospitalAdmissions;
+use App\Filament\Resources\HospitalAdmissionResource\Pages\CreateHospitalAdmission;
+use App\Filament\Resources\HospitalAdmissionResource\Pages\EditHospitalAdmission;
 use Filament\Forms;
 use Filament\Tables;
-use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use App\Models\HospitalAdmission;
-use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Section;
 use Illuminate\Database\Eloquent\Builder;
-use Filament\Forms\Components\Actions\Action;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\HospitalAdmissionResource\Pages;
 use App\Filament\Resources\HospitalAdmissionResource\RelationManagers;
@@ -24,12 +33,12 @@ class HospitalAdmissionResource extends Resource
 {
     protected static ?string $model = HospitalAdmission::class;
 
-    protected static ?string $navigationIcon = 'healthicons-o-admissions';
+    protected static string | \BackedEnum | null $navigationIcon = 'healthicons-o-admissions';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Section::make()
                 ->schema([
                     Grid::make()
@@ -38,14 +47,14 @@ class HospitalAdmissionResource extends Resource
                                 ->relationship('patient', 'full_name')
                                 ->preload()
                                 ->searchable(['full_name'])
-                                ->createOptionForm(function (Form $form) {
-                                    return PatientResource::form($form)->extraAttributes(['class' => 'w-full']);
+                                ->createOptionForm(function (Schema $schema) {
+                                    return PatientResource::form($schema)->extraAttributes(['class' => 'w-full']);
                                 })
                                 ->createOptionAction(function(Action $action) {
                                     return $action
                                         ->modalWidth('xl')
                                         ->modalHeading('Create Patient')
-                                        ->mutateFormDataUsing(function(array $data) {
+                                        ->mutateDataUsing(function(array $data) {
                                             $data['user_id'] = auth()->id();
                                             return $data;
                                         });
@@ -53,16 +62,16 @@ class HospitalAdmissionResource extends Resource
                             TextInput::make('hospital')
                                 ->required()
                                 ->datalist(fn($model) => $model::query()->select('hospital')->distinct()->get()->pluck('hospital')),
-                            Forms\Components\DatePicker::make('admission_date')
+                            DatePicker::make('admission_date')
                                 ->required(),
-                            Forms\Components\DatePicker::make('discharge_date'),
+                            DatePicker::make('discharge_date'),
                         ])
                         ->columns(2),
                     Grid::make()
                         ->schema([
-                            Forms\Components\RichEditor::make('final_diagnosis')
+                            RichEditor::make('final_diagnosis')
                                 ->toolbarButtons(self::onlyAllowedToolbar()),
-                            Forms\Components\RichEditor::make('remarks')
+                            RichEditor::make('remarks')
                                 ->toolbarButtons(self::onlyAllowedToolbar()),
                         ])
                         ->columns(2)
@@ -89,25 +98,25 @@ class HospitalAdmissionResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('hospital')
+                TextColumn::make('hospital')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('admission_date')
+                TextColumn::make('admission_date')
                     ->date()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('discharge_date')
+                TextColumn::make('discharge_date')
                     ->date()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('patient.full_name')
+                TextColumn::make('patient.full_name')
                     ->numeric()
                     ->sortable(),
                 // Tables\Columns\TextColumn::make('user_id')
                 //     ->numeric()
                 //     ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -116,8 +125,8 @@ class HospitalAdmissionResource extends Resource
                 //
             ])
             ->paginationPageOptions([5, 10, 15, 20, 50, 100])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
                 
                 // Html2MediaAction::make('print_admitting_order')
                 //     ->icon('heroicon-o-printer')
@@ -131,9 +140,9 @@ class HospitalAdmissionResource extends Resource
                 //         ]);
                 //     })
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -148,9 +157,9 @@ class HospitalAdmissionResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListHospitalAdmissions::route('/'),
-            'create' => Pages\CreateHospitalAdmission::route('/create'),
-            'edit' => Pages\EditHospitalAdmission::route('/{record}/edit'),
+            'index' => ListHospitalAdmissions::route('/'),
+            'create' => CreateHospitalAdmission::route('/create'),
+            'edit' => EditHospitalAdmission::route('/{record}/edit'),
         ];
     }
 }

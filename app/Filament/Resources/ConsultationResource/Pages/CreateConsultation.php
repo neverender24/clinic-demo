@@ -2,6 +2,10 @@
 
 namespace App\Filament\Resources\ConsultationResource\Pages;
 
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Support\Enums\TextSize;
+use Filament\Schemas\Components\Fieldset;
 use Filament\Actions;
 use Filament\Tables\Table;
 use Livewire\Attributes\On;
@@ -10,14 +14,10 @@ use Filament\Facades\Filament;
 use Illuminate\Support\Carbon;
 use App\Trait\HasHistoryAction;
 use Illuminate\Support\HtmlString;
-use Filament\Tables\Actions\Action;
-use Filament\Infolists\Components\Grid;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
 use App\Infolists\Components\PatientEntry;
-use Filament\Infolists\Components\Section;
 use Filament\Resources\Pages\CreateRecord;
-use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Actions\Action as FilamentAction;
@@ -25,7 +25,6 @@ use App\Filament\Resources\ConsultationResource;
 use App\Models\HospitalAdmission;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Infolists\Components\RepeatableEntry;
-use Filament\Infolists\Components\TextEntry\TextEntrySize;
 use Filament\Notifications\Notification;
 
 class CreateConsultation extends CreateRecord implements HasTable
@@ -119,17 +118,17 @@ class CreateConsultation extends CreateRecord implements HasTable
                 ->label('Date of Consultation')
                 ->dateTime('F j, Y')
         ])
-        ->actions([
+        ->recordActions([
             // Action::make('select2')
             //     ->action(function($record) {
             //         $this->historyData = $record;
             //         $this->dispatch('open-modal', id: 'history-modal');
             //     }),
-            Action::make('select_history')
+            FilamentAction::make('select_history')
                 ->label('view')
                 ->modal()
                 ->modalWidth('7xl')
-                ->infolist([
+                ->schema([
                     Grid::make(5)
                     ->schema([
                         Section::make()
@@ -139,7 +138,7 @@ class CreateConsultation extends CreateRecord implements HasTable
                                         PatientEntry::make('patient.full_name')
                                             ->inlineLabel(false)
                                             ->hiddenLabel()
-                                            ->size(TextEntry\TextEntrySize::Large)
+                                            ->size(TextSize::Large)
                                             ->icon('healthicons-o-traumatism')
                                             ->iconColor('white')
                                             ->formatStateUsing(fn($state) => strtoupper($state)),
@@ -210,13 +209,13 @@ class CreateConsultation extends CreateRecord implements HasTable
                 // ->modalContent(new HtmlString('test'))
                 ->modalHeading(fn($record) => 'Consultation Details '.Carbon::parse($record->date)->format('F j, Y'))
                 ->modalFooterActions([
-                    Action::make('copy_patient_details')
+                    FilamentAction::make('copy_patient_details')
                         ->label('Copy Patient Record')
                         ->action(fn($record) => $this->selectHistory($record))
                         ->cancelParentActions()
                         ->color('indigo')
                         ->icon('healthicons-o-medical-records'),
-                    Action::make('copy_prescription')
+                    FilamentAction::make('copy_prescription')
                         ->label('Copy Prescription')
                         ->action(fn($record) => $this->copyPrescription($record->medicines))
                         ->cancelParentActions()
@@ -226,7 +225,7 @@ class CreateConsultation extends CreateRecord implements HasTable
 
                 // ->action(fn($record) => $this->selectHistory($record))
         ])
-        ->actionsColumnLabel('Action')
+        ->recordActionsColumnLabel('Action')
         ->heading('Previous Consultations')
         ->paginated(false);
     }
