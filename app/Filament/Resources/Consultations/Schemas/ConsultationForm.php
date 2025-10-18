@@ -79,6 +79,7 @@ class ConsultationForm
                                     ->schema([
                                         RichEditor::make('chief_complaint')
                                         ->required()
+                                        ->json(false)
                                         ->toolbarButtons(self::onlyAllowedToolbar())
                                         ->fileAttachmentsDirectory('chief-complaint/'.now()->format('m-y'))
                                         ->visible(fn() => auth()->user()->can('addChiefComplaint', Consultation::class)),

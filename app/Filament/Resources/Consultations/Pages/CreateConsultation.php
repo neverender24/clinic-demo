@@ -23,9 +23,11 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Actions\Action as FilamentAction;
 use App\Filament\Resources\Consultations\ConsultationResource;
 use App\Models\HospitalAdmission;
+use Filament\Forms\Components\RichEditor\RichContentRenderer;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Notifications\Notification;
+use Filament\Support\Enums\FontWeight;
 
 class CreateConsultation extends CreateRecord implements HasTable
 {
@@ -135,20 +137,26 @@ class CreateConsultation extends CreateRecord implements HasTable
                             ->schema([
                                 Grid::make(columns: 1)
                                     ->schema([
-                                        PatientEntry::make('patient.full_name')
-                                            ->inlineLabel(false)
-                                            ->hiddenLabel()
+                                        TextEntry::make('patient.full_name')
                                             ->size(TextSize::Large)
+                                            ->weight(FontWeight::ExtraBold)
                                             ->icon('healthicons-o-traumatism')
                                             ->iconColor('white')
-                                            ->formatStateUsing(fn($state) => strtoupper($state)),
+                                        // PatientEntry::make('patient.full_name')
+                                        //     ->inlineLabel(false)
+                                        //     ->hiddenLabel()
+                                        //     ->size(TextSize::Large)
+                                        //     ->icon('healthicons-o-traumatism')
+                                        //     ->iconColor('white')
+                                        //     ->formatStateUsing(fn($state) => strtoupper($state)),
                                     ]),
                                 Grid::make()
                                     ->extraAttributes(['class' => 'border-t-2'])
                                     ->schema([
-                                        TextEntry::make('test_results')
-                                            ->html()
-                                            ->columnSpanFull(),
+                                        // RichContentRenderer::make()
+                                        // TextEntry::make('test_results')
+                                        //     ->html()
+                                        //     ->columnSpanFull(),
                                         Fieldset::make('Chief Complaint')
                                             ->schema([
                                                 TextEntry::make('chief_complaint')

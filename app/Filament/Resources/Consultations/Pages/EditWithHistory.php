@@ -35,6 +35,7 @@ use Filament\Forms\Components\MarkdownEditor;
 use Filament\Infolists\Contracts\HasInfolists;
 use Filament\Forms\Concerns\InteractsWithForms;
 use App\Filament\Resources\Consultations\ConsultationResource;
+use App\Filament\Resources\Consultations\Schemas\ConsultationForm;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Torgodly\Html2Media\Actions\Html2MediaAction;
 use Filament\Infolists\Components\RepeatableEntry;
@@ -85,6 +86,7 @@ class EditWithHistory extends Page implements HasForms, HasTable, HasInfolists
         
         $this->record = Consultation::with('consultationMedicines')->findOrFail($record)->load('medicines');
 
+      
         $this->historyData = $this->record;
 
         // dd(auth()->user());
@@ -119,7 +121,7 @@ class EditWithHistory extends Page implements HasForms, HasTable, HasInfolists
 
     public function form(Schema $schema): Schema
     {
-        return ConsultationResource::form($schema)
+        return ConsultationForm::configure($schema)
             ->columns(1)
             ->statePath('data')
             ->model(Consultation::class);
@@ -361,31 +363,31 @@ class EditWithHistory extends Page implements HasForms, HasTable, HasInfolists
     protected function getHeaderActions(): array
     {
         return [
-            Html2MediaAction::make('print_prescription')
-                ->label('Prescription')
-                ->color('success')
-                ->icon('heroicon-o-printer')
-                ->extraAttributes([
-                    'class' => 'hidden'
-                ])
-                ->content(function($record): View {
-                    // dd($record);
-                    return view('consultations.print', [
-                                'medicines' => $record->medicines->chunk(6),
-                                'patient' => $record->patient,
-                                'next_follow_up_schedule' => $record->next_follow_up_schedule?->format('F j, Y'),
-                                'header_image' => $record->clinic->header_image,
-                                'header_image1' => public_path("storage/{$record->clinic->header_image}"),
-                            ]
-                        );
-                })
+            // Html2MediaAction::make('print_prescription')
+            //     ->label('Prescription')
+            //     ->color('success')
+            //     ->icon('heroicon-o-printer')
+            //     ->extraAttributes([
+            //         'class' => 'hidden'
+            //     ])
+            //     ->content(function($record): View {
+            //         // dd($record);
+            //         return view('consultations.print', [
+            //                     'medicines' => $record->medicines->chunk(6),
+            //                     'patient' => $record->patient,
+            //                     'next_follow_up_schedule' => $record->next_follow_up_schedule?->format('F j, Y'),
+            //                     'header_image' => $record->clinic->header_image,
+            //                     'header_image1' => public_path("storage/{$record->clinic->header_image}"),
+            //                 ]
+            //             );
+            //     })
 
-                // ->preview()
-                ->orientation()
-                ->format('a5')
-                // ->pagebreak('section', ['css', 'legacy'])
-                // ->margin([2, 2, 0, 2])
-                ->modalWidth('2xl'),
+            //     // ->preview()
+            //     ->orientation()
+            //     ->format('a5')
+            //     // ->pagebreak('section', ['css', 'legacy'])
+            //     // ->margin([2, 2, 0, 2])
+            //     ->modalWidth('2xl'),
                 DeleteAction::make()
                     ->successRedirectUrl(route('filament.admin.resources.consultations.index', [1])),
         ];
