@@ -2,11 +2,10 @@
 
 namespace App\Filament\Resources\Consultations\Tables;
 
-use App\Filament\Resources\Consultations\ConsultationResource;
 use App\Models\Patient;
-use App\Trait\HasStatusAction;
 use Filament\Tables\Table;
 use Filament\Actions\Action;
+use App\Trait\HasStatusAction;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Number;
 use Filament\Actions\EditAction;
@@ -25,8 +24,10 @@ use Filament\Tables\Columns\Layout\Grid;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\RichEditor;
 use Filament\Schemas\Components\Fieldset;
+use Filament\Tables\Columns\SelectColumn;
 use Torgodly\Html2Media\Actions\Html2MediaAction;
 use Illuminate\Contracts\Database\Eloquent\Builder;
+use App\Filament\Resources\Consultations\ConsultationResource;
 
 class ConsultationsTable
 {
@@ -51,13 +52,13 @@ class ConsultationsTable
                     ->color(fn($record) => $record->patient->trashed() ? 'danger' : '')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('status')
-                    ->searchable()
-                    // ->formatStateUsing(function($record) {
-                    //     dd($record);
-                    // })
-                    ->sortable()
-                    ->badge(),
+                SelectColumn::make('status')
+                    ->options([
+                        'Done' => 'Done',
+                        'Pending' => 'Pending'
+                    ])
+                    ->selectablePlaceholder(false)
+                    ->width(10),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -128,33 +129,17 @@ class ConsultationsTable
                     ->icon('heroicon-m-pencil-square')
                     ->url(fn($record) => route('filament.admin.resources.consultations.edit.consultation', [$record->clinic_id, $record->id])),
                 ActionGroup::make([
+                    Action::make('prescription')
+                        ->color(fn($record) => $record->medicines->count() < 1 ? 'danger' : 'success')
+                        ->icon('heroicon-m-printer')
+                        ->url(fn($record) => route('prescription.print', [$record->id]), shouldOpenInNewTab: true)
+                        ,
                     Action::make('medical_cert_form')
                         ->label('Medical Certificate Form')
-                        ->color('primary')
-                        ->icon('heroicon-s-document-text')
+                         ->color('success')
+                        ->icon('heroicon-s-printer')
                         // ->visible(fn($record) => !filled($record->approximate_days) && !filled($record->estimated_date) && !filled($record->medical_cert_remarks))
-                        ->schema([
-                            Fieldset::make('Date of rest')
-                                ->schema([
-                                    DatePicker::make('estimated_date')
-                                        ->label('From'),
-                                    DatePicker::make('estimated_date_to')
-                                        ->label('To')
-                                        ->validationAttribute('End of date to rest'),
-                                ]),
-                            Grid::make(2)
-                                ->schema([
-
-                                    TextInput::make('approximate_days')
-                                        ->label('Days of rest and recovery')
-                                        ->numeric(),
-                                    DatePicker::make('return_date')
-                                        ->afterOrEqual('estimated_date_to')
-                                        ->validationMessages([
-                                            'after_or_equal' => 'The value must be after the \'Date to\' in the Date of Rest.'
-                                        ]),
-                                ]),
-                           
+                        ->schema([  
                             RichEditor::make('medical_cert_remarks')
                                 ->label('Remarks'),
                         ])
@@ -176,10 +161,14 @@ class ConsultationsTable
                                     ->body($th->getMessage());
                             }
                         })
-                        ->after(fn($livewire) =>  $livewire->dispatch('refreshTable')),
+                         ->after(function($livewire, $record) {
+                            $livewire->js("window.open('".route('medical.medcert', [$record->id])."', '_blank')");
+                        }),
                     Action::make('admitting_order')
-                        ->label('Admitting Order Form')
-                        ->icon('heroicon-s-document-text')
+                        ->label('Admitting Order')
+                        ->color('success')
+                        ->icon('heroicon-s-printer')
+                        ->closeModalByClickingAway(false)
                         ->schema([
                             RichEditor::make('admitting_order_data')
                             // ->mentionsItems(function () {
@@ -199,125 +188,36 @@ class ConsultationsTable
                         // ->fillForm(fn($record) => [
                         //     'admitting_order_data' => $record->admitting_order_data
                         // ])
-                        ->action(function($data, $record, $livewire) {
-                            DB::beginTransaction();
+                        ->action(function($data, $record) {
+                        //    dd($data);
                             try {
                                 //code...
                                 $record->update($data);
-                                DB::commit();
                                 Notification::make()
                                 ->success()
                                 ->title('Success')
                                 ->body('The changes have been saved');
-                            } catch (Throwable $th) {
-                                DB::rollBack();
+                               
+                            } catch (\Throwable $th) {
                                 dd($th->getMessage());
                                 Notification::make()
                                     ->title('Error')
                                     ->body($th->getMessage());
                             }
+                        })
+                        ->after(function($livewire, $record) {
+                              $livewire->js("window.open('".route('prescription.admitting.order', $record)."', '_blank')");
                         }),
                         Action::make('custom_docs')
                             ->icon('heroicon-s-document-text')
                             ->url(fn($record) => ConsultationResource::getUrl('custom.doc', [$record])),
-                    // Html2MediaAction::make('print_prescription')
-                    //     ->label('Prescription')
-                    //     ->color('success')
-                    //     ->icon('heroicon-o-printer')
-                    //     ->content(function($record): View {
-                    //         return view('consultations.print', [
-                    //                     'medicines' => $record->medicines->chunk(6),
-                    //                     'patient' => $record->patient,
-                    //                     'next_follow_up_schedule' => $record->next_follow_up_schedule?->format('F j, Y'),
-                    //                     'header_image' => $record->clinic->header_image,
-                    //                     'header_image1' => public_path("storage/{$record->clinic->header_image}"),
-                    //                 ]
-                    //             );
-                    //     })
-
-                    //     // ->preview()
-                    //     ->orientation()
-                    //     ->format('a5')
-                    //     // ->pagebreak('section', ['css', 'legacy'])
-                    //     // ->margin([2, 2, 0, 2])
-                    //     ->modalWidth('2xl'),
-                    // Html2MediaAction::make('print_medcert')
-                    //     ->label('Medical Certificate')
-                    //     ->color('success')
-                    //     ->icon('heroicon-o-printer')
-                    //     ->format(format: 'letter')
-                    //     // ->preview()
-                    //     // ->action(fn($data) => dd($data))
-                    //     // ->visible(fn($record) => filled($record->approximate_days) && filled($record->estimated_date) && filled($record->medical_cert_remarks))
-                    //     ->content(fn($record): View => view('consultations.medcert', [
-                    //         'medicines' => $record->medicines,
-                    //         'patient' => $record->patient,
-                    //         'next_follow_up_schedule' => $record->next_follow_up_schedule?->format('F j, Y'),
-                    //         'header_image' => asset('storage/'.$record->clinic->medcert_header_image),
-                    //         'watermark' => asset('storage/'.$record->clinic->watermarks),
-                    //         'consultation_date' => $record->date?->format('F d, Y'),
-                    //         'medical_cert_remarks' => $record->medical_cert_remarks,
-                    //         'approximate_days_in_word' => Number::spell(intval($record->approximate_days)),
-                    //         'approximate_days' => transform($record->approximate_days, fn($value) => "($value)", 'N/A'),
-                    //         'estimated_date' => $record->estimated_date ? $record->estimated_date->format('F j, Y') : '',
-                    //         'estimated_date_to' => $record->estimated_date_to ? Carbon::parse($record->estimated_date_to)->format('F j, Y') : null,
-                    //         'return_date' => $record->return_date ? Carbon::parse($record->return_date)->format('F j, Y') : null,
-                    //         'diagnosis' => $record->diagnosis,
-                    //         'chief_complaint' => str_replace(['</p>', '<p>'], '', $record->chief_complaint)
-                    //     ])),
-                    // Html2MediaAction::make('print_admitting_order')
-                    //     ->label('Admitting Order')
-                    //     ->color('success')
-                    //     ->modalWidth(Width::MaxContent)
-                    //     ->icon('heroicon-o-printer')
-                    //     ->format('a5')
-                    //     ->content(function($record): View {
-                    //         // dd($record->admitting_order_data);
-                    //         return view('consultations.admitting-order', [
-                    //             'data' => $record->admitting_order_data,
-                    //             'header_image' => $record->clinic->header_image,
-                    //             'patient' => $record->patient,
-                    //         ]);
-                    //     })
-                    //     ->preview(),
-                    // Tables\Actions\Action::make('print_prescription1')
-                    //     ->label('Prescription')
-                    //     ->hidden(false)
-                    //     ->color('success')
-                    //     ->icon('heroicon-o-printer')
-                    //     ->modalContent(function($record): View {
-                    //         return view('consultations.print', [
-                    //             'medicines' => $record->medicines,
-                    //             'patient' => $record->patient,
-                    //             'next_follow_up_schedule' => $record->next_follow_up_schedule->format('F j, Y')
-                    //         ]);
-                    //     })
-                    //     ->modalWidth('2xl')
-                    //     ->modalSubmitAction(false)
-                    //     ->modalCancelAction(false)
-                    //     // ->modalFooterActions(function(Action))
-                    //     ->slideOver(),
-                    // Tables\Actions\Action::make('med_cert')
-                    //     ->label('Medical Certification')
-                    //     ->hidden(false)
-                    //     ->color('success')
-                    //     ->icon('heroicon-o-printer')
-                    //     ->modalContent(function($record): View {
-                    //         return view('consultations.print', [
-                    //             'medicines' => $record->medicines,
-                    //             'patient' => $record->patient,
-                    //             'next_follow_up_schedule' => $record->next_follow_up_schedule->format('F j, Y')
-                    //         ]);
-                    //     })
-                    //     ->modalWidth('7xl')
-                    //     ->slideOver(),
-                    Action::make('status')
-                        ->label(fn($record) => static::statusLabel($record))
-                        ->color(fn($record) => static::statusColor($record))
-                        ->icon(fn($record) => static::statusIcon($record))
-                        ->action(fn($record) => $record->changeStatus())
-                        ->hidden(fn() => ! auth()->user()->doctor())
-                        ->requiresConfirmation()
+                    // Action::make('status')
+                    //     ->label(fn($record) => static::statusLabel($record))
+                    //     ->color(fn($record) => static::statusColor($record))
+                    //     ->icon(fn($record) => static::statusIcon($record))
+                    //     ->action(fn($record) => $record->changeStatus())
+                    //     ->hidden(fn() => ! auth()->user()->doctor())
+                    //     ->requiresConfirmation()
                 ])
             ])
             ;

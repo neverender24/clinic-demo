@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Medical Certificate</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <style>
+    :root {
+      --font-stack: "Segoe UI", Arial, sans-serif;
+      --border-color: #000;
+    }
+
+    /* Page setup for A4 portrait */
+    @page {
+      size: A4 portrait;
+      margin: 1.5cm;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: #fff;
+      font-family: var(--font-stack);
+      color: #000;
+      font-size: 13px;
+      line-height: 2;
+      -webkit-print-color-adjust: exact;
+    }
+
+    .certificate {
+      /* fill the full printable height */
+      min-height: calc(297mm - 3cm); /* A4 height minus top+bottom margins */
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 2rem 2.5rem;
+      box-sizing: border-box;
+    }
+
+    .header {
+      /* nothing special */
+    }
+
+    h1 {
+      font-size: 1.35rem;
+      margin: 0.2rem 0 0.5rem;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .subhead {
+      text-align: center;
+      margin: 0.1rem 0;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    .contact {
+      text-align: center;
+      font-size: 0.65rem;
+      margin-bottom: 0.9rem;
+    }
+
+    .italic {
+      font-style: italic;
+    }
+
+    .section {
+      margin-top: 0.75rem;
+      flex: 1; /* allow middle to stretch */
+    }
+
+    .line {
+      display: inline-block;
+      min-width: 180px;
+      border-bottom: none;
+      position: relative;
+      padding-right: 4px;
+      font-family: "Segoe UI", Arial, sans-serif;
+    }
+
+    .line.short {
+      min-width: 90px;
+    }
+
+    .underscore-line {
+      display: block;
+      font-family: monospace;
+      white-space: nowrap;
+      overflow: hidden;
+      /* letter-spacing: 1px; */
+      margin: 6px 0;
+    }
+
+    .fill {
+      width: 100%;
+      display: block;
+    }
+
+    .checkbox-group {
+      margin: 0.75rem 0;
+    }
+
+    .checkbox-line {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.4rem;
+      margin-bottom: 4px;
+    }
+
+    .checkbox-box {
+      width: 14px;
+      height: 14px;
+      border: 1px solid var(--border-color);
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .footer {
+      margin-top: 1rem;
+      font-size: 0.7rem;
+      line-height: 2;
+    }
+
+    .doctor {
+      margin-top: 1rem;
+      font-weight: 700;
+    }
+
+    .title-small {
+      font-size: 0.65rem;
+      margin: 2px 0;
+    }
+
+    .license {
+      font-weight: 500;
+    }
+
+    /* Print adjustments */
+    @media print {
+      body {
+        padding: 0;
+        font-size: 12px;
+      }
+      .certificate {
+        padding: 1.2rem 1.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="certificate" aria-label="Medical Certificate">
+    <div class="header">
+      <div style="text-align:center;">
+        <div style="font-weight:700; font-size:1rem;">
+          YBIERNAS EAR NOSE THROAT HEAD AND NECK SURGERY CLINIC
+        </div>
+        <div class="subhead">Consultation Room 1</div>
+        <div class="subhead">Doctors Community Hospital</div>
+        <div class="subhead">Mawab, Davao de Oro, Philippines</div>
+        <div class="contact">
+          Contact: 0932 322 0523; 0917 704 4317<br>
+          <span class="italic">bongybiernas@yahoo.com</span>
+        </div>
+      </div>
+      <h1>MEDICAL CERTIFICATE</h1>
+    </div>
+
+    <div class="section">
+      <div style="margin-top:6px;">
+        <strong>Date:</strong>__________
+      </div>
+
+      <div style="margin-top:8px;">
+        This is to certify that ____________________________ ____years old,
+      </div>
+
+      <div style="margin-top:6px;">_______,
+        from _________
+        was seen at the clinic on ____________
+        and was diagnosed to have ______________________________.
+      </div>
+
+      <div style="margin-top:6px;">
+        He/She was treated for such with:
+      </div> ______________________
+
+      <div style="margin-top:8px;">
+        Medications include the following:
+      </div>
+      <div>__________________________________________________</div>
+      <div>__________________________________________________</div>
+      <div>__________________________________________________</div>
+    </div>
+
+    <div>
+      <div class="checkbox-group" style="line-height: 1.15">
+        <div class="checkbox-line">
+          <div class="checkbox-box" aria-label="checkbox"></div>
+          <div>
+            <strong>Advised to rest for</strong>
+            <span class="underscore-line" style="display:inline-block; width: 80px; margin:0;">_____________</span> days.
+          </div>
+        </div>
+        <div class="checkbox-line">
+          <div class="checkbox-box" aria-label="checkbox"></div>
+          <div>
+            <strong>Must make a follow-up visit on</strong>
+            <span class="underscore-line" style="display:inline-block; width: 180px; margin:0;">________________________________</span>
+          </div>
+        </div>
+        <div class="checkbox-line">
+          <div class="checkbox-box" aria-label="checkbox"></div>
+          <div>
+            <strong>Others</strong>
+            <span class="underscore-line" style="display:inline-block; width: 220px; margin:0;">______________________________________</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:8px;">
+      Issued for whatever legal purpose this may serve him or her best.
+    </div>
+
+    <div class="footer">
+      <div class="doctor">ANTONIO P. YBIERNAS JR., M.D., COHC</div>
+      <div class="title-small">Otolaryngology-Head and Neck Surgery Specialist</div>
+      <div class="title-small">U.S. Certified Occupational Hearing Conservationist</div>
+      <div class="license">Lic Number: 0085800</div>
+    </div>
+  </div>
+</body>
+</html>

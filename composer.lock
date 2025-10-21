@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "da27028b3b23d150a87345999b48b505",
+    "content-hash": "22761190d9ee90bcc92dc249874aeb72",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -2220,6 +2220,50 @@
                 }
             ],
             "time": "2025-09-14T15:34:49+00:00"
+        },
+        {
+            "name": "javarex/ddo-login",
+            "version": "v1.0.27",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/javarex/javarex-filament-login.git",
+                "reference": "055200edd9c264ba5b554cfe26e7a5e155de65ee"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/javarex/javarex-filament-login/zipball/055200edd9c264ba5b554cfe26e7a5e155de65ee",
+                "reference": "055200edd9c264ba5b554cfe26e7a5e155de65ee",
+                "shasum": ""
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Javarex\\DdoLogin\\Providers\\LoginDdoServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Javarex\\DdoLogin\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "javarex",
+                    "email": "raymartnayreitanong11@gmail.com"
+                }
+            ],
+            "description": "Custom Login",
+            "support": {
+                "issues": "https://github.com/javarex/javarex-filament-login/issues",
+                "source": "https://github.com/javarex/javarex-filament-login/tree/v1.0.27"
+            },
+            "time": "2025-10-15T06:33:57+00:00"
         },
         {
             "name": "kirschbaum-development/eloquent-power-joins",
@@ -5313,6 +5357,106 @@
                 "source": "https://github.com/ramsey/uuid/tree/4.9.1"
             },
             "time": "2025-09-04T20:59:21+00:00"
+        },
+        {
+            "name": "rmunate/spell-number",
+            "version": "v4.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/rmunate/SpellNumber.git",
+                "reference": "4dfa6b72328968bb001af97ec6072796c03fa0c1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rmunate/SpellNumber/zipball/4dfa6b72328968bb001af97ec6072796c03fa0c1",
+                "reference": "4dfa6b72328968bb001af97ec6072796c03fa0c1",
+                "shasum": ""
+            },
+            "require": {
+                "ext-intl": "*",
+                "illuminate/support": "^8.0|^9.0|^10.0|^11.0|^12.0",
+                "php": "^8.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^10.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Rmunate\\Utilities\\Providers\\SpellNumberProvider"
+                    ]
+                },
+                "branch-alias": {
+                    "dev-main": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Rmunate\\Utilities\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Raul Mauricio Uñate Castro",
+                    "email": "raulmauriciounate@gmail.com",
+                    "homepage": "https://github.com/rmunate",
+                    "role": "owner"
+                },
+                {
+                    "name": "Olsza",
+                    "homepage": "https://github.com/olsza",
+                    "role": "developer"
+                },
+                {
+                    "name": "Er. Ashok Devatwal",
+                    "email": "ashokdev78@gmail.com",
+                    "homepage": "https://github.com/ashokdevatwal",
+                    "role": "developer"
+                },
+                {
+                    "name": "Siros Fakhri",
+                    "homepage": "https://github.com/sirosfakhri",
+                    "role": "developer"
+                },
+                {
+                    "name": "Jens Twesmann",
+                    "homepage": "https://github.com/jetwes",
+                    "role": "developer"
+                },
+                {
+                    "name": "Gabriel Rausch",
+                    "homepage": "https://github.com/gdsrmygdsrjr",
+                    "role": "developer"
+                },
+                {
+                    "name": "Alejandro Diaz",
+                    "homepage": "https://github.com/alejandrodiazpinilla",
+                    "role": "developer"
+                }
+            ],
+            "description": "Easily convert numbers to letters, this library supports the native PHP INTL extension with which we can easily convert numbers to letters. This library provides us with the possibility of converting only to numbers or to currency formats depending on the language to be used, this package has support in the languages en: English, es: Spanish, pt: Portuguese, fr: French, it: Italian, ro: Romanian, fa: Farsi, hi: Hindi, pl: Polish.",
+            "homepage": "https://github.com/rmunate/SpellNumber",
+            "keywords": [
+                "code-maestro",
+                "numbers",
+                "rmunate",
+                "spell",
+                "spell-number",
+                "spell-numbers",
+                "toletters",
+                "towords"
+            ],
+            "support": {
+                "issues": "https://github.com/rmunate/SpellNumber/issues",
+                "source": "https://github.com/rmunate/SpellNumber/tree/v4.3.0"
+            },
+            "abandoned": "illuminate/support",
+            "time": "2025-06-10T14:06:51+00:00"
         },
         {
             "name": "ryangjchandler/blade-capture-directive",

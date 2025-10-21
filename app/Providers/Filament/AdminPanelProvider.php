@@ -35,6 +35,7 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Leandrocfe\FilamentApexCharts\FilamentApexChartsPlugin;
 use BezhanSalleh\FilamentShield\Middleware\SyncShieldTenant;
+use Filament\Actions\Action;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 
 class AdminPanelProvider extends PanelProvider
@@ -48,12 +49,12 @@ class AdminPanelProvider extends PanelProvider
             ->tenant(Clinic::class)
             ->tenantRegistration(RegisterClinic::class)
             ->tenantMenu(fn () => auth()->user()->can('canManageTenant', User::class))
+            ->tenantProfile(EditTenantProfile::class)
             ->tenantMenuItems([
-                'profile' => MenuItem::make()->label('Edit Clinic'),
-                'register' => MenuItem::make()->label('Register Clinic'),
+                'profile' => fn(Action $action) => $action->label('Edit Clinic'),
+                'register' => fn(Action $action) => $action->label('Register Clinic'),
                 // ...
             ])
-            ->tenantProfile(EditTenantProfile::class)
             ->login(Login::class)
             ->colors([
                 'primary' => Color::Blue,
@@ -88,6 +89,7 @@ class AdminPanelProvider extends PanelProvider
 
             ->sidebarFullyCollapsibleOnDesktop()
             ->plugins([
+                \Javarex\DdoLogin\LoginDdoPlugin::make(),
                 FilamentShieldPlugin::make()
                     ->scopeToTenant(false),
                 FilamentApexChartsPlugin::make(),
