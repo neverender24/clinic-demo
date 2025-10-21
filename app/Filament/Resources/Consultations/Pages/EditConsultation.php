@@ -38,26 +38,26 @@ class EditConsultation extends EditRecord
     {
         return [
             $this->getSaveFormAction(),
-            Html2MediaAction::make('print_prescription')
-                ->label('Prescription')
-                ->color('success')
-                ->icon('heroicon-o-printer')
-                ->content(function($record): View {
-                    return view('consultations.print', [
-                                'medicines' => $record->medicines->chunk(6),
-                                'patient' => $record->patient,
-                                'next_follow_up_schedule' => $record->next_follow_up_schedule?->format('F j, Y'),
-                                'header_image' => $record->clinic->header_image,
-                                'header_image1' => public_path("storage/{$record->clinic->header_image}"),
-                            ]
-                        );
-                })
-                // ->preview()
-                ->orientation()
-                ->format('a5')
-                // ->pagebreak('section', ['css', 'legacy'])
-                // ->margin([2, 2, 0, 2])
-                ->modalWidth('2xl'),
+            // Html2MediaAction::make('print_prescription')
+            //     ->label('Prescription')
+            //     ->color('success')
+            //     ->icon('heroicon-o-printer')
+            //     ->content(function($record): View {
+            //         return view('consultations.print', [
+            //                     'medicines' => $record->medicines->chunk(6),
+            //                     'patient' => $record->patient,
+            //                     'next_follow_up_schedule' => $record->next_follow_up_schedule?->format('F j, Y'),
+            //                     'header_image' => $record->clinic->header_image,
+            //                     'header_image1' => public_path("storage/{$record->clinic->header_image}"),
+            //                 ]
+            //             );
+            //     })
+            //     // ->preview()
+            //     ->orientation()
+            //     ->format('a5')
+            //     // ->pagebreak('section', ['css', 'legacy'])
+            //     // ->margin([2, 2, 0, 2])
+            //     ->modalWidth('2xl'),
             $this->getCancelFormAction(),
         ];
     }

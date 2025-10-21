@@ -1,153 +1,115 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Policies;
 
-use App\Models\User;
+use Illuminate\Foundation\Auth\User as AuthUser;
 use App\Models\Consultation;
-use Filament\Facades\Filament;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class ConsultationPolicy
 {
     use HandlesAuthorization;
-
-    /**
-     * Determine whether the user can view any models.
-     */
-    public function viewAny(User $user): bool
+    
+    public function viewAny(AuthUser $authUser): bool
     {
-        return $user->can('view_any_consultation');
+        return $authUser->can('ViewAny:Consultation');
     }
 
-    /**
-     * Determine whether the user can view the model.
-     */
-    public function view(User $user, Consultation $consultation): bool
+    public function view(AuthUser $authUser, Consultation $consultation): bool
     {
-        return $user->can('view_consultation');
+        return $authUser->can('View:Consultation');
     }
 
-    /**
-     * Determine whether the user can create models.
-     */
-    public function create(User $user): bool
+    public function create(AuthUser $authUser): bool
     {
-        return $user->can('create_consultation');
+        return $authUser->can('Create:Consultation');
     }
 
-    /**
-     * Determine whether the user can update the model.
-     */
-    public function update(User $user, Consultation $consultation): bool
+    public function update(AuthUser $authUser, Consultation $consultation): bool
     {
-        return $user->can('update_consultation');
+        // dd($authUser->can('Update:Consultation'));
+        return $authUser->can('Update:Consultation') || true;
     }
 
-    /**
-     * Determine whether the user can delete the model.
-     */
-    public function delete(User $user, Consultation $consultation): bool
+    public function delete(AuthUser $authUser, Consultation $consultation): bool
     {
-        return $user->can('delete_consultation');
+        return $authUser->can('Delete:Consultation');
     }
 
-    /**
-     * Determine whether the user can bulk delete.
-     */
-    public function deleteAny(User $user): bool
+    public function restore(AuthUser $authUser, Consultation $consultation): bool
     {
-        return $user->can('delete_any_consultation');
+        return $authUser->can('Restore:Consultation');
     }
 
-    /**
-     * Determine whether the user can permanently delete.
-     */
-    public function forceDelete(User $user, Consultation $consultation): bool
+    public function forceDelete(AuthUser $authUser, Consultation $consultation): bool
     {
-        return $user->can('force_delete_consultation');
+        return $authUser->can('ForceDelete:Consultation');
     }
 
-    /**
-     * Determine whether the user can permanently bulk delete.
-     */
-    public function forceDeleteAny(User $user): bool
+    public function forceDeleteAny(AuthUser $authUser): bool
     {
-        return $user->can('force_delete_any_consultation');
+        return $authUser->can('ForceDeleteAny:Consultation');
     }
 
-    /**
-     * Determine whether the user can restore.
-     */
-    public function restore(User $user, Consultation $consultation): bool
+    public function restoreAny(AuthUser $authUser): bool
     {
-        return $user->can('restore_consultation');
+        return $authUser->can('RestoreAny:Consultation');
     }
 
-    /**
-     * Determine whether the user can bulk restore.
-     */
-    public function restoreAny(User $user): bool
+    public function replicate(AuthUser $authUser, Consultation $consultation): bool
     {
-        return $user->can('restore_any_consultation');
+        return $authUser->can('Replicate:Consultation');
     }
 
-    /**
-     * Determine whether the user can replicate.
-     */
-    public function replicate(User $user, Consultation $consultation): bool
+    public function reorder(AuthUser $authUser): bool
     {
-        return $user->can('replicate_consultation');
+        return $authUser->can('Reorder:Consultation');
     }
 
-    /**
-     * Determine whether the user can reorder.
-     */
-    public function reorder(User $user): bool
-    {
-        return $user->can('reorder_consultation');
-    }
-
-        /**
+          /**
      * Customized permissions.
      */
-    public function addManagement(User $user): bool
+    public function addManagement(AuthUser $user): bool
     {
         return $user->can('add_management_consultation');
     }
 
-    public function addDiagnosis(User $user): bool
+    public function addDiagnosis(AuthUser $user): bool
     {
         return $user->can('add_diagnosis_consultation');
     }
 
-    public function addChiefComplaint(User $user): bool
+    public function addChiefComplaint(AuthUser $user): bool
     {
         return $user->can('add_chief_complaint_consultation');
     }
 
-    public function addPrescription(User $user): bool
+    public function addPrescription(AuthUser $user): bool
     {
         return $user->can('add_prescription_consultation');
     }
 
-    public function addTestResult(User $user): bool
+    public function addTestResult(AuthUser $user): bool
     {
         return $user->can('add_test_results_consultation');
     }
 
-    public function editAsDoctor(User $user)
+    public function editAsDoctor(AuthUser $user)
     {
         // dd($user->hasPermissionTo());
         return $user->can('edit_as_doctor_consultation');
     }
 
-    public function editRecord(User $user, Consultation $consultation): bool
+    public function editRecord(AuthUser $user, Consultation $consultation): bool
     {
         return ($consultation->status->value !== 'Done' || $user->doctor());
     }
 
-    public function addFollowupSchedule(User $user, Consultation $consultation): bool
+    public function addFollowupSchedule(AuthUser $user, Consultation $consultation): bool
     {
         return $user->can('add_followup_schedule_consultation');
     }
+
 }

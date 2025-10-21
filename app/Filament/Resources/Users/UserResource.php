@@ -70,9 +70,10 @@ class UserResource extends Resource
                         }
                     )
                     ->required()
-                    // ->saveRelationshipsUsing(function (Model $record, $state) {
-                    //      $record->roles()->syncWithPivotValues($state, [config('permission.column_names.team_foreign_key') => getPermissionsTeamId()]);
-                    // })
+                    ->saveRelationshipsUsing(function (Model $record, $state, $get) {
+                        // dd(getPermissionsTeamId());
+                        $record->roles()->syncWithPivotValues($state, [config('permission.column_names.team_foreign_key') => Filament::getTenant()->id]);
+                    })
                    ->searchable()
             ]);
     }

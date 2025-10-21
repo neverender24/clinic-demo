@@ -2,7 +2,9 @@
 
 namespace App\Filament\Resources\Consultations\Tables;
 
+use App\Filament\Resources\Consultations\ConsultationResource;
 use App\Models\Patient;
+use App\Trait\HasStatusAction;
 use Filament\Tables\Table;
 use Filament\Actions\Action;
 use Illuminate\Support\Carbon;
@@ -28,6 +30,8 @@ use Illuminate\Contracts\Database\Eloquent\Builder;
 
 class ConsultationsTable
 {
+    use HasStatusAction;
+    
     public static function configure(Table $table): Table
     {
         return $table
@@ -215,7 +219,7 @@ class ConsultationsTable
                         }),
                         Action::make('custom_docs')
                             ->icon('heroicon-s-document-text')
-                            ->url(fn($record) => static::getUrl('custom.doc', [$record])),
+                            ->url(fn($record) => ConsultationResource::getUrl('custom.doc', [$record])),
                     // Html2MediaAction::make('print_prescription')
                     //     ->label('Prescription')
                     //     ->color('success')

@@ -114,7 +114,9 @@ class CreateConsultation extends CreateRecord implements HasTable
 
     public function table(Table $table): Table
     {
-        return $table->query(fn() => Consultation::query()->patientPreviousConsultations(patient_id:$this->data['patient_id'], date: $this->data['date']))
+        return $table->query(fn() => Consultation::query()
+                                        ->patientPreviousConsultations(patient_id:$this->data['patient_id'], date: $this->data['date'])
+                                        ->latest('date'))
         ->columns([
             TextColumn::make('date')
                 ->label('Date of Consultation')

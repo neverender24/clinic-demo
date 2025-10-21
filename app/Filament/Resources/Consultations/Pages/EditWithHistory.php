@@ -2,22 +2,20 @@
 
 namespace App\Filament\Resources\Consultations\Pages;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\Section;
-use Filament\Support\Enums\TextSize;
-use Filament\Schemas\Components\Fieldset;
 use Throwable;
 use Carbon\Carbon;
 use Illuminate\View\View;
 use Filament\Tables\Table;
 use App\Models\Consultation;
+use Filament\Schemas\Schema;
 use App\Trait\HasHistoryAction;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\Page;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\HtmlString;
 use App\Models\ConsultationMedicine;
+use Filament\Support\Enums\TextSize;
+use Filament\Schemas\Components\Grid;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
@@ -25,27 +23,30 @@ use Filament\Tables\Contracts\HasTable;
 use App\Models\Scopes\ConsultationScope;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
+use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\RichEditor;
+use Filament\Schemas\Components\Fieldset;
 use App\Infolists\Components\PatientEntry;
 use Illuminate\Contracts\Support\Htmlable;
-use App\Filament\Resources\Patients\PatientResource;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Actions\Action as ActionsAction;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Infolists\Contracts\HasInfolists;
 use Filament\Forms\Concerns\InteractsWithForms;
-use App\Filament\Resources\Consultations\ConsultationResource;
-use App\Filament\Resources\Consultations\Schemas\ConsultationForm;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Torgodly\Html2Media\Actions\Html2MediaAction;
 use Filament\Infolists\Components\RepeatableEntry;
-use BezhanSalleh\FilamentShield\Traits\HasPageShield;
-use Filament\Actions\Action as ActionsAction;
 use Filament\Actions\Concerns\InteractsWithActions;
+use App\Filament\Resources\Patients\PatientResource;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
+use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
+use Filament\Forms\Components\RichEditor\RichContentRenderer;
+use App\Filament\Resources\Consultations\ConsultationResource;
+use App\Filament\Resources\Consultations\Schemas\ConsultationForm;
 use Filament\Infolists\Components\Actions\Action as InfolistAction;
-use Filament\Pages\Concerns\InteractsWithFormActions;
 
 class EditWithHistory extends Page implements HasForms, HasTable, HasInfolists
 {
@@ -138,7 +139,9 @@ class EditWithHistory extends Page implements HasForms, HasTable, HasInfolists
     public function table(Table $table): Table
     {
         return $table
-                ->query(fn() => Consultation::query()->patientPreviousConsultations(patient_id:$this->patient_id, date: $this->data['date']))
+                ->query(fn() => Consultation::query()
+                                    ->patientPreviousConsultations(patient_id:$this->patient_id, date: $this->data['date'])
+                                    ->latest('date'))
                 ->columns([
                     TextColumn::make('date')
                         ->label('Date of Consultation')
@@ -335,6 +338,7 @@ class EditWithHistory extends Page implements HasForms, HasTable, HasInfolists
         $this->validate();
 
         DB::transaction(function() {
+            // dd($this->data);
             try {
                 $this->record->update($this->data);
                 $this->record->medicines()->detach();
@@ -415,6 +419,11 @@ class EditWithHistory extends Page implements HasForms, HasTable, HasInfolists
                 // ->pagebreak('section', ['css', 'legacy'])
                 // ->margin([2, 2, 0, 2])
                 ->modalWidth('2xl');
+    }
+
+    protected function renderToHtml($content): string 
+    {
+        return RichContentRenderer::make($content)->toHtml();
     }
 
 }
