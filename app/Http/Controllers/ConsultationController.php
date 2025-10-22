@@ -3,18 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Models\Consultation;
+use App\Models\CustomDoc;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Number;
 use App\Models\Scopes\TenantScope;
 use Rmunate\Utilities\SpellNumber;
 use App\Models\Scopes\ConsultationScope;
+use Filament\Forms\Components\RichEditor\RichContentRenderer;
+use Illuminate\Support\HtmlString;
 
 class ConsultationController extends Controller
 {
     public function print($id)
     {
-        $record = Consultation::withoutGlobalScope(TenantScope::class)->find($id);
+        $record = $this->getRecord($id);
        
         $meds = $record->medicines->chunk(3);
         
@@ -30,9 +33,7 @@ class ConsultationController extends Controller
 
     public function prescription($id)
     {
-        $record = Consultation::withoutGlobalScopes([TenantScope::class, ConsultationScope::class])
-                    ->with('medicines', 'clinic', 'patient')
-                    ->find($id);
+        $record = $this->getRecord($id);
         $bday = Carbon::parse($record->patient?->birthday);
         $record->patient->age = $bday->age == 0 ? $bday->month : $bday->age;
         // dd($record->clinic->header_image);
@@ -62,7 +63,7 @@ class ConsultationController extends Controller
         //     'diagnosis' => $record->diagnosis
         // ]);
 
-        $record = Consultation::withoutGlobalScopes([TenantScope::class, ConsultationScope::class])->with('medicines', 'clinic', 'patient')->find($id);
+        $record = $this->getRecord($id);
         $bday = Carbon::parse($record->patient?->birthday);
         $record->patient->age = $bday->age == 0 ? $bday->month : $bday->age;
         $record->diagnosis = str_replace(['<p>', '</p>'], ['<span>', '</span>'], $record->diagnosis);
@@ -77,7 +78,7 @@ class ConsultationController extends Controller
 
     public function admittingOrder($id)
     {
-        $record = Consultation::withoutGlobalScopes([TenantScope::class, ConsultationScope::class])->with('medicines', 'clinic', 'patient')->find($id);
+        $record = $this->getRecord($id);
         $bday = Carbon::parse($record->patient?->birthday);
         $record->patient->age = $bday->age == 0 ? $bday->month : $bday->age;
         return view('consultations.admitting-order', [
@@ -87,5 +88,26 @@ class ConsultationController extends Controller
             'next_follow_up_schedule' => $record->next_follow_up_schedule?->format('F j, Y'),
             'header_image' => $record->clinic->header_image,
         ]);
+    }
+
+    public function customDoc(CustomDoc $doc)
+    {
+
+        $record = $this->getRecord($doc->consultation_id);
+
+        return view('pdf.custom-doc', [
+            'record' => $record,
+            'content' => RichContentRenderer::make($doc->content)
+                ->mergeTags([
+                    'name' => $record->patient->full_name,
+                    'diagnosis' => new HtmlString($record->diagnosis)
+                ])
+                ->toHtml(), 
+        ]);
+    }
+
+    protected function getRecord($id)
+    {
+        return Consultation::withoutGlobalScopes([TenantScope::class, ConsultationScope::class])->with('medicines', 'clinic', 'patient')->find($id);
     }
 }

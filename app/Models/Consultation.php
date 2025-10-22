@@ -57,6 +57,11 @@ class Consultation extends Model
         return $this->hasMany(ConsultationMedicine::class);
     }
 
+    public function customDocs(): HasMany
+    {
+        return $this->hasMany(CustomDoc::class);
+    }
+
     public function changeStatus()
     {
         $this->status = $this->status->value == 'Done' ? 'Pending' : 'Done';

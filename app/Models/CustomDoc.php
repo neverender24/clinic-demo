@@ -9,6 +9,10 @@ class CustomDoc extends Model
 {
     protected $guarded = [];
 
+    protected $casts = [
+        'content' => 'array'
+    ];
+
     public function consultation(): BelongsTo
     {
         return $this->belongsTo(Consultation::class);
