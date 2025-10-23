@@ -22,24 +22,14 @@ class HospitalAdmissionChart extends ApexChartWidget
      */
     protected static ?string $chartId = 'hospitalAdmissionChart';
 
-    protected int | string | array $columnSpan = 1;
-
+    
     // protected static ?string $pollingInterval = '';
-
+    
     protected static ?int $sort = 3;
-    /**
-     * Widget Title
-     *
-     * @var string|null
-     */
+    protected int | string | array $columnSpan = 6;
+
     protected static ?string $heading = 'Hospital Admission';
 
-    /**
-     * Chart options (series, labels, types, size, animations...)
-     * https://apexcharts.com/docs/options
-     *
-     * @return array
-     */
 
      protected $chartData;
 
@@ -172,63 +162,63 @@ class HospitalAdmissionChart extends ApexChartWidget
 
     }
 
-    protected function extraJsOptions(): RawJs
-    {
-        return RawJs::make(<<<'JS'
-        {
-            annotations: {
-                points: [{
-                    x: 'Bananas',
-                    seriesIndex: 0,
-                    label: {
-                    borderColor: '#775DD0',
-                    offsetY: 0,
-                    style: {
-                        color: '#fff',
-                        background: '#775DD0',
-                    },
-                    text: 'Bananas are good',
-                    }
-                }]
-            },
-            yaxis: {
-                labels: {
-                    formatter: function (val, index) {
-                        return val.toFixed(0)
-                    }
-                }
-            },
-            xaxis: {
-                labels: {
-                    rotate: -45
-                },
-                tickPlacement: 'on'
-            },
-            stroke: {
-                curve: "smooth"
-            },
-            dataLabels: {
-                enabled: true,
-                formatter: function (val, opt) {
-                    if (val) {
-                        return val;
-                    }
-                    return ''
-                },
-                dropShadow: {
-                    enabled: true
-                },
-            }
-            // zoom: {
-            //     type: "x",
-            //     enabled: true,
-            //     autoScaleYaxis: true
-            // },
-            // toolbar: {
-            //     autoSelected: "zoom"
-            // }
+    // protected function extraJsOptions(): RawJs
+    // {
+    //     return RawJs::make(<<<'JS'
+    //     {
+    //         annotations: {
+    //             points: [{
+    //                 x: 'Bananas',
+    //                 seriesIndex: 0,
+    //                 label: {
+    //                 borderColor: '#775DD0',
+    //                 offsetY: 0,
+    //                 style: {
+    //                     color: '#fff',
+    //                     background: '#775DD0',
+    //                 },
+    //                 text: 'Bananas are good',
+    //                 }
+    //             }]
+    //         },
+    //         yaxis: {
+    //             labels: {
+    //                 formatter: function (val, index) {
+    //                     return val.toFixed(0)
+    //                 }
+    //             }
+    //         },
+    //         xaxis: {
+    //             labels: {
+    //                 rotate: -45
+    //             },
+    //             tickPlacement: 'on'
+    //         },
+    //         stroke: {
+    //             curve: "smooth"
+    //         },
+    //         dataLabels: {
+    //             enabled: true,
+    //             formatter: function (val, opt) {
+    //                 if (val) {
+    //                     return val;
+    //                 }
+    //                 return ''
+    //             },
+    //             dropShadow: {
+    //                 enabled: true
+    //             },
+    //         }
+    //         // zoom: {
+    //         //     type: "x",
+    //         //     enabled: true,
+    //         //     autoScaleYaxis: true
+    //         // },
+    //         // toolbar: {
+    //         //     autoSelected: "zoom"
+    //         // }
 
-        }
-        JS);
-    }
+    //     }
+    //     JS);
+    // }
 }

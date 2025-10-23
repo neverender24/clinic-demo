@@ -11,8 +11,7 @@ use Illuminate\Support\HtmlString;
 
 class MostPrescribedDrugs extends BaseWidget
 {
-    protected static ?int $sort = 1;
-
+    protected static ?int $sort = 9;
     protected $medicines;
 
     protected function getHeading(): ?string
