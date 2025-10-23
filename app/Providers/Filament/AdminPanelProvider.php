@@ -8,35 +8,36 @@ use App\Models\User;
 use Filament\Widgets;
 use App\Models\Clinic;
 use Filament\PanelProvider;
+use Filament\Actions\Action;
 use App\Filament\Pages\Dashboard;
 use Filament\Navigation\MenuItem;
 use App\Filament\Pages\Auth\Login;
 use Filament\Support\Colors\Color;
+use Filament\Enums\UserMenuPosition;
 use Filament\Navigation\NavigationItem;
-use App\Filament\Resources\Users\UserResource;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Navigation\NavigationBuilder;
-use App\Filament\Resources\Patients\PatientResource;
 use Rmsramos\Activitylog\ActivitylogPlugin;
-use App\Filament\Resources\Medicines\MedicineResource;
 use Filament\FontProviders\LocalFontProvider;
 use App\Filament\Pages\Tenancy\RegisterClinic;
+use App\Filament\Resources\Users\UserResource;
 use App\Filament\Resources\ActivityLogResource;
 use Illuminate\Session\Middleware\StartSession;
-use App\Filament\Resources\Consultations\ConsultationResource;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use App\Filament\Pages\Tenancy\EditTenantProfile;
 use Filament\Http\Middleware\AuthenticateSession;
+use App\Filament\Resources\Patients\PatientResource;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Illuminate\Routing\Middleware\SubstituteBindings;
+use App\Filament\Resources\Medicines\MedicineResource;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Leandrocfe\FilamentApexCharts\FilamentApexChartsPlugin;
 use BezhanSalleh\FilamentShield\Middleware\SyncShieldTenant;
-use Filament\Actions\Action;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use App\Filament\Resources\Consultations\ConsultationResource;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -86,8 +87,10 @@ class AdminPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ])
-
-            ->sidebarFullyCollapsibleOnDesktop()
+            ->userMenu(position: UserMenuPosition::Sidebar)
+            ->globalSearch(false)
+            ->topbar(false)
+            ->sidebarFullyCollapsibleOnDesktop(false)
             ->plugins([
                 \Javarex\DdoLogin\LoginDdoPlugin::make(),
                 FilamentShieldPlugin::make()

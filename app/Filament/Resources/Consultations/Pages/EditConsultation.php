@@ -2,14 +2,15 @@
 
 namespace App\Filament\Resources\Consultations\Pages;
 
-use Filament\Actions\DeleteAction;
 use Filament\Actions;
 use Illuminate\View\View;
+use Filament\Actions\Action;
 use function Filament\authorize;
-use Filament\Resources\Pages\EditRecord;
+use Filament\Actions\DeleteAction;
 
-use App\Filament\Resources\Consultations\ConsultationResource;
+use Filament\Resources\Pages\EditRecord;
 use Torgodly\Html2Media\Actions\Html2MediaAction;
+use App\Filament\Resources\Consultations\ConsultationResource;
 
 class EditConsultation extends EditRecord
 {
@@ -30,6 +31,10 @@ class EditConsultation extends EditRecord
     {
         return [
             DeleteAction::make(),
+             Action::make('prescription')
+                        ->color(fn($record) => $record->medicines->count() < 1 ? 'danger' : 'success')
+                        ->icon('heroicon-m-printer')
+                        ->url(fn($record) => route('prescription.print', [$record->id]), shouldOpenInNewTab: true)
 
         ];
     }

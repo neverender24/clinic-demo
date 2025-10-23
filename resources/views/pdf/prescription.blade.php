@@ -283,7 +283,7 @@ hr {
         window.addEventListener('afterprint', () => {
             console.log('Printing is done!');
             // You can also close the window or redirect here
-            // window.close();
+            window.close();
              // only works if opened via JS
         });
     </script>
