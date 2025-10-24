@@ -5,55 +5,86 @@
   <title>Medical Certificate</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <style>
+    /* ===============================
+       🧾 PRINT PAGE CONFIG (A5)
+    =============================== */
     @page {
-      size: letter portrait;
-      margin: 2.5cm 2.5cm 0 1.5cm; /* bottom margin = 0 */
+      size: A5 portrait;
+      margin: 0;
     }
 
+    /* 🧠 General variables */
     :root {
       --font-stack: "Segoe UI", Arial, sans-serif;
     }
 
+    /* ===============================
+       🌐 GLOBAL STYLES
+    =============================== */
     html, body {
       margin: 0;
       padding: 0;
       font-family: var(--font-stack);
-      font-size: 13px;
-      line-height: 1.4;
-      color: #000;
-      background: #fff;
-      -webkit-print-color-adjust: exact;
-    }
-
-    .certificate {
-      min-height: 100vh; /* full page height */
+      background-color: #e5e7eb;
       display: flex;
-      flex-direction: column;
-      padding: 2rem 2rem 0 2rem; /* no bottom padding */
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+    }
+
+    /* ===============================
+       🧾 PAPER CANVAS SIMULATION
+    =============================== */
+    .certificate {
+      background: white;
+      color: #000;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
       box-sizing: border-box;
+      padding: 1.5cm;
+      position: relative;
+      width: 100%;
     }
 
-    .certificate-body {
-      flex: 1; /* pushes doctor + footer to the bottom */
-    }
-
+    /* ===============================
+       ✍️ CONTENT STYLES
+    =============================== */
     .header {
-      text-align: center;
+      width: 100%;
+      height: 159px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 20px !important;
     }
 
-    .header .clinic-name {
+    .header img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center;
+      border: 3px solid #1e3a8a;
+      border-radius: 8px;
+    }
+
+    .clinic-name {
       font-weight: 700;
       font-size: 13pt;
     }
 
     h1 {
-      font-size: 18pt;
+      font-size: 16pt;
       margin: 0.5rem 0;
       font-weight: bold;
     }
 
+    .certificate-body {
+      flex: 1;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
     .section {
-      margin-top: 1rem;
+      margin-top: 0.8rem;
     }
 
     .patient-info {
@@ -62,106 +93,253 @@
     }
 
     .doctor-block {
-      font-size: 12pt;
-      line-height: 1.2;
+      font-size: 11pt;
+      line-height: 1.3;
       text-align: left;
-      margin-bottom: 5rem; /* small gap above footer */
-    }
-
-    .doctor {
-      margin-top: 1rem;
-      font-weight: bold;
-    }
-
-    .title-small {
-      font-size: 12pt;
-    }
-
-    .license {
-      font-weight: 500;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
     }
 
     .certificate-footer {
-      margin-top: auto; /* stick to bottom */
       text-align: center;
-      font-size: 11pt;
+      font-size: 10pt;
       color: rgb(71, 71, 71);
+      margin-top: auto;
     }
 
+    .dynamic-underline {
+      text-decoration: underline !important;
+      text-decoration-color: black !important;
+      text-decoration-thickness: 1px !important;
+      text-underline-offset: 3px !important;
+      color: black !important;
+    }
+
+    /* ===============================
+       🖨️ PRINT MEDIA (Header & Footer Repeat)
+    =============================== */
     @media print {
+      @page {
+        size: A5 portrait;
+        margin: 0;
+      }
+
       body {
-        font-size: 12pt;
+        background: none !important;
       }
 
       .certificate {
-        padding: 1.5rem 2rem 2rem 2rem;
+        margin: 0;
+        box-shadow: none;
+        width: 100%;
+        padding: 1.5cm;
+      }
+
+      /* Enable table layout for repeating header/footer */
+      .print-wrapper {
+        display: table !important;
+        width: 100%;
+        border-collapse: collapse !important;
+      }
+
+      thead {
+        display: table-header-group !important;
+      }
+
+      tfoot {
+        display: table-footer-group !important;
+      }
+
+      .print-body {
+        display: table-row-group !important;
+      }
+
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
       }
     }
   </style>
 </head>
 <body>
-  <div class="certificate" aria-label="Medical Certificate">
-    <div class="certificate-body">
-      @include('pdf.header',['title' => 'MEDICAL CERTIFICATE'])
+  <!-- Table structure for repeating header/footer -->
+  <table class="print-wrapper">
+    <thead>
+      <tr>
+        <td>
+          <div class="header">
+            @include('pdf.header', ['title' => 'MEDICAL CERTIFICATE'])
+          </div>
+        </td>
+      </tr>
+    </thead>
 
-      <div class="section">
-        {{-- <p><span>Date:</span> {{ now()->format('F j, Y') }}</p> --}}
+    <tbody class="print-body">
+      <tr>
+        <td>
+          <div class="certificate" aria-label="Medical Certificate">
+            <div class="certificate-body">
+              <div class="section patient-info">
+                This is to certify that 
+                <span class="dynamic-underline"><strong>Test, Test T.</strong></span>,
+                10 years old, Male, from 
+                <span class="dynamic-underline">Purok 100, Buhangin, Davao City, Philippines</span>,
+                was seen at the clinic on 
+                <span class="dynamic-underline">October 24, 2025</span> and was diagnosed to have: 
+                <br><strong><span>sadasd</span></strong>
+              </div>
 
-        <div class="patient-info">
-          This is to certify that <strong>{{ $record->patient->full_name }}</strong>,
-          {{ $record->patient->age }} years old,
-          {{ $record->patient->sex == 'M' ? 'Male' : 'Female' }},
-          from {{ $record->patient->address }},
-          was seen at the clinic on {{ $record->date->format('F j, Y') }} and was diagnosed to have: <br>
-          <strong>{!! $record->diagnosis !!}</strong>
-        </div>
+              <p style="margin-top:1rem;">
+                He was treated for such with: 
+                <strong>dsadsad</strong>
+              </p>
 
-        <p style="margin-top:1rem;">
-          {{ $record->patient->sex == 'M' ? 'He' : 'She' }} was treated for such with: 
-          <strong>{!!$record->management!!}</strong>
-        </p>
+              <p style="margin-top:1rem;">Medications include the following:</p>
+              <ul>
+                <li>Paracetamol (Biogesic), asdasdad</li>
+              </ul>
 
-        <p style="margin-top:1rem;">
-          Medications include the following:
-        </p>
+              <div class="section">
+                <p><strong>Others:</strong></p>
+                <p>adasdasd adsad sadasdsad asfsafsafasfas</p>
+              </div>
 
-        <ul>
-          @foreach($record->medicines as $key => $row)
-            <li>{{ $row->name }} ({{ $row->brand }}), {{ $row->pivot->remarks }}</li>
-          @endforeach
-        </ul>
+              <p style="margin-top:1rem;">
+                Issued on October 24, 2025 for whatever legal purpose this may serve him best.
+              </p>
+              <div class="section">
+                <p><strong>Others:</strong></p>
+                <p>adasdasd adsad sadasdsad asfsafsafasfas</p>
+              </div>
 
-        <div class="section">
-          @if($record->approximate_days)
-            <p><strong>Advised to rest for:</strong> {{ $record->approximate_days }} days.</p>
-          @endif
-          @if($record->estimated_date)
-            <p><strong>Fit to work on:</strong> {{ $record->estimated_date?->format('F j, Y') }}</p>
-          @endif
-          @if($record->next_follow_up_schedule)
-            <p><strong>Must make a follow-up visit on:</strong> {{ $record->next_follow_up_schedule?->format('F j, Y') }}</p>
-          @endif
-          @if($record->medical_cert_remarks)
-            <p><strong>Others:</strong> {!! preg_replace('#</p>\s*<p>#i', ' ', $record->medical_cert_remarks) !!}</p>
-          @endif
-        </div>
+              <p style="margin-top:1rem;">
+                Issued on October 24, 2025 for whatever legal purpose this may serve him best.
+              </p>
+              <div class="section">
+                <p><strong>Others:</strong></p>
+                <p>adasdasd adsad sadasdsad asfsafsafasfas</p>
+              </div>
 
-        <p style="margin-top:1rem;">
-          Issued on {{now()->format('F d, Y')}} for whatever legal purpose this may serve {{ $record->patient->sex == 'M' ? 'him' : 'her' }} best.
-        </p>
-      </div>
-    </div>
+              <p style="margin-top:1rem;">
+                Issued on October 24, 2025 for whatever legal purpose this may serve him best.
+              </p>
+              <div class="section">
+                <p><strong>Others:</strong></p>
+                <p>adasdasd adsad sadasdsad asfsafsafasfas</p>
+              </div>
 
-    <!-- Doctor block above footer -->
-    <div class="doctor-block">
-      @include('pdf.signatory')
-    </div>
+              <p style="margin-top:1rem;">
+                Issued on October 24, 2025 for whatever legal purpose this may serve him best.
+              </p>
+              <div class="section">
+                <p><strong>Others:</strong></p>
+                <p>adasdasd adsad sadasdsad asfsafsafasfas</p>
+              </div>
 
-    <!-- True footer -->
-    <div class="certificate-footer">
-      @include('pdf.footer')
-    </div>
-  </div>
+              <p style="margin-top:1rem;">
+                Issued on October 24, 2025 for whatever legal purpose this may serve him best.
+              </p>
+              <div class="section">
+                <p><strong>Others:</strong></p>
+                <p>adasdasd adsad sadasdsad asfsafsafasfas</p>
+              </div>
+
+              <p style="margin-top:1rem;">
+                Issued on October 24, 2025 for whatever legal purpose this may serve him best.
+              </p>
+              <div class="section">
+                <p><strong>Others:</strong></p>
+                <p>adasdasd adsad sadasdsad asfsafsafasfas</p>
+              </div>
+
+              <p style="margin-top:1rem;">
+                Issued on October 24, 2025 for whatever legal purpose this may serve him best.
+              </p>
+              <div class="section">
+                <p><strong>Others:</strong></p>
+                <p>adasdasd adsad sadasdsad asfsafsafasfas</p>
+              </div>
+
+              <p style="margin-top:1rem;">
+                Issued on October 24, 2025 for whatever legal purpose this may serve him best.
+              </p>
+              <div class="section">
+                <p><strong>Others:</strong></p>
+                <p>adasdasd adsad sadasdsad asfsafsafasfas</p>
+              </div>
+
+              <p style="margin-top:1rem;">
+                Issued on October 24, 2025 for whatever legal purpose this may serve him best.
+              </p>
+              <div class="section">
+                <p><strong>Others:</strong></p>
+                <p>adasdasd adsad sadasdsad asfsafsafasfas</p>
+              </div>
+
+              <p style="margin-top:1rem;">
+                Issued on October 24, 2025 for whatever legal purpose this may serve him best.
+              </p>
+              <div class="section">
+                <p><strong>Others:</strong></p>
+                <p>adasdasd adsad sadasdsad asfsafsafasfas</p>
+              </div>
+
+              <p style="margin-top:1rem;">
+                Issued on October 24, 2025 for whatever legal purpose this may serve him best.
+              </p>
+              <div class="section">
+                <p><strong>Others:</strong></p>
+                <p>adasdasd adsad sadasdsad asfsafsafasfas</p>
+              </div>
+
+              <p style="margin-top:1rem;">
+                Issued on October 24, 2025 for whatever legal purpose this may serve him best.
+              </p>
+              <div class="section">
+                <p><strong>Others:</strong></p>
+                <p>adasdasd adsad sadasdsad asfsafsafasfas</p>
+              </div>
+
+              <p style="margin-top:1rem;">
+                Issued on October 24, 2025 for whatever legal purpose this may serve him best.
+              </p>
+              <div class="section">
+                <p><strong>Others:</strong></p>
+                <p>adasdasd adsad sadasdsad asfsafsafasfas</p>
+              </div>
+
+              <p style="margin-top:1rem;">
+                Issued on October 24, 2025 for whatever legal purpose this may serve him best.
+              </p>
+              <div class="section">
+                <p><strong>Others:</strong></p>
+                <p>adasdasd adsad sadasdsad asfsafsafasfas</p>
+              </div>
+
+              <p style="margin-top:1rem;">
+                Issued on October 24, 2025 for whatever legal purpose this may serve him best.
+              </p>
+
+              <div class="doctor-block">
+                @include('pdf.signatory')
+              </div>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+
+    <tfoot>
+      <tr>
+        <td>
+          <div class="certificate-footer">
+            @include('pdf.footer')
+          </div>
+        </td>
+      </tr>
+    </tfoot>
+  </table>
 
   <script>
     window.addEventListener('load', function () {
@@ -169,7 +347,7 @@
     });
 
     window.addEventListener('afterprint', () => {
-      window.close(); // Only works if opened by JS
+      // window.close();
     });
   </script>
 </body>
