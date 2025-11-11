@@ -53,16 +53,20 @@ class ConsultationForm
                                     ->required(),
                                 Select::make('patient_id')
                                     ->label('Patient')
+                                    ->columnSpan([
+                                        'default' => 'full',
+                                        'xl' => 3
+                                    ])
                                     ->relationship('patient', 'full_name')
+                                    ->preload()
+                                     ->searchable()
                                     // ->getSearchResultsUsing(fn (string $search) => Patient::query()->where('full_name', 'like', "%$search%")->pluck('full_name', 'id'))
-                                    ->getOptionLabelsUsing(fn($value) => Patient::find($value)->full_name)
+                                    // ->getOptionLabelsUsing(fn($value) => Patient::find($value)->full_name)
                                     ->afterStateUpdated(
                                         function ($livewire) {
                                             $livewire->getTable();
                                         }
                                     )
-                                    ->preload()
-                                    ->searchable()
                                     ->createOptionForm(function (Schema $schema) {
                                         return PatientResource::form($schema)->extraAttributes(['class' => 'w-full']);
                                     })
@@ -77,19 +81,17 @@ class ConsultationForm
                                     })
                                     ->live()
                                     ->required()
-                                    ->columnSpan([
-                                        'default' => 'full',
-                                        'xl' => 3
-                                    ]),
+                                    ,
                                 RichEditor::make('chief_complaint')
+                                    ->columnSpan([
+                                        'xl' => 'full'
+                                    ])
                                     ->required()
                                     ->json(false)
                                     ->toolbarButtons(self::onlyAllowedToolbar())
                                     ->fileAttachmentsDirectory('chief-complaint/' . now()->format('m-y'))
                                     ->visible(fn() => auth()->user()->can('addChiefComplaint', Consultation::class))
-                                    ->columnSpan([
-                                        'xl' => 'full'
-                                    ]),
+                                    ,
                                 RichEditor::make('test_results')
                                     ->label('Medical Data')
                                     ->required()
