@@ -21,7 +21,7 @@ return [
             'pages' => true,
             'widgets' => true,
             'resources' => true,
-            'custom_permissions' => false,
+            'custom_permissions' => true,
         ],
     ],
 
@@ -170,9 +170,30 @@ return [
                 'update',
                 'delete',
             ],
+            App\Filament\Resources\Consultations\ConsultationResource::class => [
+                'view',
+                'view_any',
+                'create',
+                'update',
+                'restore',
+                'restore_any',
+                'replicate',
+                'reorder',
+                'delete',
+                'delete_any',
+                'force_delete',
+                'force_delete_any',
+                'add_management',
+                'add_diagnosis',
+                'add_chief_complaint',
+                'add_prescription',
+                'add_test_results',
+                'edit_as_doctor',
+                'add_followup_schedule'
+            ]
         ],
         'exclude' => [
-            //
+            // App\Filament\Resources\Consultations\ConsultationResource::class
         ],
     ],
 
@@ -226,7 +247,9 @@ return [
     |
     */
 
-    'custom_permissions' => [],
+    'custom_permissions' => [
+       
+    ],
 
     /*
     |--------------------------------------------------------------------------

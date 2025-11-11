@@ -2,30 +2,22 @@
 
 namespace App\Filament\Resources\Consultations\Schemas;
 
-use App\Models\Patient;
 use App\Models\Medicine;
-use Illuminate\View\View;
-use App\Enums\Enums\Status;
 use App\Models\Consultation;
 use Filament\Actions\Action;
 use Filament\Schemas\Schema;
 use App\Models\HospitalAdmission;
 use App\Models\ConsultationMedicine;
 use Filament\Forms\Components\Select;
-use Filament\Schemas\Components\Grid;
-use App\Forms\Components\HistoryField;
 use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Textarea;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\RichEditor;
-use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Repeater\TableColumn;
 use App\Filament\Resources\Patients\PatientResource;
 use App\Filament\Resources\Medicines\MedicineResource;
-use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\View as ComponentsView;
 
 class ConsultationForm
@@ -93,31 +85,33 @@ class ConsultationForm
                                     ->visible(fn() => auth()->user()->can('addChiefComplaint', Consultation::class))
                                     ,
                                 RichEditor::make('test_results')
-                                    ->label('Medical Data')
-                                    ->required()
-                                    ->toolbarButtons(self::onlyAllowedToolbar())
-                                    ->fileAttachmentsDirectory('test-results/' . now()->format('m-y'))
-                                    ->visible(fn() => auth()->user()->can('addTestResult', Consultation::class))
                                     ->columnSpan([
                                         'xl' => 'full'
-                                    ]),
-                                RichEditor::make('diagnosis')
+                                    ])
+                                    ->label('Medical Data')
+                                    ->visible(fn() => auth()->user()->can('addTestResult', Consultation::class))
                                     ->required()
                                     ->toolbarButtons(self::onlyAllowedToolbar())
+                                    ->fileAttachmentsDirectory('test-results/' . now()->format('m-y')),
+                                RichEditor::make('diagnosis')
+                                    ->columnSpan([
+                                        'xl' => 'full'
+                                    ])
                                     ->columnSpanFull()
+                                    ->required()
+                                    ->toolbarButtons(self::onlyAllowedToolbar())
                                     ->fileAttachmentsDirectory('diagnosis/' . now()->format('m-y'))
                                     ->visible(fn() => auth()->user()->hasAnyRole(['Doctor', 'super_admin']))
+                                    ,
+                                RichEditor::make('management')
                                     ->columnSpan([
                                         'xl' => 'full'
-                                    ]),
-                                RichEditor::make('management')
+                                    ])
                                     ->required()
                                     ->toolbarButtons(self::onlyAllowedToolbar())
                                     ->visible(fn() => auth()->user()->hasAnyRole(['Doctor', 'super_admin']))
                                     ->fileAttachmentsDirectory('management/' . now()->format('m-y'))
-                                    ->columnSpan([
-                                        'xl' => 'full'
-                                    ]),
+                                    ,
                                 DatePicker::make('next_follow_up_schedule')
                                     ->label('Follow up schedule')
                                     ->visible(fn($livewire) => auth()->user()->can('addFollowupSchedule', $livewire->record))
@@ -224,6 +218,7 @@ class ConsultationForm
                                             ]),
                                         TextInput::make('quantity')
                                             ->required()
+                                            
                                             ->columnSpan(2)
                                             ->columnSpan([
                                                 'lg' => 1,

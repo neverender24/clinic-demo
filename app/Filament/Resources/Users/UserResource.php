@@ -49,6 +49,9 @@ class UserResource extends Resource
                     ->preload(),
                 TextInput::make('username')
                     ->unique(ignoreRecord: true)
+                    // ->validationMessages([
+                    //     'required' => 'The :attribute has already been registered.',
+                    // ])
                     ->required()
                     ->maxLength(255),
                 TextInput::make('email')
@@ -70,10 +73,6 @@ class UserResource extends Resource
                         }
                     )
                     ->required()
-                    ->saveRelationshipsUsing(function (Model $record, $state, $get) {
-                        // dd(getPermissionsTeamId());
-                        $record->roles()->syncWithPivotValues($state, [config('permission.column_names.team_foreign_key') => Filament::getTenant()->id]);
-                    })
                    ->searchable()
             ]);
     }

@@ -2,71 +2,20 @@
 
 namespace App\Filament\Resources\Consultations;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\Section;
-use Filament\Actions\Action;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Actions\EditAction;
-use Filament\Actions\DeleteAction;
-use Filament\Schemas\Components\Fieldset;
-use Throwable;
-use Filament\Support\Enums\Width;
-use App\Filament\Resources\Consultations\Pages\EditConsultation;
-use App\Filament\Resources\Consultations\Pages\CustomDoc;
-use App\Filament\Resources\Consultations\Pages\EditWithHistory;
-use Carbon\Carbon;
-use Filament\Forms;
-use Filament\Tables;
-use App\Models\Patient;
-use App\Models\Medicine;
-use Illuminate\View\View;
 use Filament\Tables\Table;
-use Livewire\Attributes\On;
 use App\Models\Consultation;
-use Livewire\Attributes\Url;
+use Filament\Schemas\Schema;
 use App\Trait\HasStatusAction;
 use Filament\Resources\Resource;
-use Filament\Actions\ActionGroup;
-use function Laravel\Prompts\form;
-use Filament\Tables\Filters\Filter;
-use App\Models\ConsultationMedicine;
-use Filament\Forms\Components\Select;
-use Filament\Forms\ComponentContainer;
-use Filament\Forms\Components\Livewire;
-use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Tabs\Tab;
-use Illuminate\Database\Eloquent\Model;
-use App\Models\Scopes\ConsultationScope;
-use Filament\Forms\Components\TextInput;
-use Filament\Notifications\Notification;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\RichEditor;
-use Filament\Tables\Filters\QueryBuilder;
-use Filament\Tables\Filters\SelectFilter;
-use Illuminate\Database\Eloquent\Builder;
-use App\Livewire\Consultation\ListRecords;
-use Filament\Forms\Components\MarkdownEditor;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Forms\Components\View as ComponentsView;
-use App\Filament\Resources\ConsultationResource\Pages;
-use App\Filament\Resources\Consultations\Pages\CreateConsultation;
-use Torgodly\Html2Media\Tables\Actions\Html2MediaAction;
-
+use App\Filament\Resources\Consultations\Pages\CustomDoc;
+use App\Filament\Resources\Consultations\Pages\EditWithHistory;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
-use App\Filament\Resources\ConsultationResource\RelationManagers;
+use App\Filament\Resources\Consultations\Pages\EditConsultation;
+
 use App\Filament\Resources\Consultations\Pages\ListConsultations;
-use App\Filament\Resources\Consultations\Pages\Test;
+use App\Filament\Resources\Consultations\Pages\CreateConsultation;
 use App\Filament\Resources\Consultations\Schemas\ConsultationForm;
 use App\Filament\Resources\Consultations\Tables\ConsultationsTable;
-use App\Forms\Components\HistoryField;
-use App\Models\HospitalAdmission;
-use Filament\Facades\Filament;
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Set;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\HtmlString;
-use Illuminate\Support\Number;
 
 class ConsultationResource extends Resource implements HasShieldPermissions
 {

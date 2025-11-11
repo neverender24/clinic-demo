@@ -64,8 +64,4 @@ class UserPolicy
         return $authUser->can('Reorder:User');
     }
 
-    public function canManageTenant(AuthUser $user): bool
-    {
-        return $user->doctor();
-    }
 }
