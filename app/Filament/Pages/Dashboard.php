@@ -13,7 +13,6 @@ class Dashboard extends BaseDashboard
 
     public function getColumns(): int | array
     {
-        dd(auth()->user()->roles->load('permissions'));
         return 12;
     }
 }

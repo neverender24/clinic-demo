@@ -14,6 +14,7 @@ class ConsultationPolicy
     
     public function viewAny(AuthUser $authUser): bool
     {
+        dd($authUser->can('view_any_consultation'));
         return $authUser->can('ViewAny:Consultation');
     }
 
