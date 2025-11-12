@@ -2,30 +2,20 @@
 
 namespace App\Filament\Resources\Consultations\Tables;
 
-use App\Models\Patient;
 use Filament\Tables\Table;
 use Filament\Actions\Action;
 use App\Trait\HasStatusAction;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Number;
 use Filament\Actions\EditAction;
 use Filament\Actions\ActionGroup;
-use Filament\Support\Enums\Width;
 use Filament\Actions\DeleteAction;
 use Illuminate\Support\Facades\DB;
 use Filament\Tables\Filters\Filter;
-use Filament\Actions\BulkActionGroup;
 use Filament\Forms\Components\Select;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
-use Filament\Tables\Columns\Layout\Grid;
-use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\RichEditor;
-use Filament\Schemas\Components\Fieldset;
 use Filament\Tables\Columns\SelectColumn;
-use Torgodly\Html2Media\Actions\Html2MediaAction;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use App\Filament\Resources\Consultations\ConsultationResource;
 

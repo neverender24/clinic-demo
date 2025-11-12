@@ -5,15 +5,20 @@ namespace App\Filament\Resources\Consultations\Pages;
 use Filament\Actions;
 use Illuminate\View\View;
 use Filament\Actions\Action;
+use App\Trait\HasHistoryAction;
 use function Filament\authorize;
-use Filament\Actions\DeleteAction;
 
+use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 use Torgodly\Html2Media\Actions\Html2MediaAction;
 use App\Filament\Resources\Consultations\ConsultationResource;
+use Livewire\Attributes\On;
 
 class EditConsultation extends EditRecord
 {
+
+    use HasHistoryAction;
+    
     protected static string $resource = ConsultationResource::class;
 
     // protected static string $view = 'filament.consultations.list-records';
@@ -22,9 +27,16 @@ class EditConsultation extends EditRecord
     {
         $this->record = $this->resolveRecord($record);
         // dd($this->record);
-        $this->authorize('editRecord', $this->record);
+        // $this->authorize('editRecord', $this->record);
 
         $this->form->fill($this->record->toArray());
+        
+    }
+
+    #[On('testing-event;')]
+    public function updateSomething()
+    {
+        dd('testing');
     }
 
     protected function getHeaderActions(): array

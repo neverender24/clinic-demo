@@ -14,103 +14,97 @@ class ConsultationPolicy
     
     public function viewAny(AuthUser $authUser): bool
     {
-        dd($authUser->can('view_any_consultation'));
-        return $authUser->can('ViewAny:Consultation');
+        return $authUser->can('view_any_consultation');
     }
 
     public function view(AuthUser $authUser, Consultation $consultation): bool
     {
-        return $authUser->can('View:Consultation');
+        return $authUser->can('view_consultation');
     }
 
     public function create(AuthUser $authUser): bool
     {
-        return $authUser->can('Create:Consultation');
+        return $authUser->can('create_consultation');
     }
 
     public function update(AuthUser $authUser, Consultation $consultation): bool
     {
-        // dd($authUser->can('Update:Consultation'));
-        return $authUser->can('Update:Consultation') || true;
+        return $authUser->can('update_consultation');
     }
 
     public function delete(AuthUser $authUser, Consultation $consultation): bool
     {
-        return $authUser->can('Delete:Consultation');
+        return $authUser->can('delete_consultation');
     }
 
     public function restore(AuthUser $authUser, Consultation $consultation): bool
     {
-        return $authUser->can('Restore:Consultation');
+        return $authUser->can('restore_consultation');
     }
 
     public function forceDelete(AuthUser $authUser, Consultation $consultation): bool
     {
-        return $authUser->can('ForceDelete:Consultation');
+        return $authUser->can('force_delete_consultation');
     }
 
     public function forceDeleteAny(AuthUser $authUser): bool
     {
-        return $authUser->can('ForceDeleteAny:Consultation');
+        return $authUser->can('force_delete_any_consultation');
     }
 
     public function restoreAny(AuthUser $authUser): bool
     {
-        return $authUser->can('RestoreAny:Consultation');
+        return $authUser->can('restore_any_consultation');
     }
 
     public function replicate(AuthUser $authUser, Consultation $consultation): bool
     {
-        return $authUser->can('Replicate:Consultation');
+        return $authUser->can('replicate_consultation');
     }
 
     public function reorder(AuthUser $authUser): bool
     {
-        return $authUser->can('Reorder:Consultation');
+        return $authUser->can('reorder_consultation');
     }
 
-          /**
-     * Customized permissions.
-     */
-    public function addManagement(AuthUser $user): bool
+    public function deleteAny(AuthUser $authUser): bool
     {
-        return $user->can('add_management_consultation');
+        return $authUser->can('delete_any_consultation');
     }
 
-    public function addDiagnosis(AuthUser $user): bool
+    public function addManagement(AuthUser $authUser, Consultation $consultation): bool
     {
-        return $user->can('add_diagnosis_consultation');
+        return $authUser->can('add_management_consultation');
     }
 
-    public function addChiefComplaint(AuthUser $user): bool
+    public function addDiagnosis(AuthUser $authUser, Consultation $consultation): bool
     {
-        return $user->can('add_chief_complaint_consultation');
+        return $authUser->can('add_diagnosis_consultation');
     }
 
-    public function addPrescription(AuthUser $user): bool
+    public function addChiefComplaint(AuthUser $authUser): bool
     {
-        return $user->can('add_prescription_consultation');
+        return $authUser->can('add_chief_complaint_consultation');
     }
 
-    public function addTestResult(AuthUser $user): bool
+    public function addPrescription(AuthUser $authUser): bool
     {
-        return $user->can('add_test_results_consultation');
+        return $authUser->can('add_prescription_consultation');
     }
 
-    public function editAsDoctor(AuthUser $user)
+    public function addTestResults(AuthUser $authUser): bool
     {
-        // dd($user->hasPermissionTo());
-        return $user->can('edit_as_doctor_consultation');
+        return $authUser->can('add_test_results_consultation');
     }
 
-    public function editRecord(AuthUser $user, Consultation $consultation): bool
+    public function editAsDoctor(AuthUser $authUser): bool
     {
-        return ($consultation->status->value !== 'Done' || $user->doctor());
+        return $authUser->can('edit_as_doctor_consultation');
     }
 
-    public function addFollowupSchedule(AuthUser $user, Consultation $consultation): bool
+    public function addFollowupSchedule(AuthUser $authUser): bool
     {
-        return $user->can('add_followup_schedule_consultation');
+        return $authUser->can('add_followup_schedule_consultation');
     }
 
 }

@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Consultations\Schemas;
 
 use App\Models\Medicine;
+use Livewire\Attributes\On;
 use App\Models\Consultation;
 use Filament\Actions\Action;
 use Filament\Schemas\Schema;
@@ -15,6 +16,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\RichEditor;
+use App\Filament\Forms\Components\PatientHistory;
 use Filament\Forms\Components\Repeater\TableColumn;
 use App\Filament\Resources\Patients\PatientResource;
 use App\Filament\Resources\Medicines\MedicineResource;
@@ -56,7 +58,7 @@ class ConsultationForm
                                     // ->getOptionLabelsUsing(fn($value) => Patient::find($value)->full_name)
                                     ->afterStateUpdated(
                                         function ($livewire) {
-                                            $livewire->getTable();
+                                            $livewire->dispatch('refresh_table');
                                         }
                                     )
                                     ->createOptionForm(function (Schema $schema) {
@@ -233,14 +235,22 @@ class ConsultationForm
                     ->compact()
                     ->columnSpan(1)
                     ->schema([
-                        ComponentsView::make('patient_history')
-                            ->visible(fn($operation) => $operation == 'create')
-                            ->view('forms.components.history-field')
-                            // ->hiddenLabel()
-                            // ->content(fn(): View => view('forms.components.history-field'))
-                            // ->visible(fn() => auth()->user()->doctor())
-                        // ->dehydrated(false)
-                        ,
+                        PatientHistory::make('history')
+                            ->viewData(function($get) {
+                                // dump($get('patient_id'));
+                                return [
+                                    'patient_id' => $get('patient_id')
+                                ];
+                            })
+                            ->reactive(),
+                        // ComponentsView::make('patient_history')
+                        //     // ->visible(fn($operation) => $operation == 'create')
+                        //     ->view('forms.components.history-field')
+                        //     // ->hiddenLabel()
+                        //     // ->content(fn(): View => view('forms.components.history-field'))
+                        //     // ->visible(fn() => auth()->user()->doctor())
+                        // // ->dehydrated(false)
+                        // ,
                         ComponentsView::make('hospital_admission')
                             ->visible(fn($operation) => $operation == 'create')
                             // ->hiddenLabel()
@@ -263,6 +273,12 @@ class ConsultationForm
                     ])
             ]);
         // ->extraAttributes(['class' => '', 'id' => 'consutation-form']);
+    }
+
+    #[On('testing-event;')]
+    public function updateSomething()
+    {
+        dd('testing');
     }
 
     protected static function onlyAllowedToolbar(): array

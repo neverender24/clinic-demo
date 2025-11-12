@@ -1,8 +1,8 @@
 <div class="">
     <div class="grid grid-cols-2 gap-4">
-        <div>
+        {{-- <div>
             {{ $this->form }}
-        </div>
+        </div> --}}
         <div>
             {{ $this->table }}
         </div>

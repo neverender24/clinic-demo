@@ -14,57 +14,57 @@ class HospitalAdmissionPolicy
     
     public function viewAny(AuthUser $authUser): bool
     {
-        return $authUser->can('ViewAny:HospitalAdmission');
+        return $authUser->can('view_any_hospital::admission');
     }
 
     public function view(AuthUser $authUser, HospitalAdmission $hospitalAdmission): bool
     {
-        return $authUser->can('View:HospitalAdmission');
+        return $authUser->can('view_hospital::admission');
     }
 
     public function create(AuthUser $authUser): bool
     {
-        return $authUser->can('Create:HospitalAdmission');
+        return $authUser->can('create_hospital::admission');
     }
 
     public function update(AuthUser $authUser, HospitalAdmission $hospitalAdmission): bool
     {
-        return $authUser->can('Update:HospitalAdmission');
+        return $authUser->can('update_hospital::admission');
     }
 
     public function delete(AuthUser $authUser, HospitalAdmission $hospitalAdmission): bool
     {
-        return $authUser->can('Delete:HospitalAdmission');
+        return $authUser->can('delete_hospital::admission');
     }
 
     public function restore(AuthUser $authUser, HospitalAdmission $hospitalAdmission): bool
     {
-        return $authUser->can('Restore:HospitalAdmission');
+        return $authUser->can('restore_hospital::admission');
     }
 
     public function forceDelete(AuthUser $authUser, HospitalAdmission $hospitalAdmission): bool
     {
-        return $authUser->can('ForceDelete:HospitalAdmission');
+        return $authUser->can('force_delete_hospital::admission');
     }
 
     public function forceDeleteAny(AuthUser $authUser): bool
     {
-        return $authUser->can('ForceDeleteAny:HospitalAdmission');
+        return $authUser->can('force_delete_any_hospital::admission');
     }
 
     public function restoreAny(AuthUser $authUser): bool
     {
-        return $authUser->can('RestoreAny:HospitalAdmission');
+        return $authUser->can('restore_any_hospital::admission');
     }
 
     public function replicate(AuthUser $authUser, HospitalAdmission $hospitalAdmission): bool
     {
-        return $authUser->can('Replicate:HospitalAdmission');
+        return $authUser->can('replicate_hospital::admission');
     }
 
     public function reorder(AuthUser $authUser): bool
     {
-        return $authUser->can('Reorder:HospitalAdmission');
+        return $authUser->can('reorder_hospital::admission');
     }
 
 }
