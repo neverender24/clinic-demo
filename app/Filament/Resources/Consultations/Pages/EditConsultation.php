@@ -33,10 +33,11 @@ class EditConsultation extends EditRecord
         
     }
 
-    #[On('testing-event;')]
-    public function updateSomething()
+    #[On('testing-event')]
+    public function testing()
     {
-        dd('testing');
+        dd($this->data['chief_complaint']);
+        $this->data['chief_complaint'] = '\n testing ni';
     }
 
     protected function getHeaderActions(): array

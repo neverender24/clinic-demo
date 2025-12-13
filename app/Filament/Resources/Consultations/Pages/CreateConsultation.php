@@ -45,6 +45,21 @@ class CreateConsultation extends CreateRecord implements HasTable
         ];
     }
 
+    #[On('copy-data')]
+    public function copyPatientData($record, $type)
+    {
+        if ($type === 'patient-data') {
+            
+            $this->selectHistory(fluent($record));
+
+        } else if($type === 'prescription') {
+
+            $this->copyPrescription(collect($record));
+
+        }
+    }
+   
+
     #[On('update-from-admission')]
     public function copyData($data, $field = "all")
     {
@@ -105,11 +120,12 @@ class CreateConsultation extends CreateRecord implements HasTable
 
     protected function getRedirectUrl(): string
     {
-        if (auth()->user()->doctor()) {
-            return $this->getResource()::getUrl('edit.consultation', [$this->record->id]);
-        } else {
-            return $this->getResource()::getUrl('edit', [$this->record->id]);
-        }
+        // if (auth()->user()->doctor()) {
+        //     return $this->getResource()::getUrl('edit.consultation', [$this->record->id]);
+        // } else {
+        //     return $this->getResource()::getUrl('edit', [$this->record->id]);
+        // }
+        return $this->getResource()::getUrl('edit', [$this->record->id]);
     } 
 
     public function table(Table $table): Table

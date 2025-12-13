@@ -14,97 +14,92 @@ class ConsultationPolicy
     
     public function viewAny(AuthUser $authUser): bool
     {
-        return $authUser->can('view_any_consultation');
+        return $authUser->can('ViewAny:Consultation');
     }
 
     public function view(AuthUser $authUser, Consultation $consultation): bool
     {
-        return $authUser->can('view_consultation');
+        return $authUser->can('View:Consultation');
     }
 
     public function create(AuthUser $authUser): bool
     {
-        return $authUser->can('create_consultation');
+        return $authUser->can('Create:Consultation');
     }
 
     public function update(AuthUser $authUser, Consultation $consultation): bool
     {
-        return $authUser->can('update_consultation');
+        return $authUser->can('Update:Consultation');
     }
 
     public function delete(AuthUser $authUser, Consultation $consultation): bool
     {
-        return $authUser->can('delete_consultation');
+        return $authUser->can('Delete:Consultation');
     }
 
     public function restore(AuthUser $authUser, Consultation $consultation): bool
     {
-        return $authUser->can('restore_consultation');
+        return $authUser->can('Restore:Consultation');
     }
 
     public function forceDelete(AuthUser $authUser, Consultation $consultation): bool
     {
-        return $authUser->can('force_delete_consultation');
+        return $authUser->can('ForceDelete:Consultation');
     }
 
     public function forceDeleteAny(AuthUser $authUser): bool
     {
-        return $authUser->can('force_delete_any_consultation');
+        return $authUser->can('ForceDeleteAny:Consultation');
     }
 
     public function restoreAny(AuthUser $authUser): bool
     {
-        return $authUser->can('restore_any_consultation');
+        return $authUser->can('RestoreAny:Consultation');
     }
 
     public function replicate(AuthUser $authUser, Consultation $consultation): bool
     {
-        return $authUser->can('replicate_consultation');
+        return $authUser->can('Replicate:Consultation');
     }
 
     public function reorder(AuthUser $authUser): bool
     {
-        return $authUser->can('reorder_consultation');
+        return $authUser->can('Reorder:Consultation');
     }
 
-    public function deleteAny(AuthUser $authUser): bool
+    public function addManagement(AuthUser $authUser): bool
     {
-        return $authUser->can('delete_any_consultation');
+        return $authUser->can('AddManagement:Consultation');
     }
 
-    public function addManagement(AuthUser $authUser, Consultation $consultation): bool
+    public function addDiagnosis(AuthUser $authUser): bool
     {
-        return $authUser->can('add_management_consultation');
-    }
-
-    public function addDiagnosis(AuthUser $authUser, Consultation $consultation): bool
-    {
-        return $authUser->can('add_diagnosis_consultation');
+        return $authUser->can('AddDiagnosis:Consultation');
     }
 
     public function addChiefComplaint(AuthUser $authUser): bool
     {
-        return $authUser->can('add_chief_complaint_consultation');
+        return $authUser->can('AddChiefComplaint:Consultation');
     }
 
     public function addPrescription(AuthUser $authUser): bool
     {
-        return $authUser->can('add_prescription_consultation');
+        return $authUser->can('AddPrescription:Consultation');
     }
 
-    public function addTestResults(AuthUser $authUser): bool
+    public function addTestResult(AuthUser $authUser): bool
     {
-        return $authUser->can('add_test_results_consultation');
-    }
-
-    public function editAsDoctor(AuthUser $authUser): bool
-    {
-        return $authUser->can('edit_as_doctor_consultation');
+        return $authUser->can('AddTestResult:Consultation');
     }
 
     public function addFollowupSchedule(AuthUser $authUser): bool
     {
-        return $authUser->can('add_followup_schedule_consultation');
+        return $authUser->can('AddFollowupSchedule:Consultation');
+    }
+
+    public function addVitalSign(AuthUser $authUser): bool
+    {
+        return $authUser->can('AddVitalSign:Consultation');
     }
 
 }

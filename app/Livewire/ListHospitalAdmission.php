@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Filament\Resources\HospitalAdmissions\Schemas\HospitalAdmissionInfolist;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Action;
@@ -9,6 +10,7 @@ use Livewire\Component;
 use Illuminate\View\View;
 use Filament\Tables\Table;
 use App\Models\HospitalAdmission;
+use Filament\Actions\ViewAction;
 use Illuminate\Support\HtmlString;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Columns\TextColumn;
@@ -19,14 +21,19 @@ use Filament\Tables\Columns\Layout\Stack;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
+use Filament\Schemas\Concerns\InteractsWithSchemas;
+use Filament\Schemas\Contracts\HasSchemas;
+use Filament\Schemas\Schema;
+use Livewire\Attributes\Reactive;
 
-class ListHospitalAdmission extends Component implements HasTable, HasForms, HasActions
+class ListHospitalAdmission extends Component implements HasTable, HasSchemas, HasActions
 {
     use InteractsWithActions;
     use InteractsWithTable;
-    use InteractsWithForms;
+    use InteractsWithSchemas    ;
     // use InteractsWithRecord;
 
+    #[Reactive]
     public $patient_id;
 
 
@@ -37,21 +44,25 @@ class ListHospitalAdmission extends Component implements HasTable, HasForms, Has
                 ->header(fn(): View => view('filament.hospital_admission.history-heading'))
                 ->columns([
                     Split::make([
-                        TextColumn::make('hospital'),
+                        TextColumn::make('hospital')
+                            ->limit(20)
+                            ->tooltip(fn($state) => $state),
                         Stack::make([
                             TextColumn::make('admission_date')
-                                ->dateTime('F j, Y')
-                                ->icon('healthicons-o-admissions')
+                                ->dateTime('m-d-Y')
+                                // ->icon('healthicons-o-admissions')
                                 ->color('warning'),
                             TextColumn::make('discharge_date')
-                                ->dateTime('F j, Y')
-                                ->icon('healthicons-o-discharge')
+                                ->dateTime('m-d-Y')
+                                // ->icon('healthicons-o-discharge')
                                 ->color('success')
                         ])
                     ])
                 ])
                 ->recordActions([
-                    Action::make('view')
+                    ViewAction::make('view')
+                        ->schema(fn(Schema $schema) => HospitalAdmissionInfolist::configure($schema)->columns(2))
+                        ->modalHeading(fn($record) => $record->patient?->full_name)
                 ])
                 ->paginated(false);
     }

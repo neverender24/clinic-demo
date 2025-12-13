@@ -6,8 +6,11 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Spatie\Activitylog\Models\Activity;
 use App\Http\Controllers\ConsultationController;
+use App\Http\Controllers\Isaiah\MedCertController;
 
-Route::get('/', Login::class);
+Route::get('/', function () {
+    return redirect('/admin');
+});
 
 Route::get('print-prescription/{id}', [ConsultationController::class, 'print']);
 
@@ -17,6 +20,37 @@ Route::get('/print-view/{consultation}', [ConsultationController::class, 'prescr
 Route::get('medical-cert/{id}', [ConsultationController::class, 'medcert'])->name('medical.medcert');
 Route::get('/admitting-order/{consultation}', [ConsultationController::class, 'admittingOrder'])->name('prescription.admitting.order');
 Route::get('custom_docs/{doc}', [ConsultationController::class, 'customDoc'])->name('print.custom.doc');
+
+Route::get('/prescription/{id}', [App\Http\Controllers\PrescriptionController::class, 'generate'])->name('tcpdf.print');
+Route::get('/afive-doc/{id}', [App\Http\Controllers\AFivePaperController::class, 'generate'])->name('tcpdf.print.a5');
+Route::get('/afive-mercert/{id}', [MedCertController::class, 'generate'])->name('tcpdf.print.a5-medcert');
+
+// Blade for new tab
+Route::get('/pdf/new-tab', function () {
+    if (request('paper') == 'A5') {
+        # code...
+        return view('pdf.print.a5', [
+            'id' => request('id'),
+            'paper' => request('paper'),
+            'type' => request('type'),
+            'custom_doc_id' => request('custom_doc_id')
+        ]);
+    }
+    return view('pdf.new-tab', [
+        'id' => request('id'),
+        'paper' => request('paper'),
+        'type' => request('type'),
+    ]);
+})->name('pdf.new-tab');
+
+Route::get('/pdf/medcert', function () {
+    return view('pdf.isaiah.medcert', [
+        'id' => request('id'),
+        'paper' => request('paper'),
+        'type' => request('type'),
+    ]);
+})->name('pdf.a5.medcert');
+
 
 Route::post('/save-header-image', function (Request $request) {
     $data = $request->input('image');
@@ -38,11 +72,18 @@ Route::post('/save-header-image', function (Request $request) {
 
     file_put_contents($path, $imageData);
 
+    // Extract width and height from template JSON
+    $templateData = json_decode($template, true);
+    $width = $templateData['width'] ?? null;
+    $height = $templateData['height'] ?? null;
+
     DB::table('headers')->updateOrInsert(
         ['type' => $type],
         [
             'file_path' => "images/{$type}_header.png",
             'template_json' => $template,
+            'width' => $width,
+            'height' => $height,
             'updated_at' => now(),
         ]
     );

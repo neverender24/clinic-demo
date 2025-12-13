@@ -200,7 +200,7 @@ hr {
     @foreach($medicines as $row)
     <div class="prescription-container">
         <div class="page" style="display: flex; flex-direction: column; height: 100%;">
-            @include('pdf.header',['title' => 'PRESCRIPTION'])
+            @include('pdf.header',['title' => 'PRESCRIPTION', 'header_image' => asset('images/prescription_header.png')])
     
             <div class="content" style="flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
                 <div>

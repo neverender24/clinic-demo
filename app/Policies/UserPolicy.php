@@ -11,57 +11,57 @@ class UserPolicy
     
     public function viewAny(AuthUser $authUser): bool
     {
-        return $authUser->can('view_any_user');
+        return $authUser->can('ViewAny:User');
     }
 
     public function view(AuthUser $authUser): bool
     {
-        return $authUser->can('view_user');
+        return $authUser->can('View:User');
     }
 
     public function create(AuthUser $authUser): bool
     {
-        return $authUser->can('create_user');
+        return $authUser->can('Create:User');
     }
 
     public function update(AuthUser $authUser): bool
     {
-        return $authUser->can('update_user');
+        return $authUser->can('Update:User');
     }
 
     public function delete(AuthUser $authUser): bool
     {
-        return $authUser->can('delete_user');
+        return $authUser->can('Delete:User');
     }
 
     public function restore(AuthUser $authUser): bool
     {
-        return $authUser->can('restore_user');
+        return $authUser->can('Restore:User');
     }
 
     public function forceDelete(AuthUser $authUser): bool
     {
-        return $authUser->can('force_delete_user');
+        return $authUser->can('ForceDelete:User');
     }
 
     public function forceDeleteAny(AuthUser $authUser): bool
     {
-        return $authUser->can('force_delete_any_user');
+        return $authUser->can('ForceDeleteAny:User');
     }
 
     public function restoreAny(AuthUser $authUser): bool
     {
-        return $authUser->can('restore_any_user');
+        return $authUser->can('RestoreAny:User');
     }
 
     public function replicate(AuthUser $authUser): bool
     {
-        return $authUser->can('replicate_user');
+        return $authUser->can('Replicate:User');
     }
 
     public function reorder(AuthUser $authUser): bool
     {
-        return $authUser->can('reorder_user');
+        return $authUser->can('Reorder:User');
     }
 
 }

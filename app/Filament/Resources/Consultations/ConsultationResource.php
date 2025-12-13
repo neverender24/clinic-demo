@@ -55,7 +55,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
 
     public static function form(Schema $schema): Schema
     {
-        return ConsultationForm::configure($schema);
+        return ConsultationForm::configure($schema)->columns(1);
     }
 
    

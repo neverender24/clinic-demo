@@ -26,9 +26,9 @@ class Medicine extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function consultations(): BelongsToMany
+     public function consultations(): BelongsToMany
     {
-        return $this->belongsToMany(Consultation::class, 'consultation_medicine');
+        return $this->belongsToMany(Consultation::class, 'consultation_medicine')->withoutGlobalScopes()->withPivot(['id']);
     }
 
     public function medfullname(): Attribute

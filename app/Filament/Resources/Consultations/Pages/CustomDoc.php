@@ -59,6 +59,7 @@ class CustomDoc extends ManageRelatedRecords implements HasTable, HasForms
 
     public function form(Schema $schema): Schema
     {
+        
         return $schema
                 ->components([
                     TextInput::make('doc_name')

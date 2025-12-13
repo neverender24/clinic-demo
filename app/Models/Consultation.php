@@ -26,6 +26,7 @@ class Consultation extends Model
             'next_follow_up_schedule' => 'date',
             'date' => 'date',
             'estimated_date' => 'date',
+            'attachments' => 'array'
            
         ];
     }
@@ -36,6 +37,11 @@ class Consultation extends Model
     //         get: fn($value) => Carbon::parse($value)->format('F j, Y')
     //     );
     // }
+
+    public function labRequests(): HasMany
+    {
+        return $this->hasMany(LabRequest::class);
+    }
 
     public function clinic(): BelongsTo
     {
@@ -49,7 +55,7 @@ class Consultation extends Model
 
     public function medicines():BelongsToMany
     {
-        return $this->belongsToMany(Medicine::class)->withPivot(['remarks', 'quantity']);
+        return $this->belongsToMany(Medicine::class)->withPivot(['id', 'remarks', 'quantity']);
     }
 
     public function consultationMedicines(): HasMany

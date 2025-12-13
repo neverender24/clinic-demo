@@ -2,296 +2,175 @@
 
 namespace App\Livewire;
 
-use App\Models\Patient;
-use Filament\Forms\Get;
-use Livewire\Component;
-use Filament\Tables\Table;
-use Livewire\Attributes\On;
 use App\Models\Consultation;
-use Filament\Schemas\Schema;
-use Illuminate\Support\Carbon;
 use App\Trait\HasHistoryAction;
-use Livewire\Attributes\Reactive;
-use Illuminate\Support\HtmlString;
-use Filament\Support\Enums\TextSize;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Contracts\HasForms;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Contracts\HasTable;
-use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Components\Section;
-use Filament\Tables\Columns\Layout\Grid;
-use Filament\Forms\Components\DatePicker;
-use Filament\Schemas\Components\Fieldset;
-use App\Infolists\Components\PatientEntry;
-use Filament\Actions\Contracts\HasActions;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Actions\Action as ActionsAction;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Tables\Concerns\InteractsWithTable;
-use Filament\Actions\Concerns\InteractsWithRecord;
-use Filament\Infolists\Components\RepeatableEntry;
+use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
-use App\Filament\Resources\Patients\PatientResource;
-use Filament\Schemas\Components\Grid as ComponentsGrid;
-use App\Filament\Resources\Consultations\ConsultationResource;
+use Filament\Actions\Contracts\HasActions;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Infolists\Components\ImageEntry;
+use Filament\Infolists\Components\RepeatableEntry;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Table;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Number;
+use Livewire\Attributes\Reactive;
+use Livewire\Component;
 
 class ListOfConsultation extends Component implements HasTable, HasForms, HasActions
 {
-
     use InteractsWithActions;
     use InteractsWithTable;
     use InteractsWithForms;
-    use InteractsWithRecord;
     use HasHistoryAction;
 
     public ?array $data = [];
 
     #[Reactive]
-    public $patient_id;
-
-    public function mount(): void
-    {
-        // $this->record = $this->resolveR
-        // dd($this);
-        
-    }
-
-    // #[On('refresh_table')]
-    // public function refreshTable(): void
-    // {
-    //     dd($this->patient_id);
-    //     // $this->resetTable();
-    // }
+    public $patient_id, $date;
 
     public function table(Table $table): Table
     {
-
-        // dd($this);
         return $table
-            ->query(function () {
-                return Consultation::query()->patientPreviousConsultations($this->patient_id, now()->addDay()->toDateString());
-            })
-            ->defaultSort('date', 'desc')
+            ->query(fn () => Consultation::query()
+                ->patientPreviousConsultations(patient_id: $this->patient_id, date: $this->date)
+                ->latest('date')
+            )
             ->columns([
                 TextColumn::make('date')
                     ->label('Date of Consultation')
-                    ->description(function($record) {
-                        return $record->created_at->format('H:i:s');
-                    })
-                    ->dateTime('F j, Y')
-            ])
-            ->recordActions([
-                // Action::make('select2')
-                //     ->action(function($record) {
-                //         $this->historyData = $record;
-                //         $this->dispatch('open-modal', id: 'history-modal');
+                    ->dateTime('F j, Y'),
+                // TextColumn::make('charge')
+                //     ->label('Charge')
+                //     ->default(function ($record) {
+                //         return Number::format($this->getTotal($record->fee, $record->follow_up_fees, $record->procedure_fee, $record->discount), 2);
                 //     }),
-                ActionsAction::make('select_history')
+            ])
+            ->recordAction('select_history')
+            ->recordActions([
+                Action::make('select_history')
                     ->label('view')
                     ->modal()
-                    ->modalWidth('7xl')
+                    ->modalWidth('4xl')
+                    ->stickyModalFooter()
+                    ->stickyModalHeader()
+                    ->slideOver()
                     ->schema([
-                        ComponentsGrid::make(5)
-                            ->schema([
-                                Section::make()
+                        Tabs::make('tabs')
+                            ->dense()
+                            ->gap(false)
+                            ->extraAttributes([
+                                'class' => 'patient-history',
+                            ])
+                            ->vertical()
+                            ->tabs([
+                                Tab::make('Consultation')
+                                    ->dense()
+                                    ->gap(false)
                                     ->schema([
-                                        ComponentsGrid::make(columns: 1)
+                                        Section::make()
+                                            ->columns(2)
                                             ->schema([
-                                                TextEntry::make('patient.full_name')
-                                                    ->inlineLabel(false)
-                                                    ->hiddenLabel()
-                                                    ->size(TextSize::Large)
-                                                    // ->icon('healthicons-o-traumatism')
-                                                    ->iconColor('white')
-                                                    ->formatStateUsing(fn($state) => strtoupper($state)),
-                                            ]),
-                                        ComponentsGrid::make()
-                                            ->extraAttributes(['class' => 'border-t-2'])
-                                            ->schema([
-                                                TextEntry::make('test_results')
-                                                    ->html()
-                                                    ->columnSpanFull(),
-                                                Fieldset::make('Chief Complaint')
+                                                Section::make()
+                                                    ->schema([
+                                                        TextEntry::make('test_results')
+                                                            ->formatStateUsing(fn ($state) => $this->renderToHtml($state))
+                                                            ->html(),
+                                                    ]),
+                                                Section::make()
                                                     ->schema([
                                                         TextEntry::make('chief_complaint')
-                                                            ->html()
-                                                            ->hiddenLabel(),
+                                                            ->formatStateUsing(fn ($state) => $this->renderToHtml($state))
+                                                            ->html(),
                                                     ])
-                                                    ->columnSpan(1),
-                                                Fieldset::make('Diagnosis')
+                                                    ->hiddenLabel(false),
+                                                Section::make()
                                                     ->schema([
                                                         TextEntry::make('diagnosis')
-                                                            ->html()
-                                                            ->hiddenLabel(),
+                                                            ->formatStateUsing(fn ($state) => $this->renderToHtml($state))
+                                                            ->html(),
                                                     ])
-                                                    ->columnSpan(1),
-                                                Fieldset::make('Management')
+                                                    ->hiddenLabel(false),
+                                                Section::make()
                                                     ->schema([
                                                         TextEntry::make('management')
-                                                            ->html()
-                                                            ->hiddenLabel()
-                                                    ]),
+                                                            ->formatStateUsing(fn ($state) => $this->renderToHtml($state))
+                                                            ->html(),
+                                                    ])
+                                                    ->hiddenLabel(false),
                                             ]),
-                                    ])
-                                    ->columnSpan(3),
-                                Section::make('Prescription')
+                                    ]),
+                                Tab::make('prescription')
+                                    ->badge(fn ($record) => $record->medicines->count())
+                                    ->dense()
+                                    ->gap(false)
                                     ->schema([
                                         RepeatableEntry::make('medicines')
                                             ->hiddenLabel()
+                                            ->grid(2)
+                                            ->dense()
+                                            ->gap(false)
                                             ->schema([
                                                 TextEntry::make('full_name_of_medicine')
-                                                    ->formatStateUsing(function ($state) {
-                                                        return $state;
-                                                    })
+                                                    ->formatStateUsing(fn ($state) => $state)
                                                     ->hiddenLabel()
                                                     ->html(),
                                                 TextEntry::make('pivot.remarks')
                                                     ->hiddenLabel(),
                                                 TextEntry::make('pivot.quantity')
-                                                    ->formatStateUsing(fn($state) => '#' . $state)
-                                                    ->hiddenLabel()
-                                            ])
-                                    ])
-                                    ->columnSpan(2)
-                            ])
+                                                    ->formatStateUsing(fn ($state) => '#' . $state)
+                                                    ->hiddenLabel(),
+                                            ]),
+                                    ]),
+                                Tab::make('Other Attachments')
+                                    ->dense()
+                                    ->gap(false)
+                                    ->schema([
+                                        ImageEntry::make('attachments')
+                                            ->imageWidth('100%')
+                                            ->imageHeight('100%'),
+                                    ]),
+                            ]),
                     ])
-                    // ->modalContent(new HtmlString('test'))
-                    ->modalHeading(fn($record) => 'Consultation Details ' . Carbon::parse($record->date)->format('F j, Y'))
-                    ->modalFooterActions([
-                        ActionsAction::make('copy_patient_details')
-                            ->label('Copy Patient Record')
-                            ->action(fn($record) => $this->dispatch('testing-event'))
-                            ->cancelParentActions()
-                            ->color('indigo')
-                            ->icon('healthicons-o-medical-records'),
-                        ActionsAction::make('copy_prescription')
-                            ->label('Copy Prescription')
-                            ->action(fn($record) => $this->copyPrescription($record->medicines))
-                            ->cancelParentActions()
-                            ->color('info')
-                            ->icon('healthicons-o-prescription-document')
-                    ])
-
-                // ->action(fn($record) => $this->selectHistory($record))
+                    ->modalHeading(fn ($record) => 'Consultation Details ' . Carbon::parse($record->date)->format('F j, Y'))
+                    ->modalFooterActions(function (Action $action) {
+                        return [
+                            Action::make('copy_patient_details')
+                                ->label('Copy Patient Record')
+                                ->action(fn ($record) => $this->dispatch('copy-data', record: $record, type: 'patient-data'))
+                                ->cancelParentActions()
+                                ->color('indigo')
+                                ->icon('healthicons-o-medical-records')
+                                ->visible(fn () => auth()->user()->doctor()),
+                            Action::make('copy_prescription')
+                                ->label('Copy Prescription')
+                                ->action(fn ($record) => $this->dispatch('copy-data', record: $record->medicines, type: 'prescription'))
+                                ->cancelParentActions()
+                                ->color('info')
+                                ->icon('healthicons-o-prescription-document')
+                                ->visible(fn () => auth()->user()->doctor()),
+                            $action->getModalCancelAction(),
+                        ];
+                    }),
             ])
             ->recordActionsColumnLabel('Action')
             ->heading('Previous Consultations')
-            ->paginated(false);
-    }
-
-    public function HistoryInfolist(Schema $schema): Schema
-    {
-        // dd($this->record);
-        return $schema
-            ->record($this->historyData->load('medicines'))
-            ->components([
-                Grid::make(5)
-                    ->schema([
-                        Section::make()
-                            ->schema([
-                                Grid::make(columns: 1)
-                                    ->schema([
-                                        PatientEntry::make('patient.full_name')
-                                            ->inlineLabel(false)
-                                            ->hiddenLabel()
-                                            ->size(TextSize::Large)
-                                            ->icon('healthicons-o-traumatism')
-                                            ->iconColor('white')
-                                            ->formatStateUsing(fn($state) => strtoupper($state)),
-                                    ]),
-                                Grid::make()
-                                    ->extraAttributes(['class' => 'border-t-2'])
-                                    ->schema([
-                                        TextEntry::make('test_results')
-                                            ->html()
-                                            ->columnSpanFull(),
-                                        Fieldset::make('Chief Complaint')
-                                            ->schema([
-                                                TextEntry::make('chief_complaint')
-                                                    ->html()
-                                                    ->hiddenLabel(),
-                                            ])
-                                            ->columnSpan(1),
-                                        Fieldset::make('Diagnosis')
-                                            ->schema([
-                                                TextEntry::make('diagnosis')
-                                                    ->html()
-                                                    ->hiddenLabel(),
-                                            ])
-                                            ->columnSpan(1),
-                                        Fieldset::make('Management')
-                                            ->schema([
-                                                TextEntry::make('management')
-                                                    ->html()
-                                                    ->hiddenLabel()
-                                            ]),
-                                    ]),
-                            ])
-                            ->columnSpan(3),
-                        Section::make('Prescription')
-                            ->schema([
-                                RepeatableEntry::make('medicines')
-                                    ->hiddenLabel()
-                                    ->schema([
-                                        TextEntry::make('full_name_of_medicine')
-                                            ->formatStateUsing(function ($state) {
-                                                return $state;
-                                            })
-                                            ->hiddenLabel()
-                                            ->html(),
-                                        TextEntry::make('pivot.remarks')
-                                            ->hiddenLabel(),
-                                        TextEntry::make('pivot.quantity')
-                                            ->formatStateUsing(fn($state) => '#' . $state)
-                                            ->hiddenLabel()
-                                    ])
-                            ])
-                            ->headerActions([
-                                ActionsAction::make('Copy')
-                                    ->action(fn($record) => $this->copyPrescription($record->medicines))
-                            ])
-                            ->columnSpan(2)
-                    ])
-            ]);
-    }
-
-    public function form(Schema $schema): Schema
-    {
-        // return $form
-        //     ->schema([
-        //         DatePicker::make('date')
-        //                 ->required(),
-        //                 Select::make('patient_id')
-        //                             ->label('Patient')
-        //                             // ->getSearchResultsUsing(fn (string $search) => Patient::query()->where('full_name', 'like', "%$search%")->pluck('full_name', 'id'))
-        //                             ->getOptionLabelsUsing(fn ($value) => Patient::find($value)->full_name)
-        //                             ->preload()
-        //                             ->searchable()
-        //                             ->relationship('patient', 'full_name')
-        //                             ->createOptionForm(function (Form $form) {
-        //                                 return PatientResource::form($form)->extraAttributes(['class' => 'w-full']);
-        //                             })
-        //                             ->createOptionAction(function(Action $action) {
-        //                                 return $action
-        //                                     ->modalWidth('xl')
-        //                                     ->modalHeading('Create Patient')
-        //                                     ->mutateFormDataUsing(function(array $data) {
-        //                                         $data['user_id'] = auth()->id();
-        //                                         return $data;
-        //                                     });
-        //                             })
-        //                             ->live()
-        //                             ->required()
-        //                             ->columnSpan(3)
-        //     ])
-        //     ->model(Consultation::class)
-        //     ->statePath('data')
-        //     ;
-        return ConsultationResource::form($schema)
-                ->model(Consultation::class)
-                ->statePath('data');
+            ->paginated(true)
+            ->paginationPageOptions([
+                'All',
+                3,
+                4,
+                5,
+            ])
+            ->defaultPaginationPageOption(4);
     }
 
     public function render()

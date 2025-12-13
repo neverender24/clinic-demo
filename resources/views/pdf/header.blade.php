@@ -5,7 +5,8 @@
 
 <header class="header">
     {{-- <img src="{{asset('storage/'.$header_image)}}" alt="Clinic Logo" class="logo"> --}}
-    <img src="{{asset('images/certificate_header.png')}}" alt="Clinic Logo" class="logo border-1">
+    {{-- @php dd($header_image); @endphp --}}
+    <img src="{{$header_image}}" alt="Clinic Logo" class="logo border-1">
     {{-- <h1>
         <hr>
     </h1> --}}

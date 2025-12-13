@@ -43,3 +43,8 @@
 .fi-fo-component-ctn {
     @apply gap-y-1;
 }
+
+.patient-field .fi-ta-ctn
+{
+    @apply shadow-lg;
+}

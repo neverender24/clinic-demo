@@ -14,57 +14,57 @@ class PatientPolicy
     
     public function viewAny(AuthUser $authUser): bool
     {
-        return $authUser->can('view_any_patient');
+        return $authUser->can('ViewAny:Patient');
     }
 
     public function view(AuthUser $authUser, Patient $patient): bool
     {
-        return $authUser->can('view_patient');
+        return $authUser->can('View:Patient');
     }
 
     public function create(AuthUser $authUser): bool
     {
-        return $authUser->can('create_patient');
+        return $authUser->can('Create:Patient');
     }
 
     public function update(AuthUser $authUser, Patient $patient): bool
     {
-        return $authUser->can('update_patient');
+        return $authUser->can('Update:Patient');
     }
 
     public function delete(AuthUser $authUser, Patient $patient): bool
     {
-        return $authUser->can('delete_patient');
+        return $authUser->can('Delete:Patient');
     }
 
     public function restore(AuthUser $authUser, Patient $patient): bool
     {
-        return $authUser->can('restore_patient');
+        return $authUser->can('Restore:Patient');
     }
 
     public function forceDelete(AuthUser $authUser, Patient $patient): bool
     {
-        return $authUser->can('force_delete_patient');
+        return $authUser->can('ForceDelete:Patient');
     }
 
     public function forceDeleteAny(AuthUser $authUser): bool
     {
-        return $authUser->can('force_delete_any_patient');
+        return $authUser->can('ForceDeleteAny:Patient');
     }
 
     public function restoreAny(AuthUser $authUser): bool
     {
-        return $authUser->can('restore_any_patient');
+        return $authUser->can('RestoreAny:Patient');
     }
 
     public function replicate(AuthUser $authUser, Patient $patient): bool
     {
-        return $authUser->can('replicate_patient');
+        return $authUser->can('Replicate:Patient');
     }
 
     public function reorder(AuthUser $authUser): bool
     {
-        return $authUser->can('reorder_patient');
+        return $authUser->can('Reorder:Patient');
     }
 
 }

@@ -56,7 +56,7 @@ class AdminPanelProvider extends PanelProvider
                 'register' => fn(Action $action) => $action->label('Register Clinic'),
                 // ...
             ])
-            ->login(Login::class)
+            // ->login(Login::class)
             ->colors([
                 'primary' => Color::Blue,
                 'red' => Color::Red,
@@ -90,6 +90,7 @@ class AdminPanelProvider extends PanelProvider
             ->userMenu(position: UserMenuPosition::Sidebar)
             ->globalSearch(false)
             ->topbar(false)
+            ->sidebarCollapsibleOnDesktop(true)
             ->sidebarFullyCollapsibleOnDesktop(false)
             ->plugins([
                 \Javarex\DdoLogin\LoginDdoPlugin::make(),

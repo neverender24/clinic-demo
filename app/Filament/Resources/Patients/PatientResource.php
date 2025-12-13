@@ -45,8 +45,8 @@ class PatientResource extends Resource
         return $schema
             ->components([
                 Section::make('')
-                    ->schema([
-                        TextInput::make('last_name')
+                   ->schema([
+                      TextInput::make('last_name')
                             ->required()
                             ->maxLength(45)
                             ->autocomplete(false)
@@ -70,6 +70,17 @@ class PatientResource extends Resource
                                     ->options([
                                         'M' => 'Male',
                                         'F' => 'Female'
+                                    ])
+                                    ->required(),
+                                Select::make('civil_status')
+                                    ->columnSpanFull()
+                                    ->required()
+                                    ->options([
+                                         'Child' => 'Child', 
+                                         'Single' => 'Single', 
+                                         'Married' => 'Married', 
+                                         'Widow' => 'Widow',
+                                         'Widower' => 'Widower',
                                     ]),
                             ])
                             ->columns(2),
@@ -77,8 +88,14 @@ class PatientResource extends Resource
                             // ->separator(',')
                             ->hint('Can be a phone number, email, and/or any other contact detail'),
                         TextInput::make('address')
+                            ->required(),
+                        TextInput::make('occupation')
+                            // ->required()
                             // ->separator(',')
                             ,
+
+                        TagsInput::make('allergies')->separator(','),
+                        TagsInput::make('surgeries')->separator(','),
                         Repeater::make('patientHmos')
                             ->label('Patient HMOs')
                             // ->addActionLabel('Click here to add HMO')
