@@ -27,8 +27,9 @@ use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
-use App\Filament\Forms\Components\PatientDetail;
+use Filament\Schemas\Components\Utilities\Set;
 use App\Filament\Forms\Components\PatientField;
+use App\Filament\Forms\Components\PatientDetail;
 use App\Filament\Forms\Components\PatientHistory;
 use Filament\Forms\Components\Repeater\TableColumn;
 use App\Filament\Resources\Patients\PatientResource;
@@ -113,6 +114,7 @@ class ConsultationForm
                                     ])
                                     ->label('Medical Data')
                                     // ->dehydrateStateUsing(fn($state) => strip_tags($state))
+                                    ->afterStateHydrated(fn(Set $set, $state) => $set('test_results', strip_tags($state)))
                                     ->required()
                                     ->visible(fn() => auth()->user()->can('addTestResult', Consultation::class)),
                                 FileUpload::make('attachments')
