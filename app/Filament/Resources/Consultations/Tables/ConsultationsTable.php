@@ -2,27 +2,28 @@
 
 namespace App\Filament\Resources\Consultations\Tables;
 
-use App\Models\Scopes\ConsultationScope;
+use Throwable;
+use Filament\Tables\Table;
 use Filament\Actions\Action;
-use Filament\Actions\ActionGroup;
-use Filament\Actions\DeleteAction;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Number;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
-use Filament\Forms\Components\Repeater;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\DeleteAction;
+use Illuminate\Support\Facades\DB;
+use Filament\Tables\Filters\Filter;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
+use Filament\Tables\Columns\TextColumn;
+use App\Models\Scopes\ConsultationScope;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Enums\PaginationMode;
-use Filament\Tables\Filters\Filter;
-use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Number;
-use Throwable;
+use Filament\Schemas\Components\Utilities\Get;
 
 class ConsultationsTable
 {
@@ -51,15 +52,13 @@ class ConsultationsTable
                     ->color(fn($record) => $record->patient->trashed() ? 'danger' : '')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('fee')
-                    ->formatStateUsing(fn($record) => Number::format(static::getTotal($record->fee, $record->follow_up_fees, $record->procedure_fee, $record->discount), 2)),
-                // SelectColumn::make('status')
-                //     ->options([
-                //         'Done' => 'Done',
-                //         'Pending' => 'Pending'
-                //     ])
-                //     ->selectablePlaceholder(false)
-                //     ->width(10),
+                SelectColumn::make('status')
+                    ->options([
+                        'Done' => 'Done',
+                        'Pending' => 'Pending'
+                    ])
+                    ->selectablePlaceholder(false)
+                    ->width(10),
                 // Tables\Columns\ToggleColumn::make('status')
                 //     ->searchable()
                 //     // ->formatStateUsing(function($record) {
@@ -272,90 +271,74 @@ class ConsultationsTable
                         // ->visible(fn($record) => !filled($record->approximate_days) && !filled($record->estimated_date) && !filled($record->medical_cert_remarks))
                         ->schema([
                             Section::make()
-                                ->columns(2)
                                 ->schema([
                                     Textarea::make('medical_cert_remarks')
                                 ])
                         ])
                         ->fillForm(function($record) {
-                            $data = $record->load(['latestPayment' => fn($query) => $query->type('Medical Certificate')]);
+                            $data = $record;
                             return [
-                                'fee' => $data->latestPayment?->amount,
-                                'discount' => $data->latestPayment?->discount,
-                                'estimated_date' => $data->estimated_date,
-                                'estimated_date_to' => $data->estimated_date_to,
-                                'approximate_days' => $data->approximate_days,
-                                'return_date' => $data->return_date,
+                                // 'estimated_date' => $data->estimated_date,
+                                // 'estimated_date_to' => $data->estimated_date_to,
+                                // 'approximate_days' => $data->approximate_days,
+                                // 'return_date' => $data->return_date,
                                 'medical_cert_remarks' => $data->medical_cert_remarks 
                             ];
                         })
-                        ->extraModalFooterActions(fn(Action $action, $data) => [
-                            $action->make('save')
-                                ->action(function ($record, array $mountedActions) use($data, $action){
+                        // ->extraModalFooterActions(fn(Action $action, $data) => [
+                        //     $action->make('save')
+                        //         ->action(function ($record, array $mountedActions) use($data, $action){
                                     
-                                    try {
-                                        // This is to get array of admitting_order_data from livewire
+                        //             try {
+                        //                 // This is to get array of admitting_order_data from livewire
 
-                                        $data = $data = $mountedActions[0]->getRawData();
+                        //                 $data = $data = $mountedActions[0]->getRawData();
 
-                                        static::medcertUpdate($data, $record);
-                                        if ($data['fee']) {
+                        //                 static::medcertUpdate($data, $record);
+                        //                 if ($data['fee']) {
 
-                                            $data['patient_id'] = $record->patient_id;
+                        //                     $data['patient_id'] = $record->patient_id;
 
-                                            $data['type_of_payment'] = 'Medical Certificate';
+                        //                     $data['type_of_payment'] = 'Medical Certificate';
 
-                                            $data['amount'] = $data['fee'];
+                        //                     $data['amount'] = $data['fee'];
 
-                                            $record->otherPayments()->create($data);
-                                        }
-                                        Notification::make()
-                                            ->success()
-                                            ->title('Success')
-                                            ->body('The changes have been saved')
-                                            ->send();
-                                    } catch (Throwable $th) {
-                                        dd($th->getMessage());
-                                        Notification::make()
-                                            ->title('Error')
-                                            ->body($th->getMessage())
-                                            ->send();
-                                    }
-                                })
-                                ->cancelParentActions()
-                            ])
+                        //                     $record->otherPayments()->create($data);
+                        //                 }
+                        //                 Notification::make()
+                        //                     ->success()
+                        //                     ->title('Success')
+                        //                     ->body('The changes have been saved')
+                        //                     ->send();
+                        //             } catch (Throwable $th) {
+                        //                 dd($th->getMessage());
+                        //                 Notification::make()
+                        //                     ->title('Error')
+                        //                     ->body($th->getMessage())
+                        //                     ->send();
+                        //             }
+                        //         })
+                        //         ->cancelParentActions()
+                        //     ])
                         ->modalSubmitActionLabel('Print')
                         ->action(function ($data, $record) {
                             // dd($data);
-                            DB::beginTransaction();
+                            
                             try {
-                                // $record->update($data);
-                                static::medcertUpdate($data, $record);
-
-                                if ($data['fee']) {
-
-                                    $data['patient_id'] = $record->patient_id;
-
-                                    $data['type_of_payment'] = 'Medical Certificate';
-
-                                    $data['amount'] = $data['fee'];
-
-                                    $record->otherPayments()->create($data);
-               
-                                }
-                                DB::commit();
+                                
+                                $record->update($data);
                                 Notification::make()
                                     ->success()
                                     ->title('Success')
                                     ->body('The changes have been saved');
+                                
                             } catch (Throwable $th) {
-                                DB::rollBack();
                                 Notification::make()
                                     ->title('Error')
                                     ->body($th->getMessage());
                             }
                         })
-                        ->after(fn($livewire, $record) =>  $livewire->js("window.open('" . route('pdf.new-tab', ['id' => $record->id, 'type' => 'Medical Certificate', 'paper' => 'letter']) . "', '_blank')")),
+                        ->after(fn($livewire, $record) =>  $livewire->js("window.open('".route('pdf.a5.medcert', ['id' => $record->id, 'type' => 'Medical Certificate', 'paper' => 'A5'])."', '_blank')")),
                     // Action::make('lab_requests')
                     //     ->url(fn($record) => route('filament.admin.resources.consultations.labRequest', [Filament::getTenant()->id, $record->id])),
                     Action::make('prescription')

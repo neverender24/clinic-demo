@@ -36,7 +36,6 @@ class EditConsultation extends EditRecord
     #[On('testing-event')]
     public function testing()
     {
-        dd($this->data['chief_complaint']);
         $this->data['chief_complaint'] = '\n testing ni';
     }
 
