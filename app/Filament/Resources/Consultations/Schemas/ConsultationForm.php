@@ -95,6 +95,7 @@ class ConsultationForm
                                     ->autosize()
                                     ->rows(7)
                                     ->required()
+                                    ->afterStateHydrated(fn(Set $set, $state) => $set('chief_complaint', strip_tags($state)))
                                     ->visible(fn() => auth()->user()->can('addChiefComplaint', Consultation::class)),
                                 Textarea::make('vital_signs')
                                     ->columnSpan(fn() => [
