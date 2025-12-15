@@ -104,8 +104,15 @@ class ConsultationForm
                                     ->autosize()
                                     ->required()
                                     ->default(function () {
-                                        $words = ['BP: ', 'RR: ', 'HR: ', '02 Stat: ', 'Temp: ', 'Pain level: ', 'Weight: '];
+                                        $words = ['BP: ', 'HR: ', 'Weight: '];
                                         return implode("\n", $words); // line break per word
+                                    })
+                                    ->afterStateHydrated(function (Set $set, $state) {
+                                        if (!$state) {
+                                            # code...
+                                            $words = ['BP: ', 'HR: ', 'Weight: '];
+                                            $set('vital_signs', implode("\n", $words)); // line break per word
+                                        }
                                     })
                                     ->visible(fn() => auth()->user()->can('addVitalSign', Consultation::class)),
 
