@@ -50,10 +50,7 @@ class EditConsultation extends EditRecord
     {
         return [
             DeleteAction::make(),
-             Action::make('prescription')
-                        ->color(fn($record) => $record->medicines->count() < 1 ? 'danger' : 'success')
-                        ->icon('heroicon-m-printer')
-                        ->url(fn($record) => route('prescription.print', [$record->id]), shouldOpenInNewTab: true)
+             $this->printPrescriptionAction(),
 
         ];
     }
