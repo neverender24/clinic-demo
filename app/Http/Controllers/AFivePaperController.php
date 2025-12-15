@@ -130,7 +130,8 @@ class AFivePaperController extends Controller
 
         $paper = request('paper') ?? 'letter';
 
-        $this->image_header = $request->type !== 'Medical Certificate' ? public_path('images/prescription_header.png') : public_path('storage/' . $consultation->clinic->medcert_header_image);
+        $this->image_header = $request->type !== 'Medical Certificate' ? public_path('storage/' . $consultation->clinic->header_image) : public_path('storage/' . $consultation->clinic->medcert_header_image);
+        // $this->image_header = $request->type !== 'Medical Certificate' ? public_path('images/prescription_header.png') : public_path('storage/' . $consultation->clinic->medcert_header_image);
         $pdf = new CustomTCPDF('P', 'mm', $paper, true, 'UTF-8', false);
 
         // Document info
