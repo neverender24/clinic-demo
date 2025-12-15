@@ -16,5 +16,5 @@ class Role extends SpatieRole
     public function clinics(): BelongsToMany
     {
         return $this->belongsToMany(Clinic::class);
-    }
+    }   
 }

@@ -49,7 +49,7 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->tenant(Clinic::class)
             ->tenantRegistration(RegisterClinic::class)
-            ->tenantMenu(fn () => auth()->user()->can('canManageTenant', User::class))
+            ->tenantMenu(fn () => true)
             ->tenantProfile(EditTenantProfile::class)
             ->tenantMenuItems([
                 'profile' => fn(Action $action) => $action->label('Edit Clinic'),
@@ -95,8 +95,8 @@ class AdminPanelProvider extends PanelProvider
             ->sidebarFullyCollapsibleOnDesktop(false)
             ->plugins([
                 // \Javarex\DdoLogin\LoginDdoPlugin::make(),
-                // FilamentShieldPlugin::make()
-                //     ->scopeToTenant(false),
+                FilamentShieldPlugin::make()
+                    ->scopeToTenant(false),
                 FilamentApexChartsPlugin::make(),
                 // ActivitylogPlugin::make()
                 //     ->label('Log')
