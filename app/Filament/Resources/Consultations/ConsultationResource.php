@@ -15,6 +15,7 @@ use App\Filament\Resources\Consultations\Pages\EditConsultation;
 use App\Filament\Resources\Consultations\Pages\ListConsultations;
 use App\Filament\Resources\Consultations\Pages\CreateConsultation;
 use App\Filament\Resources\Consultations\Schemas\ConsultationForm;
+use App\Filament\Resources\Consultations\Schemas\ConsultationInfolist;
 use App\Filament\Resources\Consultations\Tables\ConsultationsTable;
 
 class ConsultationResource extends Resource implements HasShieldPermissions
@@ -56,6 +57,11 @@ class ConsultationResource extends Resource implements HasShieldPermissions
     public static function form(Schema $schema): Schema
     {
         return ConsultationForm::configure($schema)->columns(1);
+    }
+
+    public static function infolist(Schema $schema): Schema
+    {
+        return ConsultationInfolist::configure($schema);
     }
 
    

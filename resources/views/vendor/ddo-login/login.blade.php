@@ -159,6 +159,7 @@
     .login-form-panel button[type="submit"]:hover {
         background: rgba(255, 255, 255, 0.9) !important;
         transform: translateY(-2px) !important;
+        color: #0d2137 !important;
         box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3) !important;
     }
 

@@ -150,6 +150,7 @@ class ConsultationsTable
                                     'Admitting Orders' => 'Admitting Orders',
                                     'Laboratory Request' => 'Laboratory Request',
                                     'Referral Form' => 'Referral Form',
+                                    'Medical Abstract' => 'Medical Abstract'
                                 ])
                                 ->reactive(),
                             Repeater::make('labRequests')
@@ -167,6 +168,11 @@ class ConsultationsTable
                                 ->label('Content')
                                 ->visible(fn(Get $get) => $get('type') == 'Referral Form')
                                 ->disabled(fn() => ! auth()->user()->doctor()),
+                            Textarea::make('medical_abstract')
+                                ->label('Content')
+                                ->autosize()
+                                ->visible(fn(Get $get) => $get('type') == 'Medical Abstract')
+                                ->disabled(fn() => ! auth()->user()->doctor()),
                             Textarea::make('admitting_order_data')
                                 ->visible(fn(Get $get) => $get('type') == 'Admitting Orders')
                                 ->disabled(fn() => ! auth()->user()->doctor())
@@ -176,7 +182,7 @@ class ConsultationsTable
                         ->fillForm(function ($record) {
                             $record->admitting_order_data = transform($record->admitting_order_data, fn($value) => $value == '' || $value == null ? null : $value)
                                     ?? "To: ____________________\n\n- Please admit patient to ____________________\n- Secure consent to care\n- Diet:\n- IVF:\n- Diagnostics:\n\n- Medications:\n\n- VS q4 and I & O qShift\n- Watchout for unusualities\n- Kindly inform me once admitted\n- Refer accordingly\n\n- Special Instructions (if any):";
-                            // dd($record);
+                            $record->medical_abstract = $record->medical_abstract ?? "Diagnosis: ".strip_tags($record->diagnosis);
                                     return $record->toArray();
                         })
                         ->action(function ($data, $record) {
@@ -186,6 +192,7 @@ class ConsultationsTable
                                     'Admitting Orders' => 'admitting_order_data',
                                     'Laboratory Request' => 'lab_request_content',
                                     'Referral Form' => 'referral_content',
+                                    'Medical Abstract' => 'medical_abstract',
                                 };
     
                                 try {

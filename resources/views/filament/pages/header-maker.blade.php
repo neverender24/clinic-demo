@@ -4,7 +4,7 @@
   <div class="flex flex-wrap items-center gap-2 p-2 bg-white border-b border-gray-200 shadow-sm">
     <!-- Template Controls -->
     <div class="flex items-center gap-1 pr-2 border-r border-gray-200">
-      <select id="templateType" class="px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+      <select id="templateType" class="px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-gray-600">
         <option value="prescription">Prescription</option>
         <option value="certificate">Certificate</option>
       </select>

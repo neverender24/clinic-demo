@@ -78,7 +78,7 @@ class AFivePaperController extends Controller
         ';
     }
 
-    public function getFooter($isPrescription = false): string
+    public function getFooter($isPrescription = false, $nextFollowUp = null): string
     {
         $fontSize = $this->fontSize;
         
@@ -87,7 +87,7 @@ class AFivePaperController extends Controller
             <tr>
                 <!-- Left side -->
                 <td width="60%" style="vertical-align:bottom; text-align:left;">
-                    ' . ($isPrescription ? '<b>Next Follow-up Schedule:</b> ________________________' : '') . '
+                    ' . ($isPrescription ? '<b>Next Follow-up Schedule:</b> <u>'.$nextFollowUp.'</u>' : '') . '
                 </td>
 
                 <!-- Right side -->
@@ -142,8 +142,9 @@ class AFivePaperController extends Controller
         $pdf->setPrintHeader(false);
         $pdf->setPrintFooter(true);
 
+        $nextFollowUp = $consultation->next_follow_up_schedule ? Carbon::parse($consultation->next_follow_up_schedule)->format('F j, Y') : null;
         // Set footer content
-        $pdf->footerHtml = $this->getFooter(isPrescription: !$request->type);
+        $pdf->footerHtml = $this->getFooter(isPrescription: !$request->type, nextFollowUp: $nextFollowUp);
         $pdf->footerFontSize = $this->fontSize;
 
         // Margins and auto-break (bottom margin for footer)
@@ -236,7 +237,14 @@ class AFivePaperController extends Controller
                 } else if($request->type == 'Laboratory Request') {
 
                     $custom_content = $consultation->lab_request_content;
+                    
+                } else if($request->type == 'Referral Form') {
+                    
+                    $custom_content = $consultation->referral_content;
 
+                } else if($request->type == 'Medical Abstract') {
+                    
+                    $custom_content = $consultation->medical_abstract;
                 }
             }
              else {

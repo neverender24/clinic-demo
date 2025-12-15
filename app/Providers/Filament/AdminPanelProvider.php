@@ -56,8 +56,8 @@ class AdminPanelProvider extends PanelProvider
                 'register' => fn(Action $action) => $action->label('Register Clinic'),
                 // ...
             ])
-            // ->login(Login::class)
-            ->darkMode(true, true)
+            ->login(Login::class)
+            // ->darkMode()
             ->colors([
                 'primary' => Color::Blue,
                 'red' => Color::Red,
@@ -94,9 +94,9 @@ class AdminPanelProvider extends PanelProvider
             ->sidebarCollapsibleOnDesktop(true)
             ->sidebarFullyCollapsibleOnDesktop(false)
             ->plugins([
-                \Javarex\DdoLogin\LoginDdoPlugin::make(),
-                FilamentShieldPlugin::make()
-                    ->scopeToTenant(false),
+                // \Javarex\DdoLogin\LoginDdoPlugin::make(),
+                // FilamentShieldPlugin::make()
+                //     ->scopeToTenant(false),
                 FilamentApexChartsPlugin::make(),
                 // ActivitylogPlugin::make()
                 //     ->label('Log')
