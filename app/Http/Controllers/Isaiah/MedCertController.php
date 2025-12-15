@@ -62,7 +62,7 @@ class MedCertController extends Controller
             ->findOrFail($id);
 
         $paper = strtolower($request->paper ?? 'letter');
-        $this->image_header =  public_path('storage/' . $consultation->clinic->medcert_header_image);
+        $this->image_header =  public_path('images/prescription_header.png');
 
         $pdf = $this->setupPdf($paper);
         $headerHtml = $this->getHeader();

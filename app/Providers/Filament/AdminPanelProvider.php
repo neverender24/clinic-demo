@@ -57,6 +57,7 @@ class AdminPanelProvider extends PanelProvider
                 // ...
             ])
             // ->login(Login::class)
+            ->darkMode(true, true)
             ->colors([
                 'primary' => Color::Blue,
                 'red' => Color::Red,
