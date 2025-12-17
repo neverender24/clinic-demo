@@ -1,8 +1,11 @@
 @import '../../../../vendor/filament/filament/resources/css/theme.css';
-
+@import './login.css';
+@import './sidebar.css';
+@import './filament-page.css';
 
 @source '../../../../app/Filament';
 @source '../../../../resources/views/filament';
+@source '../../../../resources/views/vendor';
 
 /* 
 #consutation-form ~ .fi-form-actions .fi-ac {
