@@ -63,10 +63,7 @@ class ConsultationForm
                                     ->getOptionLabelsUsing(fn($value) => Patient::find($value)->full_name)
                                     ->preload()
                                     ->searchable()
-
-                                    ->createOptionForm(function (Schema $schema) {
-                                        return PatientResource::form($schema)->extraAttributes(['class' => 'w-full']);
-                                    })
+                                    ->createOptionForm(PatientResource::getFormSchema())
                                     ->createOptionAction(function (Action $action) {
                                         return $action
                                             ->modalWidth('xl')
@@ -76,9 +73,7 @@ class ConsultationForm
                                                 return $data;
                                             });
                                     })
-                                    ->editOptionForm(function (Schema $schema) {
-                                        return PatientResource::form($schema)->extraAttributes(['class' => 'w-full']);
-                                    })
+                                    ->editOptionForm(PatientResource::getFormSchema())
                                     ->editOptionAction(function (Action $action, $livewire) {
                                         return $action
                                             ->modalWidth('xl')

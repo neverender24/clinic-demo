@@ -40,97 +40,157 @@ class PatientResource extends Resource
 
     protected static string | \BackedEnum | null $navigationIcon = 'healthicons-o-traumatism';
 
+    /**
+     * Get the base form fields (without relationship-based repeaters)
+     * Used for createOptionForm/editOptionForm in Select components
+     */
+    public static function getFormSchema(): array
+    {
+        return [
+            Section::make('')
+                ->schema([
+                    TextInput::make('last_name')
+                        ->required()
+                        ->maxLength(45)
+                        ->autocomplete(false)
+                        ->autocapitalize('words'),
+                    TextInput::make('first_name')
+                        ->required()
+                        ->maxLength(45)
+                        ->autocomplete(false)
+                        ->autocapitalize('words'),
+                    TextInput::make('middle_name')
+                        ->maxLength(45)
+                        ->autocomplete(false)
+                        ->autocapitalize('words'),
+                    Grid::make()
+                        ->schema([
+                            DatePicker::make('birthday')
+                                ->required()
+                                ->displayFormat('d/m/Y')
+                                ->native(true),
+                            Select::make('sex')
+                                ->options([
+                                    'M' => 'Male',
+                                    'F' => 'Female'
+                                ])
+                                ->required(),
+                            Select::make('civil_status')
+                                ->columnSpanFull()
+                                ->required()
+                                ->options([
+                                        'Child' => 'Child',
+                                        'Single' => 'Single',
+                                        'Married' => 'Married',
+                                        'Widow' => 'Widow',
+                                        'Widower' => 'Widower',
+                                ]),
+                        ])
+                        ->columns(2),
+                    TagsInput::make('contact_details')
+                        ->hint('Can be a phone number, email, and/or any other contact detail'),
+                    TextInput::make('address')
+                        ->required(),
+                    TextInput::make('occupation'),
+                    TagsInput::make('allergies')->separator(','),
+                    TagsInput::make('surgeries')->separator(','),
+                ])
+        ];
+    }
+
+    /**
+     * Get the full form schema including relationship-based repeaters
+     * Used for the main resource form
+     */
+    public static function getFullFormSchema(): array
+    {
+        return [
+            Section::make('')
+                ->schema([
+                    TextInput::make('last_name')
+                        ->required()
+                        ->maxLength(45)
+                        ->autocomplete(false)
+                        ->autocapitalize('words'),
+                    TextInput::make('first_name')
+                        ->required()
+                        ->maxLength(45)
+                        ->autocomplete(false)
+                        ->autocapitalize('words'),
+                    TextInput::make('middle_name')
+                        ->maxLength(45)
+                        ->autocomplete(false)
+                        ->autocapitalize('words'),
+                    Grid::make()
+                        ->schema([
+                            DatePicker::make('birthday')
+                                ->required()
+                                ->displayFormat('d/m/Y')
+                                ->native(true),
+                            Select::make('sex')
+                                ->options([
+                                    'M' => 'Male',
+                                    'F' => 'Female'
+                                ])
+                                ->required(),
+                            Select::make('civil_status')
+                                ->columnSpanFull()
+                                ->required()
+                                ->options([
+                                        'Child' => 'Child',
+                                        'Single' => 'Single',
+                                        'Married' => 'Married',
+                                        'Widow' => 'Widow',
+                                        'Widower' => 'Widower',
+                                ]),
+                        ])
+                        ->columns(2),
+                    TagsInput::make('contact_details')
+                        ->hint('Can be a phone number, email, and/or any other contact detail'),
+                    TextInput::make('address')
+                        ->required(),
+                    TextInput::make('occupation'),
+                    TagsInput::make('allergies')->separator(','),
+                    TagsInput::make('surgeries')->separator(','),
+                    Repeater::make('patientHmos')
+                        ->label('Patient HMOs')
+                        ->addAction(function(Action $action) {
+                            return $action
+                                        ->label('Click here to add HMO')
+                                        ->icon('healthicons-o-social-work')
+                                        ->color('primary')
+                                        ->link()
+                                        ->size('lg');
+                        })
+                        ->relationship()
+                        ->schema([
+                            Select::make('hmo_id')
+                                ->label('Name')
+                                ->required()
+                                ->relationship('hmo', 'name')
+                                ->searchable()
+                                ->preload()
+                                ->createOptionForm([
+                                    TextInput::make('name')
+                                        ->required()
+                                        ->maxLength(255)
+                                ])
+                                ->columnSpanFull(),
+                            DatePicker::make('date_registered')
+                                ->label('Registered Date'),
+                            DatePicker::make('date_expiry')
+                                ->label('Expired Date'),
+                        ])
+                        ->defaultItems(0)
+                        ->columns(2)
+                ])
+        ];
+    }
+
     public static function form(Schema $schema): Schema
     {
         return $schema
-            ->components([
-                Section::make('')
-                   ->schema([
-                      TextInput::make('last_name')
-                            ->required()
-                            ->maxLength(45)
-                            ->autocomplete(false)
-                            ->autocapitalize('words'),
-                        TextInput::make('first_name')
-                            ->required()
-                            ->maxLength(45)
-                            ->autocomplete(false)
-                            ->autocapitalize('words'),
-                        TextInput::make('middle_name')
-                            ->maxLength(45)
-                            ->autocomplete(false)
-                            ->autocapitalize('words'),
-                        Grid::make()
-                            ->schema([
-                                DatePicker::make('birthday')
-                                    ->required()
-                                    ->displayFormat('d/m/Y')
-                                    ->native(true),
-                                Select::make('sex')
-                                    ->options([
-                                        'M' => 'Male',
-                                        'F' => 'Female'
-                                    ])
-                                    ->required(),
-                                Select::make('civil_status')
-                                    ->columnSpanFull()
-                                    ->required()
-                                    ->options([
-                                         'Child' => 'Child', 
-                                         'Single' => 'Single', 
-                                         'Married' => 'Married', 
-                                         'Widow' => 'Widow',
-                                         'Widower' => 'Widower',
-                                    ]),
-                            ])
-                            ->columns(2),
-                        TagsInput::make('contact_details')
-                            // ->separator(',')
-                            ->hint('Can be a phone number, email, and/or any other contact detail'),
-                        TextInput::make('address')
-                            ->required(),
-                        TextInput::make('occupation')
-                            // ->required()
-                            // ->separator(',')
-                            ,
-
-                        TagsInput::make('allergies')->separator(','),
-                        TagsInput::make('surgeries')->separator(','),
-                        Repeater::make('patientHmos')
-                            ->label('Patient HMOs')
-                            // ->addActionLabel('Click here to add HMO')
-                            // ->addActionAlignment(Alignment::Left)
-                            ->addAction(function(Action $action) {
-                                return $action
-                                            ->label('Click here to add HMO')
-                                            ->icon('healthicons-o-social-work')
-                                            ->color('primary')
-                                            ->link()
-                                            ->size('lg');
-                            })
-                            ->relationship()
-                            ->schema([
-                                Select::make('hmo_id')
-                                    ->label('Name')
-                                    ->required()
-                                    ->relationship('hmo', 'name')
-                                    ->searchable()
-                                    ->preload()
-                                    ->createOptionForm([
-                                        TextInput::make('name')
-                                            ->required()
-                                            ->maxLength(255)
-                                    ])
-                                    ->columnSpanFull(),
-                                DatePicker::make('date_registered')
-                                    ->label('Registered Date'),
-                                DatePicker::make('date_expiry')
-                                    ->label('Expired Date'),
-                            ])
-                            ->defaultItems(0)
-                            ->columns(2)
-                    ])
-            ])
+            ->components(static::getFullFormSchema())
             ->columns(1)
             ->extraAttributes(['class' => 'w-1/2']);
     }

@@ -29,9 +29,9 @@ use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Notifications\Notification;
 use Filament\Support\Enums\FontWeight;
 
-class CreateConsultation extends CreateRecord implements HasTable
+class CreateConsultation extends CreateRecord 
 {
-    use InteractsWithTable;
+    // use InteractsWithTable;
     use HasHistoryAction;
 
     protected static string $resource = ConsultationResource::class;
@@ -85,16 +85,16 @@ class CreateConsultation extends CreateRecord implements HasTable
         }
     }
 
-    public function getFormActions(): array
-    {
-        return [
-            FilamentAction::make('create')
-                ->action('create'),
-            FilamentAction::make('cancel')
-                ->url(fn() => $this->previousUrl)
-                ->color('gray')
-        ];
-    }
+    // public function getFormActions(): array
+    // {
+    //     return [
+    //         FilamentAction::make('create')
+    //             ->action('create'),
+    //         FilamentAction::make('cancel')
+    //             ->url(fn() => $this->previousUrl)
+    //             ->color('gray')
+    //     ];
+    // }
     
     public function mutateFormDataBeforeCreate(array $data): array
     {
@@ -104,10 +104,6 @@ class CreateConsultation extends CreateRecord implements HasTable
         return $data;
     }
 
-    public function getTable2(): void
-    {
-        $this->hospital_admission = HospitalAdmission::where('patient_id', $this->data['patient_id'])->get();
-    }
     // public function create(bool $another = false): void
     // {
     //     dd('test');

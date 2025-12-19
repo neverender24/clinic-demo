@@ -2,32 +2,33 @@
 
 namespace App\Filament\Resources\HospitalAdmissions;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Grid;
-use Filament\Actions\Action;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\RichEditor;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Actions\EditAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use App\Filament\Resources\HospitalAdmissions\Pages\ListHospitalAdmissions;
-use App\Filament\Resources\HospitalAdmissions\Pages\CreateHospitalAdmission;
-use App\Filament\Resources\HospitalAdmissions\Pages\EditHospitalAdmission;
 use Filament\Forms;
 use Filament\Tables;
+use Illuminate\View\View;
 use Filament\Tables\Table;
+use Filament\Actions\Action;
+use Filament\Schemas\Schema;
+use Filament\Actions\EditAction;
 use Filament\Resources\Resource;
 use App\Models\HospitalAdmission;
+use Filament\Actions\BulkActionGroup;
 use Filament\Forms\Components\Select;
+use Filament\Schemas\Components\Grid;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\RichEditor;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\Patients\PatientResource;
+use Torgodly\Html2Media\Tables\Actions\Html2MediaAction;
 use App\Filament\Resources\HospitalAdmissionResource\Pages;
 use App\Filament\Resources\HospitalAdmissionResource\RelationManagers;
-use Filament\Forms\Components\TextInput;
-use Illuminate\View\View;
-use Torgodly\Html2Media\Tables\Actions\Html2MediaAction;
+use App\Filament\Resources\HospitalAdmissions\Pages\EditHospitalAdmission;
+use App\Filament\Resources\HospitalAdmissions\Pages\ListHospitalAdmissions;
+use App\Filament\Resources\HospitalAdmissions\Pages\CreateHospitalAdmission;
 
 class HospitalAdmissionResource extends Resource
 {
@@ -40,6 +41,8 @@ class HospitalAdmissionResource extends Resource
         return $schema
             ->components([
                 Section::make()
+                ->columns(1)
+                ->columnSpanFull()
                 ->schema([
                     Grid::make()
                         ->schema([
