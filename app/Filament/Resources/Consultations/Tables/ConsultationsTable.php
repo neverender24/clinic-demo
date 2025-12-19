@@ -216,54 +216,54 @@ class ConsultationsTable
                             }
                         })
                         ->modalSubmitAction(fn(Action $action) => $action->label('Print')->color('success'))
-                        ->extraModalFooterActions(function ($action, $arguments, $data) {
-                            return [
-                                $action->make('save')
-                                    ->visible(fn() => auth()->user()->doctor())
-                                    ->action(function ($record, $mountedActions) use ($arguments, $data){
-                                        $data = $mountedActions[0]->getRawData();
+                        // ->extraModalFooterActions(function ($action, $arguments, $data) {
+                        //     return [
+                        //         $action->make('save')
+                        //             ->visible(fn() => auth()->user()->doctor())
+                        //             ->action(function ($record, $mountedActions) use ($arguments, $data){
+                        //                 $data = $mountedActions[0]->getRawData();
                                        
-                                        try {
-                                            // This is to get array of admitting_order_data from livewire
+                        //                 try {
+                        //                     // This is to get array of admitting_order_data from livewire
 
-                                            $type_field = match ($data['type']) {
-                                                'Admitting Orders' => 'admitting_order_data',
-                                                'Laboratory Request' => 'lab_request_content',
-                                                'Referral Form' => 'referral_content',
-                                            };
+                        //                     $type_field = match ($data['type']) {
+                        //                         'Admitting Orders' => 'admitting_order_data',
+                        //                         'Laboratory Request' => 'lab_request_content',
+                        //                         'Referral Form' => 'referral_content',
+                        //                     };
 
-                                            if ($type_field == 'lab_request_content') {
+                        //                     if ($type_field == 'lab_request_content') {
                                                 
-                                                $result = collect($data['labRequests'])->map(fn ($item) => [
-                                                    'content' => $item['content'] ?? null,
-                                                ])->values()->toArray();
+                        //                         $result = collect($data['labRequests'])->map(fn ($item) => [
+                        //                             'content' => $item['content'] ?? null,
+                        //                         ])->values()->toArray();
                                                 
-                                                $record->labRequests()->delete();
+                        //                         $record->labRequests()->delete();
 
-                                                $record->labRequests()->createMany($result);
-                                            } else {
+                        //                         $record->labRequests()->createMany($result);
+                        //                     } else {
 
-                                                $record->update([
-                                                    $type_field => $data[$type_field]
-                                                ]);
+                        //                         $record->update([
+                        //                             $type_field => $data[$type_field]
+                        //                         ]);
                                                 
-                                            }
+                        //                     }
 
 
-                                            Notification::make()
-                                                ->success()
-                                                ->title('Success')
-                                                ->body('The changes have been saved');
-                                        } catch (Throwable $th) {
-                                            dd($th->getMessage());
-                                            Notification::make()
-                                                ->title('Error')
-                                                ->body($th->getMessage());
-                                        }
-                                    })
-                                    ->cancelParentActions()
-                            ];
-                        })
+                        //                     Notification::make()
+                        //                         ->success()
+                        //                         ->title('Success')
+                        //                         ->body('The changes have been saved');
+                        //                 } catch (Throwable $th) {
+                        //                     dd($th->getMessage());
+                        //                     Notification::make()
+                        //                         ->title('Error')
+                        //                         ->body($th->getMessage());
+                        //                 }
+                        //             })
+                        //             ->cancelParentActions()
+                        //     ];
+                        // })
                         ->after(function ($livewire, $record, $data) {
                             $livewire->js("window.open('" . route('pdf.new-tab', [
                                 'id' => $record->id,
