@@ -38,9 +38,9 @@ use Filament\Schemas\Components\View as ComponentsView;
 
 class ConsultationForm
 {
-
     public static function configure(Schema $schema): Schema
     {
+        
         return $schema
             ->components([
                 Grid::make(3)
@@ -86,9 +86,9 @@ class ConsultationForm
                                     ->live()
                                     ->required(),
                                 Textarea::make('chief_complaint')
+                                    ->label('Subjective')
                                     ->columnSpanFull()
                                     ->autosize()
-                                    ->rows(7)
                                     ->required()
                                     ->afterStateHydrated(fn(Set $set, $state) => $set('chief_complaint', strip_tags($state)))
                                     ->visible(fn() => auth()->user()->can('addChiefComplaint', Consultation::class)),
@@ -115,11 +115,26 @@ class ConsultationForm
                                     ->columnSpan(fn() => [
                                         'sm' => auth()->user()->can('addVitalSign', Consultation::class) ? 1 : 2
                                     ])
-                                    ->label('Medical Data')
+                                    ->label('Objective')
                                     // ->dehydrateStateUsing(fn($state) => strip_tags($state))
                                     ->afterStateHydrated(fn(Set $set, $state) => $set('test_results', strip_tags($state)))
                                     ->required()
                                     ->visible(fn() => auth()->user()->can('addTestResult', Consultation::class)),
+                                Textarea::make('diagnosis')
+                                    ->label('Assessment')
+                                    ->columnSpanFull()
+                                    ->required()
+                                    // ->toolbarButtons(self::onlyAllowedToolbar())
+                                    // ->hint(fn($operation): View | null => $operation == 'create' ? null : view('forms.components.draw'))
+                                    ->visible(fn() => auth()->user()->hasAnyRole(['Doctor', 'super_admin'])),
+                                Textarea::make('management')
+                                    ->label('Plan')
+                                    ->columnSpanFull()
+                                    ->required()
+                                    ->visible(fn() => auth()->user()->hasAnyRole(['Doctor', 'super_admin']))
+                                    ->columnSpan([
+                                        'xl' => 'full'
+                                    ]),
                                 FileUpload::make('attachments')
                                     ->multiple()
                                     ->panelLayout('grid')
@@ -140,21 +155,6 @@ class ConsultationForm
                                                 $fail('The file must be an image.');
                                             }
                                         },
-                                    ]),
-                                RichEditor::make('diagnosis')
-                                    ->columnSpanFull()
-                                    ->required()
-                                    // ->toolbarButtons(self::onlyAllowedToolbar())
-                                    ->toolbarButtons(self::onlyAllowedToolbar())
-                                    // ->hint(fn($operation): View | null => $operation == 'create' ? null : view('forms.components.draw'))
-                                    ->visible(fn() => auth()->user()->hasAnyRole(['Doctor', 'super_admin'])),
-                                RichEditor::make('management')
-                                    ->columnSpanFull()
-                                    ->required()
-                                    ->toolbarButtons(self::onlyAllowedToolbar())
-                                    ->visible(fn() => auth()->user()->hasAnyRole(['Doctor', 'super_admin']))
-                                    ->columnSpan([
-                                        'xl' => 'full'
                                     ]),
                                 DatePicker::make('next_follow_up_schedule')
                                     ->columnSpanFull()

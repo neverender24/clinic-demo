@@ -57,7 +57,7 @@ class AdminPanelProvider extends PanelProvider
                 // ...
             ])
             // ->login(Login::class)
-            ->darkMode(false)
+            // ->darkMode(false)
             ->colors([
                 'primary' => Color::Blue,
                 'red' => Color::Red,
@@ -120,6 +120,7 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
+            ->sidebarWidth('16rem')
             ->unsavedChangesAlerts()
             ->font(
                 'Inter',

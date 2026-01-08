@@ -1,18 +1,17 @@
 <?php
 
-namespace App\Http\Controllers\Isaiah;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
+use TCPDF;
+use App\Models\Consultation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use App\Models\Scopes\TenantScope;
 use Illuminate\Support\Number;
-use TCPDF;
-use App\Models\Consultation;
 
-class MedCertController extends Controller
+class LetterPaperController extends Controller
 {
-    public $image_header = '';
+   public $image_header = '';
     protected $content = '';
     protected int $fontSize;
 
@@ -43,9 +42,9 @@ class MedCertController extends Controller
                 </td>
                 <td width="50%" style="text-align:left; vertical-align:bottom">
                     <b>Attending Physician:</b><br><br><br>
-                    <b>Juan Dela Cruz, MD, FPCP</b><br>
-                    License no: 0000000<br>
-                    PTR no: 0000000<br>
+                    <b>Isaiah Jeremi P. Gampon, MD, FPCP</b><br>
+                    License no: 0133619<br>
+                    PTR no: 3326746<br>
                     S2 License no: _____________________
                 </td>
             </tr>
@@ -62,19 +61,39 @@ class MedCertController extends Controller
             ->findOrFail($id);
 
         $paper = strtolower($request->paper ?? 'letter');
-        $this->image_header =  public_path('images/certificate_header.png');
-        // $this->image_header =  public_path('images/prescription_header.png');
+        $this->image_header = $request->type !== 'Medical Certificate'
+            ? public_path('storage/' . $consultation->clinic->header_image)
+            : public_path('storage/' . $consultation->clinic->medcert_header_image);
 
         $pdf = $this->setupPdf($paper);
         $headerHtml = $this->getHeader();
         $footerHtml = $this->getFooter(isPrescription: !$request->type);
 
         // ------------------------------ CONTENT ------------------------------
-        $this->generateMedicalCertificateContent($consultation);
+        if (! $request->type) {
+            // PRESCRIPTION (multiple pages)
+            $chunks = $consultation->medicines->chunk(6);
+            $totalChunks = count($chunks);
+            $pageIndex = 0;
 
-        // $content = $this->content;
+            foreach ($chunks as $chunk) {
+                $pageIndex++;
+                $isFirstPage = $pageIndex === 1;
+                $isLastPage = $pageIndex === $totalChunks;
 
-         $this->addCustomPage($pdf, $this->content, $headerHtml, $footerHtml, true, true, $paper);
+                $this->generatePrescriptionContent($consultation, $chunk);
+                $this->addCustomPage($pdf, $this->content, $headerHtml, $footerHtml, $isFirstPage, $isLastPage, $paper);
+            }
+        } else {
+            // CUSTOM CONTENT TYPES
+            if ($request->type == 'Admitting Orders') {
+                $this->generateCustomContent($request->type, $consultation->admitting_order_data, $consultation);
+            } else {
+                $this->generateMedicalCertificateContent($consultation);
+            }
+
+            $this->addCustomPage($pdf, $this->content, $headerHtml, $footerHtml, true, true, $paper);
+        }
 
         $pdf->Output('prescription.pdf', 'I');
     }
@@ -92,8 +111,11 @@ class MedCertController extends Controller
         $pdf->setPrintFooter(false);
 
         if ($paper === 'a5') {
-            $pdf->SetMargins(10, 10, 10);
+            $pdf->SetMargins(10, 2, 10);
             $pdf->SetAutoPageBreak(true, 5);
+        } else { // letter
+            $pdf->SetMargins(10, 2, 10);
+            $pdf->SetAutoPageBreak(true, 10);
         }
 
         $pdf->SetFont('helvetica', '', $this->fontSize);
@@ -128,7 +150,7 @@ class MedCertController extends Controller
             );
 
             // Reset Y properly (different for each paper type)
-            $pdf->SetY(25);
+            $pdf->SetY($paper === 'a5' ? 50 : 55);
         } else {
             $pdf->SetY(20);
         }
@@ -219,41 +241,28 @@ class MedCertController extends Controller
     protected function generateMedicalCertificateContent($consultation): void
     {
         $patientName = $consultation->patient->full_name;
-        $age = Carbon::parse($consultation->patient->birthday)->age;
-        $sex = $consultation->patient->sex == 'M' ? 'Male' : 'Female';
-        $address = $consultation->patient->address;
         $chiefComplaint = $consultation->chief_complaint ?? '';
         $diagnosis = $consultation->diagnosis ?? 'Diagnosis';
         $dateToday = now()->format('F d, Y');
 
-        // $restStart = Carbon::parse($consultation->estimated_date)->format('F d, Y');
-        // $restEnd = Carbon::parse($consultation->estimated_date_to)->addDays(3)->format('F d, Y');
-        // $recovery = Number::spell($consultation->approximate_days);
-        // $returnDate = Carbon::parse($consultation->created_at)->addDays(4)->format('F d, Y');
+        $restStart = Carbon::parse($consultation->estimated_date)->format('F d, Y');
+        $restEnd = Carbon::parse($consultation->estimated_date_to)->addDays(3)->format('F d, Y');
+        $recovery = Number::spell($consultation->approximate_days);
+        $returnDate = Carbon::parse($consultation->created_at)->addDays(4)->format('F d, Y');
         $remarks = $consultation->medical_cert_remarks ?? '___________________________';
 
         $fontSize = $this->fontSize;
-       $content = '
-    <div style="font-size:'.$fontSize.'pt; line-height:1.6; font-family: Arial, sans-serif;">
-            <div style="margin-top: 40px; text-align:center; font-size: 14pt; font-weight:bold">
-                <b>Medical Certificate</b>
-            </div>
-        <div style="text-align: right; margin-bottom: 20px;">
-            Date: <u>'.$dateToday.'</u>
-        </div>
-
-       
-
-        <div style="margin-top: 30px; text-align: justify;">To whom it may concern:
-            <br><br>This is to certify that <u>'.$patientName.'</u>, <u>'.$age.'</u> years old, <u>'.$sex.'</u>, 
-            currently residing at <u>'.$address.'</u>, sought medical consult last
-            <u>'.$consultation->date->format('F j, Y').'</u> for medical checkup and assessment:
-            <br><u>'.$diagnosis.'</u><br>
-            <br><b>Remarks:</b> '.$remarks.'
-            <br><br>
-        </div>
-    </div>';
-
+        $content = $this->patientinfo($consultation) . '
+        <div style="font-size:'.$fontSize.'; line-height:1.4; text-align:justify;">
+            This certifies that the above-mentioned patient was seen and evaluated at this clinic/hospital on
+            <u>'.$dateToday.'</u> due to <u>'.$chiefComplaint.'</u>.<br><br>
+            <b>Diagnosis:</b> '.$diagnosis.'<br>
+            The patient is advised to have <u>'.$recovery.' ('.$consultation->approximate_days.')</u> days of rest,
+            from <u>'.$restStart.'</u> to <u>'.$restEnd.'</u> to allow for complete recovery.<br><br>
+            The patient is fit to return to work/school on <u>'.$returnDate.'</u>.<br><br>
+            <b>Remarks:</b> '.$remarks.'<br><br>
+            <i>This certification is issued upon request of the above-mentioned individual for whatever purpose it may serve, except for medico-legal purposes.</i>
+        </div>';
 
         $this->content = $content;
     }

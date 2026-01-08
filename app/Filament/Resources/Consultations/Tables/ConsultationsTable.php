@@ -48,7 +48,7 @@ class ConsultationsTable
                 TextColumn::make('date')
                     ->date()
                     ->sortable(),
-                TextColumn::make('patient.first_name')
+                TextColumn::make('patient.full_name')
                     ->color(fn($record) => $record->patient->trashed() ? 'danger' : '')
                     ->searchable()
                     ->sortable(),

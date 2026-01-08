@@ -33,11 +33,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Gate::before(function (User $user, string $ability) {
-            if ($user->hasRole('super_admin')) {
-                return true;
-            }
-        });
+        // Gate::before(function (User $user, string $ability) {
+        //     if ($user->hasRole('super_admin')) {
+        //         return true;
+        //     }
+        // });
 
         // app(PermissionRegistrar::class)
         //     ->setPermissionClass(Permission::class)

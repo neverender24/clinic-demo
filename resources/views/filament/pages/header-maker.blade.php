@@ -157,69 +157,103 @@
   <!-- Main Container -->
   <div class="flex flex-1 min-h-0">
     
-    <!-- Left Panel -->
-    <div id="leftPanel" class="flex-col hidden w-56 bg-white border-r border-gray-200 lg:flex xl:w-64 2xl:w-72">
-      <div class="px-4 py-3 font-semibold text-gray-800 border-b border-gray-200">Properties</div>
-      <div class="flex-1 p-3 space-y-3 overflow-y-auto">
-        <div id="noSelection" class="text-sm text-gray-500">Select an object to edit</div>
-        <div id="propertiesPanel" class="hidden space-y-3">
-          <div>
-            <label class="block mb-1 text-xs font-medium text-gray-500 uppercase">Position</label>
-            <div class="grid grid-cols-2 gap-2">
-              <input id="posX" type="number" placeholder="X" class="w-full px-2 py-1 text-sm border border-gray-300 rounded" />
-              <input id="posY" type="number" placeholder="Y" class="w-full px-2 py-1 text-sm border border-gray-300 rounded" />
-            </div>
-          </div>
-          <div>
-            <label class="block mb-1 text-xs font-medium text-gray-500 uppercase">Size</label>
-            <div class="grid grid-cols-2 gap-2">
-              <input id="width" type="number" placeholder="W" class="w-full px-2 py-1 text-sm border border-gray-300 rounded" />
-              <input id="height" type="number" placeholder="H" class="w-full px-2 py-1 text-sm border border-gray-300 rounded" />
-            </div>
-          </div>
-          <div id="textProperties" class="space-y-3">
-            <div>
-              <label class="block mb-1 text-xs font-medium text-gray-500 uppercase">Font</label>
-              <select id="fontFamily" class="w-full px-2 py-1 text-sm border border-gray-300 rounded">
-                <option value="Arial">Arial</option>
-                <option value="Helvetica">Helvetica</option>
-                <option value="Times New Roman">Times New Roman</option>
-                <option value="Georgia">Georgia</option>
-                <option value="Courier New">Courier New</option>
-              </select>
-            </div>
-            <div>
-              <label class="block mb-1 text-xs font-medium text-gray-500 uppercase">Size</label>
-              <input id="fontSize" type="number" value="40" class="w-full px-2 py-1 text-sm border border-gray-300 rounded" />
-            </div>
-            <div>
-              <label class="block mb-1 text-xs font-medium text-gray-500 uppercase">Style</label>
-              <div class="flex gap-1">
-                <button id="bold" class="w-8 h-8 font-bold text-gray-700 border border-gray-300 rounded hover:bg-gray-50">B</button>
-                <button id="italic" class="w-8 h-8 italic text-gray-700 border border-gray-300 rounded hover:bg-gray-50">I</button>
-                <button id="underline" class="w-8 h-8 text-gray-700 underline border border-gray-300 rounded hover:bg-gray-50">U</button>
+    <!-- Left Panel (Collapsible) -->
+    <div id="leftPanel" class="flex-col hidden bg-white border-r border-gray-200 lg:flex transition-all duration-200" style="width: 192px;">
+      <!-- Collapsed State Toggle -->
+      <button id="togglePropertiesPanel" class="flex items-center justify-center w-full px-2 py-2 text-sm font-semibold text-gray-800 border-b border-gray-200 hover:bg-gray-50" title="Toggle Properties Panel">
+        <svg id="propertiesToggleIcon" class="w-4 h-4 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+        <span id="propertiesLabel" class="ml-2">Properties</span>
+      </button>
+      <div id="propertiesContent" class="flex-1 p-2 space-y-2 overflow-y-auto">
+        <div id="noSelection" class="text-xs text-gray-500">Select an object to edit</div>
+        <div id="propertiesPanel" class="hidden space-y-2">
+          <!-- Position Section -->
+          <div class="property-section">
+            <button class="property-toggle flex items-center justify-between w-full py-1 text-xs font-medium text-gray-600 hover:text-gray-900" data-target="positionContent">
+              <span>Position</span>
+              <svg class="w-3 h-3 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div id="positionContent" class="pt-1">
+              <div class="grid grid-cols-2 gap-1">
+                <input id="posX" type="number" placeholder="X" class="w-full px-1.5 py-1 text-xs border border-gray-300 rounded" />
+                <input id="posY" type="number" placeholder="Y" class="w-full px-1.5 py-1 text-xs border border-gray-300 rounded" />
               </div>
             </div>
           </div>
-          <div>
-            <label class="block mb-1 text-xs font-medium text-gray-500 uppercase">Fill</label>
-            <input id="fillColor" type="color" value="#111111" class="w-full h-8 border border-gray-300 rounded cursor-pointer" />
+          <!-- Size Section -->
+          <div class="property-section">
+            <button class="property-toggle flex items-center justify-between w-full py-1 text-xs font-medium text-gray-600 hover:text-gray-900" data-target="sizeContent">
+              <span>Size</span>
+              <svg class="w-3 h-3 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div id="sizeContent" class="pt-1">
+              <div class="grid grid-cols-2 gap-1">
+                <input id="width" type="number" placeholder="W" class="w-full px-1.5 py-1 text-xs border border-gray-300 rounded" />
+                <input id="height" type="number" placeholder="H" class="w-full px-1.5 py-1 text-xs border border-gray-300 rounded" />
+              </div>
+            </div>
           </div>
-          <div id="strokeField">
-            <label class="block mb-1 text-xs font-medium text-gray-500 uppercase">Stroke</label>
-            <input id="strokeColor" type="color" value="#000000" class="w-full h-8 border border-gray-300 rounded cursor-pointer" />
+          <!-- Text Properties Section -->
+          <div id="textProperties" class="space-y-2">
+            <div class="property-section">
+              <button class="property-toggle flex items-center justify-between w-full py-1 text-xs font-medium text-gray-600 hover:text-gray-900" data-target="fontContent">
+                <span>Font</span>
+                <svg class="w-3 h-3 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+              <div id="fontContent" class="pt-1 space-y-1">
+                <select id="fontFamily" class="w-full px-1.5 py-1 text-xs border border-gray-300 rounded">
+                  <option value="Arial">Arial</option>
+                  <option value="Helvetica">Helvetica</option>
+                  <option value="Times New Roman">Times New Roman</option>
+                  <option value="Georgia">Georgia</option>
+                  <option value="Courier New">Courier New</option>
+                </select>
+                <input id="fontSize" type="number" value="40" placeholder="Size" class="w-full px-1.5 py-1 text-xs border border-gray-300 rounded" />
+                <div class="flex gap-1">
+                  <button id="bold" class="w-6 h-6 text-xs font-bold text-gray-700 border border-gray-300 rounded hover:bg-gray-50">B</button>
+                  <button id="italic" class="w-6 h-6 text-xs italic text-gray-700 border border-gray-300 rounded hover:bg-gray-50">I</button>
+                  <button id="underline" class="w-6 h-6 text-xs text-gray-700 underline border border-gray-300 rounded hover:bg-gray-50">U</button>
+                </div>
+              </div>
+            </div>
           </div>
-          <div id="strokeWidthField">
-            <label class="block mb-1 text-xs font-medium text-gray-500 uppercase">Stroke Width</label>
-            <input id="strokeWidth" type="number" value="1" class="w-full px-2 py-1 text-sm border border-gray-300 rounded" />
+          <!-- Fill & Stroke Section -->
+          <div class="property-section">
+            <button class="property-toggle flex items-center justify-between w-full py-1 text-xs font-medium text-gray-600 hover:text-gray-900" data-target="fillStrokeContent">
+              <span>Fill & Stroke</span>
+              <svg class="w-3 h-3 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div id="fillStrokeContent" class="pt-1 space-y-1">
+              <div class="flex items-center gap-1">
+                <span class="text-xs text-gray-500 w-10">Fill</span>
+                <input id="fillColor" type="color" value="#111111" class="flex-1 h-6 border border-gray-300 rounded cursor-pointer" />
+              </div>
+              <div id="strokeField" class="flex items-center gap-1">
+                <span class="text-xs text-gray-500 w-10">Stroke</span>
+                <input id="strokeColor" type="color" value="#000000" class="flex-1 h-6 border border-gray-300 rounded cursor-pointer" />
+              </div>
+              <div id="strokeWidthField" class="flex items-center gap-1">
+                <span class="text-xs text-gray-500 w-10">Width</span>
+                <input id="strokeWidth" type="number" value="1" class="flex-1 px-1.5 py-1 text-xs border border-gray-300 rounded" />
+              </div>
+            </div>
           </div>
-          <div>
-            <label class="block mb-1 text-xs font-medium text-gray-500 uppercase">Opacity: <span id="opacityValue">100%</span></label>
-            <input id="opacity" type="range" min="0" max="1" step="0.01" value="1" class="w-full" />
-          </div>
-          <div>
-            <label class="block mb-1 text-xs font-medium text-gray-500 uppercase">Rotation: <span id="angleValue">0°</span></label>
-            <input id="angle" type="range" min="0" max="360" step="1" value="0" class="w-full" />
+          <!-- Transform Section -->
+          <div class="property-section">
+            <button class="property-toggle flex items-center justify-between w-full py-1 text-xs font-medium text-gray-600 hover:text-gray-900" data-target="transformContent">
+              <span>Transform</span>
+              <svg class="w-3 h-3 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div id="transformContent" class="pt-1 space-y-1">
+              <div>
+                <label class="text-xs text-gray-500">Opacity: <span id="opacityValue">100%</span></label>
+                <input id="opacity" type="range" min="0" max="1" step="0.01" value="1" class="w-full h-1" />
+              </div>
+              <div>
+                <label class="text-xs text-gray-500">Rotation: <span id="angleValue">0°</span></label>
+                <input id="angle" type="range" min="0" max="360" step="1" value="0" class="w-full h-1" />
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -376,6 +410,10 @@
           <button class="preset-btn px-3 py-2 text-sm text-left border border-gray-300 rounded-lg hover:bg-gray-50" data-width="794" data-height="224">
             <span class="font-medium">Prescription Header</span>
             <span class="text-gray-400 text-xs block">794 × 224 px</span>
+          </button>
+          <button class="preset-btn px-3 py-2 text-sm text-left border border-gray-300 rounded-lg hover:bg-gray-50" data-width="794" data-height="200">
+            <span class="font-medium">A5 Header</span>
+            <span class="text-gray-400 text-xs block">794 × 200 px</span>
           </button>
         </div>
       </div>
@@ -591,7 +629,43 @@ function canvasBuilder() {
       // Width/Height inputs
       this.$('canvasWidth').oninput = () => this.handleResizeInput('width');
       this.$('canvasHeight').oninput = () => this.handleResizeInput('height');
-      
+
+      // Property panel toggle (collapse entire panel horizontally)
+      this.propertiesPanelCollapsed = false;
+      this.$('togglePropertiesPanel').onclick = () => {
+        const panel = this.$('leftPanel');
+        const content = this.$('propertiesContent');
+        const icon = this.$('propertiesToggleIcon');
+        const label = this.$('propertiesLabel');
+
+        this.propertiesPanelCollapsed = !this.propertiesPanelCollapsed;
+
+        if (this.propertiesPanelCollapsed) {
+          panel.style.width = '40px';
+          content.classList.add('hidden');
+          label.classList.add('hidden');
+          icon.style.transform = 'rotate(180deg)';
+        } else {
+          panel.style.width = '192px';
+          content.classList.remove('hidden');
+          label.classList.remove('hidden');
+          icon.style.transform = '';
+        }
+      };
+
+      // Property section toggles (individual sections)
+      document.querySelectorAll('.property-toggle').forEach(btn => {
+        btn.onclick = () => {
+          const targetId = btn.dataset.target;
+          const target = this.$(targetId);
+          const icon = btn.querySelector('svg');
+          if (target) {
+            target.classList.toggle('hidden');
+            icon.style.transform = target.classList.contains('hidden') ? 'rotate(-90deg)' : '';
+          }
+        };
+      });
+
       // Context menu
       this.$('c').oncontextmenu = (e) => { e.preventDefault(); this.$('contextMenu').style.left = e.clientX+'px'; this.$('contextMenu').style.top = e.clientY+'px'; this.$('contextMenu').classList.remove('hidden'); };
       document.onclick = () => this.$('contextMenu').classList.add('hidden');

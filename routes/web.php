@@ -21,7 +21,7 @@ Route::get('medical-cert/{id}', [ConsultationController::class, 'medcert'])->nam
 Route::get('/admitting-order/{consultation}', [ConsultationController::class, 'admittingOrder'])->name('prescription.admitting.order');
 Route::get('custom_docs/{doc}', [ConsultationController::class, 'customDoc'])->name('print.custom.doc');
 
-Route::get('/prescription/{id}', [App\Http\Controllers\PrescriptionController::class, 'generate'])->name('tcpdf.print');
+Route::get('/prescription/{id}', [App\Http\Controllers\LetterPaperController::class, 'generate'])->name('tcpdf.print');
 Route::get('/afive-doc/{id}', [App\Http\Controllers\AFivePaperController::class, 'generate'])->name('tcpdf.print.a5');
 Route::get('/afive-mercert/{id}', [MedCertController::class, 'generate'])->name('tcpdf.print.a5-medcert');
 
