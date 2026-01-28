@@ -63,7 +63,7 @@
                                 {{ config('app.name') ?? 'System Name'}}
                             </div>
                             <div class="login-tagline">
-                                Secure Healthcare Management
+                                Smart, Simple, and Customizable for Every Clinic
                             </div>
                         </div>
                         <div class="login-brand-decoration"></div>

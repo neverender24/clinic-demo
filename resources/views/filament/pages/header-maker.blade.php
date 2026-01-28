@@ -1,14 +1,14 @@
-<div id="canvasBuilderApp" class="flex flex-col h-screen bg-gray-100 font-sans">
-  
+<div id="canvasBuilderApp" class="flex flex-col h-screen bg-gray-100 dark:bg-gray-900 font-sans">
+
   <!-- Top Toolbar -->
-  <div class="flex flex-wrap items-center gap-2 p-2 bg-white border-b border-gray-200 shadow-sm">
+  <div class="flex flex-wrap items-center gap-2 p-2 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm">
     <!-- Template Controls -->
-    <div class="flex items-center gap-1 pr-2 border-r border-gray-200">
-      <select id="templateType" class="px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-gray-600">
+    <div class="flex items-center gap-1 pr-2 border-r border-gray-200 dark:border-gray-600">
+      <select id="templateType" class="px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-500 dark:bg-gray-600 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
         <option value="prescription">Prescription</option>
         <option value="certificate">Certificate</option>
       </select>
-      <button id="loadTemplate" class="inline-flex items-center gap-1 px-2 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+      <button id="loadTemplate" class="inline-flex items-center gap-1 px-2 py-1.5 text-sm font-medium text-gray-700 dark:text-white bg-white dark:bg-gray-600 border border-gray-300 dark:border-gray-500 rounded-md hover:bg-gray-50 dark:hover:bg-gray-500">
         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 15v4c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
         <span class="hidden sm:inline">Load</span>
       </button>
@@ -19,104 +19,104 @@
     </div>
 
     <!-- Undo/Redo -->
-    <div class="flex items-center gap-1 pr-2 border-r border-gray-200">
-      <button id="undo" class="p-1.5 text-gray-600 rounded-md hover:bg-gray-100 disabled:opacity-40" title="Undo (Ctrl+Z)" disabled>
+    <div class="flex items-center gap-1 pr-2 border-r border-gray-200 dark:border-gray-600">
+      <button id="undo" class="p-1.5 text-gray-600 dark:text-gray-100 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-40" title="Undo (Ctrl+Z)" disabled>
         <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7v6h6"/><path d="M3 13c0-4.97 4.03-9 9-9s9 4.03 9 9-4.03 9-9 9c-2.12 0-4.07-.74-5.61-1.97"/></svg>
       </button>
-      <button id="redo" class="p-1.5 text-gray-600 rounded-md hover:bg-gray-100 disabled:opacity-40" title="Redo (Ctrl+Y)" disabled>
+      <button id="redo" class="p-1.5 text-gray-600 dark:text-gray-100 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-40" title="Redo (Ctrl+Y)" disabled>
         <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 7v6h-6"/><path d="M21 13c0-4.97-4.03-9-9-9s-9 4.03-9 9 4.03 9 9 9c2.12 0 4.07-.74 5.61-1.97"/></svg>
       </button>
     </div>
 
     <!-- Add Objects -->
-    <div class="flex items-center gap-1 pr-2 border-r border-gray-200">
-      <button id="uploadBtn" class="inline-flex items-center gap-1 px-2 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50" title="Add Image">
+    <div class="flex items-center gap-1 pr-2 border-r border-gray-200 dark:border-gray-600">
+      <button id="uploadBtn" class="inline-flex items-center gap-1 px-2 py-1.5 text-sm font-medium text-gray-700 dark:text-white bg-white dark:bg-gray-600 border border-gray-300 dark:border-gray-500 rounded-md hover:bg-gray-50 dark:hover:bg-gray-500" title="Add Image">
         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
         <span class="hidden md:inline">Image</span>
       </button>
       <input id="file" type="file" accept="image/*" class="hidden" />
-      <button id="addText" class="inline-flex items-center gap-1 px-2 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50" title="Add Text">
+      <button id="addText" class="inline-flex items-center gap-1 px-2 py-1.5 text-sm font-medium text-gray-700 dark:text-white bg-white dark:bg-gray-600 border border-gray-300 dark:border-gray-500 rounded-md hover:bg-gray-50 dark:hover:bg-gray-500" title="Add Text">
         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
         <span class="hidden md:inline">Text</span>
       </button>
-      <button id="addRect" class="p-1.5 text-gray-600 rounded-md hover:bg-gray-100" title="Rectangle">
+      <button id="addRect" class="p-1.5 text-gray-600 dark:text-gray-100 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700" title="Rectangle">
         <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
       </button>
-      <button id="addCircle" class="p-1.5 text-gray-600 rounded-md hover:bg-gray-100" title="Circle">
+      <button id="addCircle" class="p-1.5 text-gray-600 dark:text-gray-100 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700" title="Circle">
         <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/></svg>
       </button>
     </div>
 
     <!-- Clipboard -->
-    <div class="flex items-center gap-1 pr-2 border-r border-gray-200">
-      <button id="copy" class="p-1.5 text-gray-600 rounded-md hover:bg-gray-100" title="Copy (Ctrl+C)">
+    <div class="flex items-center gap-1 pr-2 border-r border-gray-200 dark:border-gray-600">
+      <button id="copy" class="p-1.5 text-gray-600 dark:text-gray-100 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700" title="Copy (Ctrl+C)">
         <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
       </button>
-      <button id="paste" class="p-1.5 text-gray-600 rounded-md hover:bg-gray-100" title="Paste (Ctrl+V)">
+      <button id="paste" class="p-1.5 text-gray-600 dark:text-gray-100 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700" title="Paste (Ctrl+V)">
         <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg>
       </button>
-      <button id="duplicate" class="p-1.5 text-gray-600 rounded-md hover:bg-gray-100" title="Duplicate (Ctrl+D)">
+      <button id="duplicate" class="p-1.5 text-gray-600 dark:text-gray-100 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700" title="Duplicate (Ctrl+D)">
         <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>
       </button>
     </div>
 
     <!-- Group -->
-    <div class="flex items-center gap-1 pr-2 border-r border-gray-200">
-      <button id="group" class="p-1.5 text-gray-600 rounded-md hover:bg-gray-100" title="Group (Ctrl+G)">
+    <div class="flex items-center gap-1 pr-2 border-r border-gray-200 dark:border-gray-600">
+      <button id="group" class="p-1.5 text-gray-600 dark:text-gray-100 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700" title="Group (Ctrl+G)">
         <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
       </button>
-      <button id="ungroup" class="p-1.5 text-gray-600 rounded-md hover:bg-gray-100" title="Ungroup">
+      <button id="ungroup" class="p-1.5 text-gray-600 dark:text-gray-100 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700" title="Ungroup">
         <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
       </button>
     </div>
 
     <!-- Alignment - Hidden on small screens -->
-    <div class="items-center hidden gap-1 pr-2 border-r border-gray-200 xl:flex">
-      <button id="alignLeftCanvas" class="p-1.5 text-gray-600 rounded-md hover:bg-gray-100" title="Align Left">
+    <div class="items-center hidden gap-1 pr-2 border-r border-gray-200 dark:border-gray-600 xl:flex">
+      <button id="alignLeftCanvas" class="p-1.5 text-gray-600 dark:text-gray-100 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700" title="Align Left">
         <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="4" x2="4" y2="20"/><rect x="8" y="6" width="12" height="4"/><rect x="8" y="14" width="8" height="4"/></svg>
       </button>
-      <button id="alignCenterH" class="p-1.5 text-gray-600 rounded-md hover:bg-gray-100" title="Center H">
+      <button id="alignCenterH" class="p-1.5 text-gray-600 dark:text-gray-100 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700" title="Center H">
         <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="2" x2="12" y2="22"/><rect x="5" y="6" width="14" height="4"/><rect x="7" y="14" width="10" height="4"/></svg>
       </button>
-      <button id="alignRightCanvas" class="p-1.5 text-gray-600 rounded-md hover:bg-gray-100" title="Align Right">
+      <button id="alignRightCanvas" class="p-1.5 text-gray-600 dark:text-gray-100 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700" title="Align Right">
         <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="20" y1="4" x2="20" y2="20"/><rect x="4" y="6" width="12" height="4"/><rect x="8" y="14" width="8" height="4"/></svg>
       </button>
-      <button id="alignTop" class="p-1.5 text-gray-600 rounded-md hover:bg-gray-100" title="Align Top">
+      <button id="alignTop" class="p-1.5 text-gray-600 dark:text-gray-100 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700" title="Align Top">
         <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="4" x2="20" y2="4"/><rect x="6" y="8" width="4" height="12"/><rect x="14" y="8" width="4" height="8"/></svg>
       </button>
-      <button id="alignCenterV" class="p-1.5 text-gray-600 rounded-md hover:bg-gray-100" title="Center V">
+      <button id="alignCenterV" class="p-1.5 text-gray-600 dark:text-gray-100 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700" title="Center V">
         <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="2" y1="12" x2="22" y2="12"/><rect x="6" y="5" width="4" height="14"/><rect x="14" y="7" width="4" height="10"/></svg>
       </button>
-      <button id="alignBottom" class="p-1.5 text-gray-600 rounded-md hover:bg-gray-100" title="Align Bottom">
+      <button id="alignBottom" class="p-1.5 text-gray-600 dark:text-gray-100 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700" title="Align Bottom">
         <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="20" x2="20" y2="20"/><rect x="6" y="4" width="4" height="12"/><rect x="14" y="8" width="4" height="8"/></svg>
       </button>
     </div>
 
     <!-- Image Tools -->
-    <div id="imageTools" class="flex items-center gap-1 pr-2 border-r border-gray-200 hidden">
-      <button id="cropImage" class="inline-flex items-center gap-1 px-2 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50" title="Crop Image">
+    <div id="imageTools" class="flex items-center gap-1 pr-2 border-r border-gray-200 dark:border-gray-600 hidden">
+      <button id="cropImage" class="inline-flex items-center gap-1 px-2 py-1.5 text-sm font-medium text-gray-700 dark:text-white bg-white dark:bg-gray-600 border border-gray-300 dark:border-gray-500 rounded-md hover:bg-gray-50 dark:hover:bg-gray-500" title="Crop Image">
         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2v4H2M18 22v-4h4M22 18H18V22M2 6h4V2M6 6v12h12M18 18V6H6"/></svg>
         <span class="hidden md:inline">Crop</span>
       </button>
     </div>
 
     <!-- Canvas Crop Tool -->
-    <div class="flex items-center gap-1 pr-2 border-r border-gray-200 hidden">
-      <button id="cropCanvasBtn" class="inline-flex items-center gap-1 px-2 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50" title="Crop Canvas">
+    <div class="flex items-center gap-1 pr-2 border-r border-gray-200 dark:border-gray-600 hidden">
+      <button id="cropCanvasBtn" class="inline-flex items-center gap-1 px-2 py-1.5 text-sm font-medium text-gray-700 dark:text-white bg-white dark:bg-gray-600 border border-gray-300 dark:border-gray-500 rounded-md hover:bg-gray-50 dark:hover:bg-gray-500" title="Crop Canvas">
         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/></svg>
         <span class="hidden md:inline">Crop Canvas</span>
       </button>
     </div>
 
     <!-- Layer Order & Delete -->
-    <div class="flex items-center gap-1 pr-2 border-r border-gray-200">
-      <button id="bringForward" class="p-1.5 text-gray-600 rounded-md hover:bg-gray-100" title="Bring Forward">
-        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="8" y="8" width="12" height="12" rx="1"/><rect x="4" y="4" width="12" height="12" rx="1" fill="white"/></svg>
+    <div class="flex items-center gap-1 pr-2 border-r border-gray-200 dark:border-gray-600">
+      <button id="bringForward" class="p-1.5 text-gray-600 dark:text-gray-100 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700" title="Bring Forward">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="8" y="8" width="12" height="12" rx="1"/><rect x="4" y="4" width="12" height="12" rx="1" class="fill-white dark:fill-gray-800"/></svg>
       </button>
-      <button id="sendBackward" class="p-1.5 text-gray-600 rounded-md hover:bg-gray-100" title="Send Backward">
-        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="12" height="12" rx="1"/><rect x="8" y="8" width="12" height="12" rx="1" fill="white"/></svg>
+      <button id="sendBackward" class="p-1.5 text-gray-600 dark:text-gray-100 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700" title="Send Backward">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="12" height="12" rx="1"/><rect x="8" y="8" width="12" height="12" rx="1" class="fill-white dark:fill-gray-800"/></svg>
       </button>
-      <button id="delete" class="p-1.5 text-red-500 rounded-md hover:bg-red-50" title="Delete">
+      <button id="delete" class="p-1.5 text-red-500 dark:text-red-400 rounded-md hover:bg-red-50 dark:hover:bg-red-900/30" title="Delete">
         <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
       </button>
     </div>
@@ -125,30 +125,30 @@
 
     <!-- Ruler & Zoom -->
     <div class="flex items-center gap-2">
-      <button id="resizeCanvas" class="p-1.5 text-gray-600 rounded-md hover:bg-gray-100" title="Resize Canvas">
+      <button id="resizeCanvas" class="p-1.5 text-gray-600 dark:text-gray-100 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700" title="Resize Canvas">
         <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M21 21H3V3"/><path d="M21 12V3h-9"/><path d="M21 3l-9 9"/>
         </svg>
       </button>
-      <button id="toggleRulers" class="p-1.5 text-blue-600 bg-blue-50 rounded-md hover:bg-blue-100" title="Toggle Rulers (R)">
+      <button id="toggleRulers" class="p-1.5 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/50" title="Toggle Rulers (R)">
         <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h18v6H3zM3 3v18h6V3"/><path d="M7 3v2M11 3v3M15 3v2M19 3v3M3 7h2M3 11h3M3 15h2M3 19h3"/></svg>
       </button>
-      <select id="rulerUnit" class="hidden px-1 py-1 text-sm border border-gray-300 rounded-md sm:block">
+      <select id="rulerUnit" class="hidden px-1 py-1 text-sm border border-gray-300 dark:border-gray-500 dark:bg-gray-600 dark:text-white rounded-md sm:block">
         <option value="px">px</option>
         <option value="mm">mm</option>
         <option value="cm">cm</option>
       </select>
       <div class="items-center hidden gap-2 sm:flex">
         <input id="zoomRange" type="range" min="0.25" max="3" step="0.05" value="1" class="w-16 lg:w-24" />
-        <span id="zoomValue" class="text-sm font-medium text-gray-600 w-10">100%</span>
+        <span id="zoomValue" class="text-sm font-medium text-gray-600 dark:text-gray-100 w-10">100%</span>
       </div>
-      <button id="toggleLeftPanel" class="p-1.5 text-gray-600 rounded-md hover:bg-gray-100 lg:hidden" title="Properties">
+      <button id="toggleLeftPanel" class="p-1.5 text-gray-600 dark:text-gray-100 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 lg:hidden" title="Properties">
         <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
       </button>
-      <button id="toggleRightPanel" class="p-1.5 text-gray-600 rounded-md hover:bg-gray-100 lg:hidden" title="Layers">
+      <button id="toggleRightPanel" class="p-1.5 text-gray-600 dark:text-gray-100 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 lg:hidden" title="Layers">
         <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="15" y1="3" x2="15" y2="21"/></svg>
       </button>
-      <button id="helpBtn" class="p-1.5 text-gray-600 rounded-md hover:bg-gray-100" title="Shortcuts (?)">
+      <button id="helpBtn" class="p-1.5 text-gray-600 dark:text-gray-100 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700" title="Shortcuts (?)">
         <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
       </button>
     </div>
@@ -158,99 +158,99 @@
   <div class="flex flex-1 min-h-0">
     
     <!-- Left Panel (Collapsible) -->
-    <div id="leftPanel" class="flex-col hidden bg-white border-r border-gray-200 lg:flex transition-all duration-200" style="width: 192px;">
+    <div id="leftPanel" class="flex-col hidden bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 lg:flex transition-all duration-200" style="width: 192px;">
       <!-- Collapsed State Toggle -->
-      <button id="togglePropertiesPanel" class="flex items-center justify-center w-full px-2 py-2 text-sm font-semibold text-gray-800 border-b border-gray-200 hover:bg-gray-50" title="Toggle Properties Panel">
+      <button id="togglePropertiesPanel" class="flex items-center justify-center w-full px-2 py-2 text-sm font-semibold text-gray-800 dark:text-gray-200 border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700" title="Toggle Properties Panel">
         <svg id="propertiesToggleIcon" class="w-4 h-4 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
         <span id="propertiesLabel" class="ml-2">Properties</span>
       </button>
       <div id="propertiesContent" class="flex-1 p-2 space-y-2 overflow-y-auto">
-        <div id="noSelection" class="text-xs text-gray-500">Select an object to edit</div>
+        <div id="noSelection" class="text-xs text-gray-500 dark:text-gray-400">Select an object to edit</div>
         <div id="propertiesPanel" class="hidden space-y-2">
           <!-- Position Section -->
           <div class="property-section">
-            <button class="property-toggle flex items-center justify-between w-full py-1 text-xs font-medium text-gray-600 hover:text-gray-900" data-target="positionContent">
+            <button class="property-toggle flex items-center justify-between w-full py-1 text-xs font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200" data-target="positionContent">
               <span>Position</span>
               <svg class="w-3 h-3 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
             </button>
             <div id="positionContent" class="pt-1">
               <div class="grid grid-cols-2 gap-1">
-                <input id="posX" type="number" placeholder="X" class="w-full px-1.5 py-1 text-xs border border-gray-300 rounded" />
-                <input id="posY" type="number" placeholder="Y" class="w-full px-1.5 py-1 text-xs border border-gray-300 rounded" />
+                <input id="posX" type="number" placeholder="X" class="w-full px-1.5 py-1 text-xs border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded" />
+                <input id="posY" type="number" placeholder="Y" class="w-full px-1.5 py-1 text-xs border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded" />
               </div>
             </div>
           </div>
           <!-- Size Section -->
           <div class="property-section">
-            <button class="property-toggle flex items-center justify-between w-full py-1 text-xs font-medium text-gray-600 hover:text-gray-900" data-target="sizeContent">
+            <button class="property-toggle flex items-center justify-between w-full py-1 text-xs font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200" data-target="sizeContent">
               <span>Size</span>
               <svg class="w-3 h-3 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
             </button>
             <div id="sizeContent" class="pt-1">
               <div class="grid grid-cols-2 gap-1">
-                <input id="width" type="number" placeholder="W" class="w-full px-1.5 py-1 text-xs border border-gray-300 rounded" />
-                <input id="height" type="number" placeholder="H" class="w-full px-1.5 py-1 text-xs border border-gray-300 rounded" />
+                <input id="width" type="number" placeholder="W" class="w-full px-1.5 py-1 text-xs border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded" />
+                <input id="height" type="number" placeholder="H" class="w-full px-1.5 py-1 text-xs border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded" />
               </div>
             </div>
           </div>
           <!-- Text Properties Section -->
           <div id="textProperties" class="space-y-2">
             <div class="property-section">
-              <button class="property-toggle flex items-center justify-between w-full py-1 text-xs font-medium text-gray-600 hover:text-gray-900" data-target="fontContent">
+              <button class="property-toggle flex items-center justify-between w-full py-1 text-xs font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200" data-target="fontContent">
                 <span>Font</span>
                 <svg class="w-3 h-3 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
               </button>
               <div id="fontContent" class="pt-1 space-y-1">
-                <select id="fontFamily" class="w-full px-1.5 py-1 text-xs border border-gray-300 rounded">
+                <select id="fontFamily" class="w-full px-1.5 py-1 text-xs border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded">
                   <option value="Arial">Arial</option>
                   <option value="Helvetica">Helvetica</option>
                   <option value="Times New Roman">Times New Roman</option>
                   <option value="Georgia">Georgia</option>
                   <option value="Courier New">Courier New</option>
                 </select>
-                <input id="fontSize" type="number" value="40" placeholder="Size" class="w-full px-1.5 py-1 text-xs border border-gray-300 rounded" />
+                <input id="fontSize" type="number" value="40" placeholder="Size" class="w-full px-1.5 py-1 text-xs border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded" />
                 <div class="flex gap-1">
-                  <button id="bold" class="w-6 h-6 text-xs font-bold text-gray-700 border border-gray-300 rounded hover:bg-gray-50">B</button>
-                  <button id="italic" class="w-6 h-6 text-xs italic text-gray-700 border border-gray-300 rounded hover:bg-gray-50">I</button>
-                  <button id="underline" class="w-6 h-6 text-xs text-gray-700 underline border border-gray-300 rounded hover:bg-gray-50">U</button>
+                  <button id="bold" class="w-6 h-6 text-xs font-bold text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded hover:bg-gray-50 dark:hover:bg-gray-600">B</button>
+                  <button id="italic" class="w-6 h-6 text-xs italic text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded hover:bg-gray-50 dark:hover:bg-gray-600">I</button>
+                  <button id="underline" class="w-6 h-6 text-xs text-gray-700 dark:text-gray-200 underline border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded hover:bg-gray-50 dark:hover:bg-gray-600">U</button>
                 </div>
               </div>
             </div>
           </div>
           <!-- Fill & Stroke Section -->
           <div class="property-section">
-            <button class="property-toggle flex items-center justify-between w-full py-1 text-xs font-medium text-gray-600 hover:text-gray-900" data-target="fillStrokeContent">
+            <button class="property-toggle flex items-center justify-between w-full py-1 text-xs font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200" data-target="fillStrokeContent">
               <span>Fill & Stroke</span>
               <svg class="w-3 h-3 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
             </button>
             <div id="fillStrokeContent" class="pt-1 space-y-1">
               <div class="flex items-center gap-1">
-                <span class="text-xs text-gray-500 w-10">Fill</span>
-                <input id="fillColor" type="color" value="#111111" class="flex-1 h-6 border border-gray-300 rounded cursor-pointer" />
+                <span class="text-xs text-gray-500 dark:text-gray-400 w-10">Fill</span>
+                <input id="fillColor" type="color" value="#111111" class="flex-1 h-6 border border-gray-300 dark:border-gray-600 rounded cursor-pointer" />
               </div>
               <div id="strokeField" class="flex items-center gap-1">
-                <span class="text-xs text-gray-500 w-10">Stroke</span>
-                <input id="strokeColor" type="color" value="#000000" class="flex-1 h-6 border border-gray-300 rounded cursor-pointer" />
+                <span class="text-xs text-gray-500 dark:text-gray-400 w-10">Stroke</span>
+                <input id="strokeColor" type="color" value="#000000" class="flex-1 h-6 border border-gray-300 dark:border-gray-600 rounded cursor-pointer" />
               </div>
               <div id="strokeWidthField" class="flex items-center gap-1">
-                <span class="text-xs text-gray-500 w-10">Width</span>
-                <input id="strokeWidth" type="number" value="1" class="flex-1 px-1.5 py-1 text-xs border border-gray-300 rounded" />
+                <span class="text-xs text-gray-500 dark:text-gray-400 w-10">Width</span>
+                <input id="strokeWidth" type="number" value="1" class="flex-1 px-1.5 py-1 text-xs border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded" />
               </div>
             </div>
           </div>
           <!-- Transform Section -->
           <div class="property-section">
-            <button class="property-toggle flex items-center justify-between w-full py-1 text-xs font-medium text-gray-600 hover:text-gray-900" data-target="transformContent">
+            <button class="property-toggle flex items-center justify-between w-full py-1 text-xs font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200" data-target="transformContent">
               <span>Transform</span>
               <svg class="w-3 h-3 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
             </button>
             <div id="transformContent" class="pt-1 space-y-1">
               <div>
-                <label class="text-xs text-gray-500">Opacity: <span id="opacityValue">100%</span></label>
+                <label class="text-xs text-gray-500 dark:text-gray-400">Opacity: <span id="opacityValue">100%</span></label>
                 <input id="opacity" type="range" min="0" max="1" step="0.01" value="1" class="w-full h-1" />
               </div>
               <div>
-                <label class="text-xs text-gray-500">Rotation: <span id="angleValue">0°</span></label>
+                <label class="text-xs text-gray-500 dark:text-gray-400">Rotation: <span id="angleValue">0°</span></label>
                 <input id="angle" type="range" min="0" max="360" step="1" value="0" class="w-full h-1" />
               </div>
             </div>
@@ -263,31 +263,31 @@
     <div class="relative flex flex-col flex-1 min-w-0">
       <div class="relative flex-1 min-h-0">
         <!-- Ruler Corner -->
-        <div id="rulerCorner" class="absolute top-0 left-0 z-10 flex items-center justify-center w-8 h-8 text-gray-400 bg-gray-100 border-b border-r border-gray-300 cursor-pointer hover:bg-gray-200">
+        <div id="rulerCorner" class="absolute top-0 left-0 z-10 flex items-center justify-center w-8 h-8 text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-800 border-b border-r border-gray-300 dark:border-gray-600 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700">
           <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h18v18H3z"/><path d="M3 9h6M3 15h4M9 3v6M15 3v4"/></svg>
         </div>
         <!-- Horizontal Ruler -->
-        <div id="rulerH" class="absolute top-0 right-0 z-[5] h-8 overflow-hidden bg-gray-50 border-b border-gray-300" style="left: 32px;">
+        <div id="rulerH" class="absolute top-0 right-0 z-[5] h-8 overflow-hidden bg-gray-50 dark:bg-gray-800 border-b border-gray-300 dark:border-gray-600" style="left: 32px;">
           <canvas id="rulerHCanvas" class="absolute top-0 left-0"></canvas>
         </div>
         <!-- Vertical Ruler -->
-        <div id="rulerV" class="absolute bottom-0 left-0 z-[5] w-8 overflow-hidden bg-gray-50 border-r border-gray-300" style="top: 32px;">
+        <div id="rulerV" class="absolute bottom-0 left-0 z-[5] w-8 overflow-hidden bg-gray-50 dark:bg-gray-800 border-r border-gray-300 dark:border-gray-600" style="top: 32px;">
           <canvas id="rulerVCanvas" class="absolute top-0 left-0"></canvas>
         </div>
         <!-- Guide Lines -->
         <div id="guideH" class="absolute left-8 right-0 h-px bg-blue-500 pointer-events-none z-[100] hidden"></div>
         <div id="guideV" class="absolute top-8 bottom-0 w-px bg-blue-500 pointer-events-none z-[100] hidden"></div>
         <!-- Canvas Area -->
-        <div id="canvasScrollArea" class="absolute right-0 bottom-0 overflow-auto bg-gray-100" style="top: 32px; left: 32px;">
+        <div id="canvasScrollArea" class="absolute right-0 bottom-0 overflow-auto bg-gray-100 dark:bg-gray-900" style="top: 32px; left: 32px;">
           <div class="flex items-center justify-center min-w-full min-h-full p-4 sm:p-8 lg:p-12">
-            <div id="canvas-container" class="bg-white rounded shadow-lg ring-1 ring-black/5" style="transform-origin: center center;">
+            <div id="canvas-container" class="bg-white rounded shadow-lg ring-1 ring-black/5 dark:ring-white/10" style="transform-origin: center center;">
               <canvas id="c" width="794" height="400"></canvas>
             </div>
           </div>
         </div>
       </div>
       <!-- Status Bar -->
-      <div class="flex items-center gap-4 px-3 py-1 text-xs text-gray-500 bg-white border-t border-gray-200">
+      <div class="flex items-center gap-4 px-3 py-1 text-xs text-gray-500 dark:text-gray-300 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
         <span>Canvas: <span id="canvasSize">794×400</span></span>
         <span>Objects: <span id="objectCount">0</span></span>
         <span id="selectionInfo" class="hidden sm:inline">No selection</span>
@@ -297,10 +297,10 @@
     </div>
 
     <!-- Right Panel -->
-    <div id="rightPanel" class="flex-col hidden w-48 bg-white border-l border-gray-200 lg:flex xl:w-56">
-      <div class="flex items-center justify-between px-4 py-3 font-semibold text-gray-800 border-b border-gray-200">
+    <div id="rightPanel" class="flex-col hidden w-48 bg-white dark:bg-gray-800 border-l border-gray-200 dark:border-gray-700 lg:flex xl:w-56">
+      <div class="flex items-center justify-between px-4 py-3 font-semibold text-gray-800 dark:text-gray-200 border-b border-gray-200 dark:border-gray-700">
         Layers
-        <button id="addLayerBtn" class="p-1 text-gray-400 rounded hover:bg-gray-100 hover:text-gray-600">
+        <button id="addLayerBtn" class="p-1 text-gray-400 dark:text-gray-500 rounded hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-600 dark:hover:text-gray-300">
           <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         </button>
       </div>
@@ -309,10 +309,10 @@
   </div>
 
   <!-- Mobile Left Panel -->
-  <div id="mobileLeftPanel" class="fixed inset-y-0 left-0 z-50 flex-col hidden w-72 max-w-full bg-white shadow-xl lg:hidden">
-    <div class="flex items-center justify-between px-4 py-3 font-semibold text-gray-800 border-b border-gray-200">
+  <div id="mobileLeftPanel" class="fixed inset-y-0 left-0 z-50 flex-col hidden w-72 max-w-full bg-white dark:bg-gray-800 shadow-xl lg:hidden">
+    <div class="flex items-center justify-between px-4 py-3 font-semibold text-gray-800 dark:text-gray-200 border-b border-gray-200 dark:border-gray-700">
       Properties
-      <button id="closeMobileLeft" class="p-1 text-gray-400 rounded hover:bg-gray-100">
+      <button id="closeMobileLeft" class="p-1 text-gray-400 dark:text-gray-500 rounded hover:bg-gray-100 dark:hover:bg-gray-700">
         <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
@@ -320,10 +320,10 @@
   </div>
 
   <!-- Mobile Right Panel -->
-  <div id="mobileRightPanel" class="fixed inset-y-0 right-0 z-50 flex-col hidden w-64 max-w-full bg-white shadow-xl lg:hidden">
-    <div class="flex items-center justify-between px-4 py-3 font-semibold text-gray-800 border-b border-gray-200">
+  <div id="mobileRightPanel" class="fixed inset-y-0 right-0 z-50 flex-col hidden w-64 max-w-full bg-white dark:bg-gray-800 shadow-xl lg:hidden">
+    <div class="flex items-center justify-between px-4 py-3 font-semibold text-gray-800 dark:text-gray-200 border-b border-gray-200 dark:border-gray-700">
       Layers
-      <button id="closeMobileRight" class="p-1 text-gray-400 rounded hover:bg-gray-100">
+      <button id="closeMobileRight" class="p-1 text-gray-400 dark:text-gray-500 rounded hover:bg-gray-100 dark:hover:bg-gray-700">
         <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
@@ -334,37 +334,37 @@
   <div id="panelBackdrop" class="fixed inset-0 z-40 hidden bg-black/50 lg:hidden"></div>
 
   <!-- Context Menu -->
-  <div id="contextMenu" class="fixed z-[1000] hidden min-w-[160px] bg-white border border-gray-200 rounded-lg shadow-lg py-1 text-sm">
-    <div class="px-3 py-1.5 cursor-pointer hover:bg-gray-100" data-action="copy">Copy <span class="float-right text-gray-400">⌘C</span></div>
-    <div class="px-3 py-1.5 cursor-pointer hover:bg-gray-100" data-action="paste">Paste <span class="float-right text-gray-400">⌘V</span></div>
-    <div class="px-3 py-1.5 cursor-pointer hover:bg-gray-100" data-action="duplicate">Duplicate <span class="float-right text-gray-400">⌘D</span></div>
-    <div class="h-px my-1 bg-gray-200"></div>
-    <div class="px-3 py-1.5 cursor-pointer hover:bg-gray-100" data-action="group">Group <span class="float-right text-gray-400">⌘G</span></div>
-    <div class="px-3 py-1.5 cursor-pointer hover:bg-gray-100" data-action="ungroup">Ungroup</div>
-    <div class="h-px my-1 bg-gray-200"></div>
-    <div class="px-3 py-1.5 cursor-pointer hover:bg-gray-100" data-action="bringForward">Bring Forward</div>
-    <div class="px-3 py-1.5 cursor-pointer hover:bg-gray-100" data-action="sendBackward">Send Backward</div>
-    <div class="h-px my-1 bg-gray-200"></div>
-    <div class="px-3 py-1.5 text-red-500 cursor-pointer hover:bg-red-50" data-action="delete">Delete <span class="float-right text-red-400">⌫</span></div>
+  <div id="contextMenu" class="fixed z-[1000] hidden min-w-[160px] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg py-1 text-sm text-gray-700 dark:text-gray-200">
+    <div class="px-3 py-1.5 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700" data-action="copy">Copy <span class="float-right text-gray-400 dark:text-gray-500">⌘C</span></div>
+    <div class="px-3 py-1.5 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700" data-action="paste">Paste <span class="float-right text-gray-400 dark:text-gray-500">⌘V</span></div>
+    <div class="px-3 py-1.5 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700" data-action="duplicate">Duplicate <span class="float-right text-gray-400 dark:text-gray-500">⌘D</span></div>
+    <div class="h-px my-1 bg-gray-200 dark:bg-gray-700"></div>
+    <div class="px-3 py-1.5 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700" data-action="group">Group <span class="float-right text-gray-400 dark:text-gray-500">⌘G</span></div>
+    <div class="px-3 py-1.5 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700" data-action="ungroup">Ungroup</div>
+    <div class="h-px my-1 bg-gray-200 dark:bg-gray-700"></div>
+    <div class="px-3 py-1.5 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700" data-action="bringForward">Bring Forward</div>
+    <div class="px-3 py-1.5 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700" data-action="sendBackward">Send Backward</div>
+    <div class="h-px my-1 bg-gray-200 dark:bg-gray-700"></div>
+    <div class="px-3 py-1.5 text-red-500 cursor-pointer hover:bg-red-50 dark:hover:bg-red-900/30" data-action="delete">Delete <span class="float-right text-red-400">⌫</span></div>
   </div>
 
   <!-- Shortcuts Modal -->
   <div id="shortcutsModal" class="fixed inset-0 z-[1001] flex items-center justify-center hidden p-4 bg-black/50">
-    <div class="w-full max-w-sm p-5 bg-white rounded-xl max-h-[80vh] overflow-y-auto">
-      <h2 class="mb-4 text-lg font-semibold">Keyboard Shortcuts</h2>
-      <div class="space-y-2 text-sm">
-        <div class="flex justify-between"><span>Undo</span><span class="text-gray-400">Ctrl+Z</span></div>
-        <div class="flex justify-between"><span>Redo</span><span class="text-gray-400">Ctrl+Y</span></div>
-        <div class="flex justify-between"><span>Copy</span><span class="text-gray-400">Ctrl+C</span></div>
-        <div class="flex justify-between"><span>Paste</span><span class="text-gray-400">Ctrl+V</span></div>
-        <div class="flex justify-between"><span>Duplicate</span><span class="text-gray-400">Ctrl+D</span></div>
-        <div class="flex justify-between"><span>Group</span><span class="text-gray-400">Ctrl+G</span></div>
-        <div class="flex justify-between"><span>Ungroup</span><span class="text-gray-400">Ctrl+Shift+G</span></div>
-        <div class="flex justify-between"><span>Select All</span><span class="text-gray-400">Ctrl+A</span></div>
-        <div class="flex justify-between"><span>Delete</span><span class="text-gray-400">Delete</span></div>
-        <div class="flex justify-between"><span>Move</span><span class="text-gray-400">Arrow Keys</span></div>
-        <div class="flex justify-between"><span>Fine Move</span><span class="text-gray-400">Shift+Arrow</span></div>
-        <div class="flex justify-between"><span>Toggle Rulers</span><span class="text-gray-400">R</span></div>
+    <div class="w-full max-w-sm p-5 bg-white dark:bg-gray-800 rounded-xl max-h-[80vh] overflow-y-auto">
+      <h2 class="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">Keyboard Shortcuts</h2>
+      <div class="space-y-2 text-sm text-gray-700 dark:text-gray-300">
+        <div class="flex justify-between"><span>Undo</span><span class="text-gray-400 dark:text-gray-500">Ctrl+Z</span></div>
+        <div class="flex justify-between"><span>Redo</span><span class="text-gray-400 dark:text-gray-500">Ctrl+Y</span></div>
+        <div class="flex justify-between"><span>Copy</span><span class="text-gray-400 dark:text-gray-500">Ctrl+C</span></div>
+        <div class="flex justify-between"><span>Paste</span><span class="text-gray-400 dark:text-gray-500">Ctrl+V</span></div>
+        <div class="flex justify-between"><span>Duplicate</span><span class="text-gray-400 dark:text-gray-500">Ctrl+D</span></div>
+        <div class="flex justify-between"><span>Group</span><span class="text-gray-400 dark:text-gray-500">Ctrl+G</span></div>
+        <div class="flex justify-between"><span>Ungroup</span><span class="text-gray-400 dark:text-gray-500">Ctrl+Shift+G</span></div>
+        <div class="flex justify-between"><span>Select All</span><span class="text-gray-400 dark:text-gray-500">Ctrl+A</span></div>
+        <div class="flex justify-between"><span>Delete</span><span class="text-gray-400 dark:text-gray-500">Delete</span></div>
+        <div class="flex justify-between"><span>Move</span><span class="text-gray-400 dark:text-gray-500">Arrow Keys</span></div>
+        <div class="flex justify-between"><span>Fine Move</span><span class="text-gray-400 dark:text-gray-500">Shift+Arrow</span></div>
+        <div class="flex justify-between"><span>Toggle Rulers</span><span class="text-gray-400 dark:text-gray-500">R</span></div>
       </div>
       <button id="closeModal" class="w-full px-4 py-2 mt-4 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700">Close</button>
     </div>
@@ -372,90 +372,90 @@
 
   <!-- Canvas Resize Modal -->
   <div id="resizeModal" class="fixed inset-0 z-[1001] flex items-center justify-center hidden p-4 bg-black/50">
-    <div class="w-full max-w-md p-5 bg-white rounded-xl">
-      <h2 class="mb-4 text-lg font-semibold">Resize Canvas</h2>
-      
+    <div class="w-full max-w-md p-5 bg-white dark:bg-gray-800 rounded-xl">
+      <h2 class="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">Resize Canvas</h2>
+
       <!-- Preset Sizes -->
       <div class="mb-4">
-        <label class="block mb-2 text-xs font-medium text-gray-500 uppercase">Preset Sizes</label>
+        <label class="block mb-2 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Preset Sizes</label>
         <div class="grid grid-cols-2 gap-2">
-          <button class="preset-btn px-3 py-2 text-sm text-left border border-gray-300 rounded-lg hover:bg-gray-50" data-width="794" data-height="1123">
-            <span class="font-medium">A4 Portrait</span>
-            <span class="text-gray-400 text-xs block">794 × 1123 px</span>
+          <button class="preset-btn px-3 py-2 text-sm text-left border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600" data-width="794" data-height="1123">
+            <span class="font-medium text-gray-900 dark:text-gray-100">A4 Portrait</span>
+            <span class="text-gray-400 dark:text-gray-500 text-xs block">794 × 1123 px</span>
           </button>
-          <button class="preset-btn px-3 py-2 text-sm text-left border border-gray-300 rounded-lg hover:bg-gray-50" data-width="1123" data-height="794">
-            <span class="font-medium">A4 Landscape</span>
-            <span class="text-gray-400 text-xs block">1123 × 794 px</span>
+          <button class="preset-btn px-3 py-2 text-sm text-left border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600" data-width="1123" data-height="794">
+            <span class="font-medium text-gray-900 dark:text-gray-100">A4 Landscape</span>
+            <span class="text-gray-400 dark:text-gray-500 text-xs block">1123 × 794 px</span>
           </button>
-          <button class="preset-btn px-3 py-2 text-sm text-left border border-gray-300 rounded-lg hover:bg-gray-50" data-width="816" data-height="1056">
-            <span class="font-medium">Letter Portrait</span>
-            <span class="text-gray-400 text-xs block">816 × 1056 px</span>
+          <button class="preset-btn px-3 py-2 text-sm text-left border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600" data-width="816" data-height="1056">
+            <span class="font-medium text-gray-900 dark:text-gray-100">Letter Portrait</span>
+            <span class="text-gray-400 dark:text-gray-500 text-xs block">816 × 1056 px</span>
           </button>
-          <button class="preset-btn px-3 py-2 text-sm text-left border border-gray-300 rounded-lg hover:bg-gray-50" data-width="1056" data-height="816">
-            <span class="font-medium">Letter Landscape</span>
-            <span class="text-gray-400 text-xs block">1056 × 816 px</span>
+          <button class="preset-btn px-3 py-2 text-sm text-left border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600" data-width="1056" data-height="816">
+            <span class="font-medium text-gray-900 dark:text-gray-100">Letter Landscape</span>
+            <span class="text-gray-400 dark:text-gray-500 text-xs block">1056 × 816 px</span>
           </button>
-          <button class="preset-btn px-3 py-2 text-sm text-left border border-gray-300 rounded-lg hover:bg-gray-50" data-width="1920" data-height="1080">
-            <span class="font-medium">HD 1080p</span>
-            <span class="text-gray-400 text-xs block">1920 × 1080 px</span>
+          <button class="preset-btn px-3 py-2 text-sm text-left border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600" data-width="1920" data-height="1080">
+            <span class="font-medium text-gray-900 dark:text-gray-100">HD 1080p</span>
+            <span class="text-gray-400 dark:text-gray-500 text-xs block">1920 × 1080 px</span>
           </button>
-          <button class="preset-btn px-3 py-2 text-sm text-left border border-gray-300 rounded-lg hover:bg-gray-50" data-width="1080" data-height="1080">
-            <span class="font-medium">Square</span>
-            <span class="text-gray-400 text-xs block">1080 × 1080 px</span>
+          <button class="preset-btn px-3 py-2 text-sm text-left border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600" data-width="1080" data-height="1080">
+            <span class="font-medium text-gray-900 dark:text-gray-100">Square</span>
+            <span class="text-gray-400 dark:text-gray-500 text-xs block">1080 × 1080 px</span>
           </button>
-          <button class="preset-btn px-3 py-2 text-sm text-left border border-gray-300 rounded-lg hover:bg-gray-50" data-width="794" data-height="400">
-            <span class="font-medium">Header Banner</span>
-            <span class="text-gray-400 text-xs block">794 × 400 px</span>
+          <button class="preset-btn px-3 py-2 text-sm text-left border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600" data-width="794" data-height="400">
+            <span class="font-medium text-gray-900 dark:text-gray-100">Header Banner</span>
+            <span class="text-gray-400 dark:text-gray-500 text-xs block">794 × 400 px</span>
           </button>
-          <button class="preset-btn px-3 py-2 text-sm text-left border border-gray-300 rounded-lg hover:bg-gray-50" data-width="794" data-height="224">
-            <span class="font-medium">Prescription Header</span>
-            <span class="text-gray-400 text-xs block">794 × 224 px</span>
+          <button class="preset-btn px-3 py-2 text-sm text-left border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600" data-width="794" data-height="224">
+            <span class="font-medium text-gray-900 dark:text-gray-100">Prescription Header</span>
+            <span class="text-gray-400 dark:text-gray-500 text-xs block">794 × 224 px</span>
           </button>
-          <button class="preset-btn px-3 py-2 text-sm text-left border border-gray-300 rounded-lg hover:bg-gray-50" data-width="794" data-height="200">
-            <span class="font-medium">A5 Header</span>
-            <span class="text-gray-400 text-xs block">794 × 200 px</span>
+          <button class="preset-btn px-3 py-2 text-sm text-left border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600" data-width="794" data-height="200">
+            <span class="font-medium text-gray-900 dark:text-gray-100">A5 Header</span>
+            <span class="text-gray-400 dark:text-gray-500 text-xs block">794 × 200 px</span>
           </button>
         </div>
       </div>
 
       <!-- Custom Size -->
       <div class="mb-4">
-        <label class="block mb-2 text-xs font-medium text-gray-500 uppercase">Custom Size (pixels)</label>
+        <label class="block mb-2 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Custom Size (pixels)</label>
         <div class="flex items-center gap-2">
           <div class="flex-1">
-            <label class="block mb-1 text-xs text-gray-500">Width</label>
-            <input id="canvasWidth" type="number" value="794" min="100" max="4000" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+            <label class="block mb-1 text-xs text-gray-500 dark:text-gray-400">Width</label>
+            <input id="canvasWidth" type="number" value="794" min="100" max="4000" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
           </div>
-          <button id="swapDimensions" class="p-2 mt-5 text-gray-500 rounded-lg hover:bg-gray-100" title="Swap dimensions">
+          <button id="swapDimensions" class="p-2 mt-5 text-gray-500 dark:text-gray-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700" title="Swap dimensions">
             <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M7 16V4m0 0L3 8m4-4l4 4M17 8v12m0 0l4-4m-4 4l-4-4"/>
             </svg>
           </button>
           <div class="flex-1">
-            <label class="block mb-1 text-xs text-gray-500">Height</label>
-            <input id="canvasHeight" type="number" value="400" min="100" max="4000" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+            <label class="block mb-1 text-xs text-gray-500 dark:text-gray-400">Height</label>
+            <input id="canvasHeight" type="number" value="400" min="100" max="4000" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
           </div>
         </div>
       </div>
 
       <!-- Lock Aspect Ratio -->
       <div class="flex items-center gap-2 mb-4">
-        <input id="lockAspectRatio" type="checkbox" class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" />
-        <label for="lockAspectRatio" class="text-sm text-gray-600">Lock aspect ratio</label>
+        <input id="lockAspectRatio" type="checkbox" class="w-4 h-4 text-blue-600 border-gray-300 dark:border-gray-600 rounded focus:ring-blue-500" />
+        <label for="lockAspectRatio" class="text-sm text-gray-600 dark:text-gray-300">Lock aspect ratio</label>
       </div>
 
       <!-- Preview -->
-      <div class="p-3 mb-4 bg-gray-100 rounded-lg">
-        <div class="text-xs text-gray-500 mb-2">Preview</div>
+      <div class="p-3 mb-4 bg-gray-100 dark:bg-gray-900 rounded-lg">
+        <div class="text-xs text-gray-500 dark:text-gray-400 mb-2">Preview</div>
         <div class="flex items-center justify-center h-24">
-          <div id="resizePreview" class="bg-white border-2 border-dashed border-gray-300 transition-all duration-200" style="width: 100px; height: 50px;"></div>
+          <div id="resizePreview" class="bg-white dark:bg-gray-700 border-2 border-dashed border-gray-300 dark:border-gray-500 transition-all duration-200" style="width: 100px; height: 50px;"></div>
         </div>
-        <div id="resizePreviewSize" class="text-center text-xs text-gray-500 mt-2">794 × 400 px</div>
+        <div id="resizePreviewSize" class="text-center text-xs text-gray-500 dark:text-gray-400 mt-2">794 × 400 px</div>
       </div>
 
       <!-- Actions -->
       <div class="flex gap-2">
-        <button id="cancelResize" class="flex-1 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">Cancel</button>
+        <button id="cancelResize" class="flex-1 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600">Cancel</button>
         <button id="applyResize" class="flex-1 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700">Apply</button>
       </div>
     </div>
@@ -463,16 +463,16 @@
 
   <!-- Crop Modal -->
   <div id="cropModal" class="fixed inset-0 z-[1001] flex items-center justify-center hidden p-4 bg-black/50">
-    <div class="w-full max-w-3xl p-5 bg-white rounded-xl max-h-[90vh] overflow-hidden flex flex-col">
+    <div class="w-full max-w-3xl p-5 bg-white dark:bg-gray-800 rounded-xl max-h-[90vh] overflow-hidden flex flex-col">
       <div class="flex items-center justify-between mb-4">
-        <h2 class="text-lg font-semibold">Crop Image</h2>
-        <button id="closeCropModal" class="p-1 text-gray-400 rounded hover:bg-gray-100">
+        <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Crop Image</h2>
+        <button id="closeCropModal" class="p-1 text-gray-400 dark:text-gray-500 rounded hover:bg-gray-100 dark:hover:bg-gray-700">
           <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
       </div>
 
       <!-- Crop Canvas Area -->
-      <div class="relative flex-1 min-h-0 mb-4 overflow-auto bg-gray-100 rounded-lg">
+      <div class="relative flex-1 min-h-0 mb-4 overflow-auto bg-gray-100 dark:bg-gray-900 rounded-lg">
         <div class="flex items-center justify-center min-h-[300px] p-4">
           <canvas id="cropCanvas"></canvas>
         </div>
@@ -481,8 +481,8 @@
       <!-- Crop Controls -->
       <div class="flex flex-wrap items-center gap-4 mb-4">
         <div class="flex items-center gap-2">
-          <label class="text-sm text-gray-600">Aspect Ratio:</label>
-          <select id="cropAspectRatio" class="px-2 py-1 text-sm border border-gray-300 rounded-md">
+          <label class="text-sm text-gray-600 dark:text-gray-300">Aspect Ratio:</label>
+          <select id="cropAspectRatio" class="px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-md">
             <option value="free">Free</option>
             <option value="1:1">1:1 (Square)</option>
             <option value="4:3">4:3</option>
@@ -492,14 +492,14 @@
           </select>
         </div>
         <div class="flex items-center gap-2">
-          <span class="text-sm text-gray-500">Selection: <span id="cropSelectionSize">0 × 0</span></span>
+          <span class="text-sm text-gray-500 dark:text-gray-400">Selection: <span id="cropSelectionSize">0 × 0</span></span>
         </div>
       </div>
 
       <!-- Actions -->
       <div class="flex gap-2">
-        <button id="cancelCrop" class="flex-1 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">Cancel</button>
-        <button id="resetCrop" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">Reset</button>
+        <button id="cancelCrop" class="flex-1 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600">Cancel</button>
+        <button id="resetCrop" class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600">Reset</button>
         <button id="applyCrop" class="flex-1 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700">Apply Crop</button>
       </div>
     </div>
@@ -925,14 +925,14 @@ function canvasBuilder() {
         const idx = objs.length - 1 - ri;
         const sel = active === o || (active && active.type === 'activeSelection' && active.getObjects().includes(o));
         const item = document.createElement('div');
-        item.className = `flex items-center gap-2 px-2 py-1.5 rounded cursor-pointer text-sm group ${sel ? 'bg-blue-50 ring-1 ring-blue-300' : 'hover:bg-gray-100'}`;
+        item.className = `flex items-center gap-2 px-2 py-1.5 rounded cursor-pointer text-sm group text-gray-700 dark:text-gray-100 ${sel ? 'bg-blue-50 dark:bg-blue-900/30 ring-1 ring-blue-300 dark:ring-blue-700' : 'hover:bg-gray-100 dark:hover:bg-gray-700'}`;
         let icon = '□', name = 'Object';
         if(o.type === 'i-text' || o.type === 'text') { icon = 'T'; name = o.text ? o.text.substring(0,12) : 'Text'; }
         else if(o.type === 'image') { icon = '🖼'; name = 'Image'; }
         else if(o.type === 'rect') { icon = '□'; name = 'Rectangle'; }
         else if(o.type === 'circle') { icon = '○'; name = 'Circle'; }
         else if(o.type === 'group') { icon = '📁'; name = `Group (${o._objects?.length||0})`; }
-        item.innerHTML = `<span class="w-5 text-center text-gray-400">${icon}</span><span class="flex-1 truncate">${name}</span><div class="flex gap-0.5 opacity-0 group-hover:opacity-100"><button class="p-0.5 text-gray-400 hover:text-gray-600" data-action="vis">${o.visible !== false ? '👁' : '👁‍🗨'}</button><button class="p-0.5 text-gray-400 hover:text-gray-600" data-action="lock">${o.lockMovementX ? '🔒' : '🔓'}</button></div>`;
+        item.innerHTML = `<span class="w-5 text-center text-gray-400 dark:text-gray-300">${icon}</span><span class="flex-1 truncate">${name}</span><div class="flex gap-0.5 opacity-0 group-hover:opacity-100"><button class="p-0.5 text-gray-400 dark:text-gray-300 hover:text-gray-600 dark:hover:text-gray-100" data-action="vis">${o.visible !== false ? '👁' : '👁‍🗨'}</button><button class="p-0.5 text-gray-400 dark:text-gray-300 hover:text-gray-600 dark:hover:text-gray-100" data-action="lock">${o.lockMovementX ? '🔒' : '🔓'}</button></div>`;
         item.onclick = (e) => {
           if(e.target.closest('[data-action]')) return;
           if(e.shiftKey) {
@@ -953,6 +953,7 @@ function canvasBuilder() {
     // Rulers
     drawRulers() {
       if(!this.rulersVisible) return;
+      const isDark = document.documentElement.classList.contains('dark');
       const hC = this.$('rulerHCanvas'), vC = this.$('rulerVCanvas'), hCtx = hC.getContext('2d'), vCtx = vC.getContext('2d');
       const scrollArea = this.$('canvasScrollArea'), container = this.$('canvas-container');
       const sRect = scrollArea.getBoundingClientRect(), cRect = container.getBoundingClientRect();
@@ -962,12 +963,15 @@ function canvasBuilder() {
       vC.width = 32; vC.height = Math.max(sRect.height + scrollArea.scrollTop, cT + cH + 100);
       hC.style.left = -scrollArea.scrollLeft + 'px'; vC.style.top = -scrollArea.scrollTop + 'px';
       hCtx.clearRect(0, 0, hC.width, hC.height); vCtx.clearRect(0, 0, vC.width, vC.height);
-      hCtx.fillStyle = vCtx.fillStyle = '#64748b'; hCtx.font = vCtx.font = '10px system-ui';
+      const textColor = isDark ? '#9ca3af' : '#64748b';
+      const strokeColor = isDark ? '#4b5563' : '#cbd5e1';
+      const highlightBg = isDark ? '#1e3a5f' : '#dbeafe';
+      hCtx.fillStyle = vCtx.fillStyle = textColor; hCtx.font = vCtx.font = '10px system-ui';
       const ppu = this.unitConversions[this.rulerUnit] * this.currentZoom;
       const int = this.getTickInt();
       // H
-      hCtx.beginPath(); hCtx.strokeStyle = '#cbd5e1';
-      hCtx.fillStyle = '#dbeafe'; hCtx.fillRect(cL, 0, cW, 32); hCtx.fillStyle = '#64748b';
+      hCtx.beginPath(); hCtx.strokeStyle = strokeColor;
+      hCtx.fillStyle = highlightBg; hCtx.fillRect(cL, 0, cW, 32); hCtx.fillStyle = textColor;
       for(let u = Math.floor(-cL/ppu); u <= Math.ceil((hC.width-cL)/ppu); u += int.minor) {
         const x = cL + u * ppu; if(x < 0 || x > hC.width) continue;
         const maj = Math.abs(u % int.major) < 0.001;
@@ -976,8 +980,8 @@ function canvasBuilder() {
       }
       hCtx.stroke();
       // V
-      vCtx.beginPath(); vCtx.strokeStyle = '#cbd5e1';
-      vCtx.fillStyle = '#dbeafe'; vCtx.fillRect(0, cT, 32, cH); vCtx.fillStyle = '#64748b';
+      vCtx.beginPath(); vCtx.strokeStyle = strokeColor;
+      vCtx.fillStyle = highlightBg; vCtx.fillRect(0, cT, 32, cH); vCtx.fillStyle = textColor;
       for(let u = Math.floor(-cT/ppu); u <= Math.ceil((vC.height-cT)/ppu); u += int.minor) {
         const y = cT + u * ppu; if(y < 0 || y > vC.height) continue;
         const maj = Math.abs(u % int.major) < 0.001;
@@ -996,8 +1000,11 @@ function canvasBuilder() {
       this.rulersVisible = !this.rulersVisible;
       this.$('rulerH').style.display = this.$('rulerV').style.display = this.$('rulerCorner').style.display = this.rulersVisible ? 'block' : 'none';
       this.$('rulerCorner').style.display = this.rulersVisible ? 'flex' : 'none';
-      this.$('toggleRulers').classList.toggle('text-blue-600', this.rulersVisible);
-      this.$('toggleRulers').classList.toggle('bg-blue-50', this.rulersVisible);
+      const btn = this.$('toggleRulers');
+      btn.classList.toggle('text-blue-600', this.rulersVisible);
+      btn.classList.toggle('dark:text-blue-400', this.rulersVisible);
+      btn.classList.toggle('bg-blue-50', this.rulersVisible);
+      btn.classList.toggle('dark:bg-blue-900/30', this.rulersVisible);
       this.$('canvasScrollArea').style.left = this.$('canvasScrollArea').style.top = this.rulersVisible ? '32px' : '0';
       if(this.rulersVisible) this.drawRulers();
     },

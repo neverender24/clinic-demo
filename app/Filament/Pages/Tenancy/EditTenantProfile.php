@@ -3,16 +3,32 @@
 namespace App\Filament\Pages\Tenancy;
 
 use Filament\Schemas\Schema;
-use App\Models\Clinic;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Actions\Action;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Pages\Tenancy\EditTenantProfile as BaseEditTenantProfile;
 
 class EditTenantProfile extends BaseEditTenantProfile
 {
     use HasPageShield;
+
+    public static function canAccess(): bool
+    {
+        $user = Filament::auth()->user();
+
+        // Allow doctors (includes super_admin) to access
+        if ($user && $user->doctor()) {
+            return true;
+        }
+
+        // Fall back to Shield's default permission check
+        $permission = static::getPagePermission();
+
+        return $permission && $user
+            ? $user->can($permission)
+            : parent::canAccess();
+    }
     
     // protected static string $view = 'filament.pages.tenancy.edit-tenant-profile';
     
@@ -36,12 +52,12 @@ class EditTenantProfile extends BaseEditTenantProfile
                 TextInput::make('location')
                     ->required(),
                 FileUpload::make('header_image')
-                    ->required(),
+                    ->required(false),
                 FileUpload::make('medcert_header_image')
                     ->label('Header for Medcert')
-                    ->required(),
+                    ->required(false),
                 FileUpload::make('watermarks')
-                    ->required()
+                    ->required(false)
 
                 // ...
             ])

@@ -16,6 +16,6 @@ trait HasUserRole
 
     public function doctor(): bool
     {
-        return $this->hasRole('Doctor') || $this->superAdmin();
+        return $this->hasAnyRole('doctor', 'Doctor') || $this->superAdmin();
     }
 }

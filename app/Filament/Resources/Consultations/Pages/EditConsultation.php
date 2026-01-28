@@ -46,6 +46,20 @@ class EditConsultation extends EditRecord
         $this->data['chief_complaint'] = '\n testing ni';
     }
 
+    #[On('copy-data')]
+    public function copyPatientData($record, $type)
+    {
+        if ($type === 'patient-data') {
+            
+            $this->selectHistory(fluent($record));
+
+        } else if($type === 'prescription') {
+
+            $this->copyPrescription(collect($record));
+
+        }
+    }
+    
     protected function getHeaderActions(): array
     {
         return [

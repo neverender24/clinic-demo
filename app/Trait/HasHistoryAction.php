@@ -30,6 +30,10 @@ trait HasHistoryAction
 
     protected function renderToHtml($content): string 
     {
+        if (empty($content)) {
+            return '';
+        }
+
         return RichContentRenderer::make($content)->toHtml() == '<p></p>' ? '' : RichContentRenderer::make($content)->toHtml();
     }
 

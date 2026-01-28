@@ -53,7 +53,7 @@ class AdminPanelProvider extends PanelProvider
             ->tenantProfile(EditTenantProfile::class)
             ->tenantMenuItems([
                 'profile' => fn(Action $action) => $action->label('Edit Clinic'),
-                'register' => fn(Action $action) => $action->label('Register Clinic'),
+                'register' => fn(Action $action) => $action->label('Register Clinic')->openUrlInNewTab(),
                 // ...
             ])
             // ->login(Login::class)

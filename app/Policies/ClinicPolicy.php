@@ -31,7 +31,7 @@ class ClinicPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create_clinic');
+        return $user->can('create_clinic') || $user->doctor();
     }
 
     /**
@@ -39,7 +39,8 @@ class ClinicPolicy
      */
     public function update(User $user, Clinic $clinic): bool
     {
-        return $user->can('update_clinic');
+        // dd($user->doctor());
+        return $user->can('update_clinic') || $user->doctor();
     }
 
     /**

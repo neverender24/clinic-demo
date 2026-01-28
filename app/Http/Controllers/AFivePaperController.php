@@ -86,20 +86,16 @@ class AFivePaperController extends Controller
         <table width="100%" style="font-size: '.$fontSize.'; line-height:1.2;">
             <tr>
                 <!-- Left side -->
-                <td width="60%" style="vertical-align:bottom; text-align:left;">
-                    ' . ($isPrescription ? '<b>Next Follow-up Schedule:</b> <u>'.$nextFollowUp.'</u>' : '') . '
+                <td width="60%" style="vertical-align:bottom; text-align:left;">' . ($isPrescription ? '<b>Next Follow-up Schedule:</b> 
+                <br><br><u>'.$nextFollowUp.'</u>' : '') . '
                 </td>
 
                 <!-- Right side -->
                 <td width="50%" style="text-align:left; vertical-align:bottom">
-                    <b>Attending Physician: </b>
-                    <br>
-                    <br>
-                    <br>
-                    <br>
-                    <b>Isaiah Jeremi P. Gampon, MD, FPCP</b><br>
-                    License no: 0133619<br>
-                    PTR no: 3326746<br>
+                    <b>Attending Physician:</b><br><br><br>
+                    <b>Juan Dela Cruz, MD, FPCP</b><br>
+                    License no: 0000000<br>
+                    PTR no: 0000000<br>
                     S2 License no: _____________________
                 </td>
             </tr>

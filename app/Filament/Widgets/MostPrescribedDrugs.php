@@ -39,7 +39,7 @@ class MostPrescribedDrugs extends BaseWidget
 //                             dd($this->medicines);
         $data = $this->medicines->map(fn($item) => [
                                 'stat' => Stat::make(
-                                                new HtmlString($item->full_name_of_medicine),
+                                                new HtmlString($item->name . ($item->brand ? "- (".ucwords($item->brand).")" : '')),
                                                 $item->consultations->count()
                                             ),
                                 'count' => $item->consultations->count()

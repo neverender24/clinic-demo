@@ -24,6 +24,8 @@ use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Enums\PaginationMode;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Tables\Columns\Summarizers\Sum;
+use Filament\Tables\Columns\Summarizers\Summarizer;
 
 class ConsultationsTable
 {
@@ -59,6 +61,17 @@ class ConsultationsTable
                     ])
                     ->selectablePlaceholder(false)
                     ->width(10),
+                TextColumn::make('fee')
+                    // ->formatStateUsing(fn($record) => Number::format(static::getTotal($record->fee, $record->follow_up_fees, $record->procedure_fee, $record->discount), 2))
+                    ->summarize(
+                        Sum::make()
+                        ->label('Total')
+                        ->money('PHP')
+                        // Summarizer::make()
+                        //     ->label('Total')
+                        //     // ->using(fn ($query) => $query->get()->sum(fn ($record) => static::getTotal($record->fee, $record->follow_up_fees, $record->procedure_fee, $record->discount)))
+                        //     ->money('PHP')
+                    ),
                 // Tables\Columns\ToggleColumn::make('status')
                 //     ->searchable()
                 //     // ->formatStateUsing(function($record) {

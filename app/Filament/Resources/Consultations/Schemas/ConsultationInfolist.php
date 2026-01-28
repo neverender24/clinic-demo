@@ -41,40 +41,40 @@ class ConsultationInfolist
                                     ->gap(false)
                                     ->schema([
                                         Section::make()
-                                            ->columns(2)
+                                            ->columns(1)
                                             ->schema([
                                                 Section::make()
                                                     ->schema([
-                                                        TextEntry::make('test_results')
-                                                            ->formatStateUsing(fn($state) => static::renderToHtml($state))
-                                                            ->html()
-                                                    ])
-                                                    ,
+                                                        TextEntry::make('chief_complaint')
+                                                            ->label('Subjective')
+                                                            ->formatStateUsing(fn ($state) => static::renderToHtml($state))
+                                                            ->html(),
+                                                    ]),
                                                 Section::make()
                                                     ->schema([
-                                                        TextEntry::make('chief_complaint')
-                                                            ->formatStateUsing(fn($state) => static::renderToHtml($state))
-                                                            ->html()
+                                                        TextEntry::make('test_results')
+                                                            ->label('Objective')
+                                                            ->formatStateUsing(fn ($state) => static::renderToHtml($state))
+                                                            ->html(),
                                                     ])
                                                     ->hiddenLabel(false),
-        
                                                 Section::make()
                                                     ->schema([
                                                         TextEntry::make('diagnosis')
-                                                            ->formatStateUsing(fn($state) => static::renderToHtml($state))
-                                                            ->html()
+                                                            ->label('Assessment')
+                                                            ->formatStateUsing(fn ($state) => static::renderToHtml($state))
+                                                            ->html(),
                                                     ])
                                                     ->hiddenLabel(false),
-                                               
                                                 Section::make()
                                                     ->schema([
                                                         TextEntry::make('management')
-                                                            ->formatStateUsing(fn($state) => static::renderToHtml($state))
-                                                            ->html()
+                                                            ->label('Plan')
+                                                            ->formatStateUsing(fn ($state) => static::renderToHtml($state))
+                                                            ->html(),
                                                     ])
                                                     ->hiddenLabel(false),
-                                                
-                                            ])
+                                            ]),
                                     ]),
                                 Tab::make('Prescription')
                                     ->badge(fn($record) => $record->medicines->count())

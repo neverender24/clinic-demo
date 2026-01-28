@@ -85,7 +85,8 @@ class UserResource extends Resource
                     ->searchable(),
                 TextColumn::make('username')
                     ->searchable(),
-                TextColumn::make('clinic.name')
+                TextColumn::make('clinics.name')
+                    ->badge()
                     ->searchable()
                     ->label('Assigned Clinic'),
                 TextColumn::make('roles.name')
