@@ -20,6 +20,7 @@ use Filament\Tables\Table;
 use Filament\Facades\Filament;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Select;
+use Filament\Schemas\Components\Section;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\UserResource\Pages;
@@ -40,40 +41,65 @@ class UserResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema
+            ->columns(2)
             ->components([
-                TextInput::make('name')
-                    ->maxLength(255),
-                Select::make('registeredClinics')
-                    ->relationship(name: 'clinics', titleAttribute: 'name')
-                    ->multiple()
-                    ->preload(),
-                TextInput::make('username')
-                    ->unique(ignoreRecord: true)
-                    // ->validationMessages([
-                    //     'required' => 'The :attribute has already been registered.',
-                    // ])
-                    ->required()
-                    ->maxLength(255),
-                TextInput::make('email')
-                    ->unique(ignoreRecord: true)
-                    ->maxLength(255),
-                TextInput::make('password')
-                    ->dehydrated(fn($operation, $state) => $operation === 'create' || ($state !== null && strtolower($operation) === 'edit'))
-                    ->password()
-                    ->required(fn($operation) => strtolower($operation) === 'create')
-                    ->maxLength(255),
-                CheckboxList::make('roles')
-                    ->relationship(
-                        name: 'roles',
-                        titleAttribute: 'name',
-                        modifyQueryUsing: function($query) {
-                            if (!auth()->user()->superAdmin()) {
-                                return $query->whereNotIn('name', ['Doctor', 'super_admin']);
-                            }
-                        }
-                    )
-                    ->required()
-                   ->searchable()
+                Section::make('Account Information')
+                    ->icon('heroicon-o-user-circle')
+                    ->columns(2)
+                    ->schema([
+                        TextInput::make('name')
+                            ->required()
+                            ->maxLength(255),
+                        TextInput::make('email')
+                            ->email()
+                            ->unique(ignoreRecord: true)
+                            ->maxLength(255),
+                        TextInput::make('username')
+                            ->unique(ignoreRecord: true)
+                            ->required()
+                            ->maxLength(255),
+                        TextInput::make('password')
+                            ->dehydrated(fn($operation, $state) => $operation === 'create' || ($state !== null && strtolower($operation) === 'edit'))
+                            ->password()
+                            ->revealable()
+                            ->required(fn($operation) => strtolower($operation) === 'create')
+                            ->maxLength(255),
+                    ]),
+                Section::make('Access & Permissions')
+                    ->icon('heroicon-o-shield-check')
+                    ->columns(2)
+                    ->schema([
+                        Select::make('registeredClinics')
+                            ->label('Assigned Clinics')
+                            ->relationship(name: 'clinics', titleAttribute: 'name')
+                            ->multiple()
+                            ->preload()
+                            ->searchable(),
+                        CheckboxList::make('roles')
+                            ->relationship(
+                                name: 'roles',
+                                titleAttribute: 'name',
+                                modifyQueryUsing: function($query) {
+                                    if (!auth()->user()->superAdmin()) {
+                                        return $query->whereNotIn('name', ['Doctor', 'super_admin']);
+                                    }
+                                }
+                            )
+                            ->required()
+                            ->searchable()
+                            ->columns(2),
+                    ]),
+                Section::make('License Information')
+                    ->icon('heroicon-o-identification')
+                    ->columns(3)
+                    ->schema([
+                        TextInput::make('license_no')
+                            ->label('License No.'),
+                        TextInput::make('ptr_no')
+                            ->label('PTR No.'),
+                        TextInput::make('s2_license_no')
+                            ->label('S2 License No.'),
+                    ]),
             ]);
     }
 

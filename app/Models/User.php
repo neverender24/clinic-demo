@@ -35,7 +35,10 @@ class User extends Authenticatable implements FilamentUser, HasTenants, HasAvata
         'username',
         'password',
         'clinic_id',
-        'email'
+        'email',
+        'license_no',
+        'ptr_no',
+        's2_license_no',
     ];
 
     /**

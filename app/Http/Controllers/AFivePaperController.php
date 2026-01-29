@@ -78,25 +78,42 @@ class AFivePaperController extends Controller
         ';
     }
 
-    public function getFooter($isPrescription = false, $nextFollowUp = null): string
+    public function getFooter($isPrescription = false, $nextFollowUp = null, $consultation = null): string
     {
         $fontSize = $this->fontSize;
-        
+
+        // Get doctor info from consultation
+        $doctorName = '________________________';
+        $licenseNo = '________________________';
+        $ptrNo = '________________________';
+        $s2LicenseNo = '________________________';
+
+        if ($consultation && $consultation->doctor) {
+            $doctor = $consultation->doctor;
+            $doctorName = $doctor->name ?? $doctorName;
+            $licenseNo = $doctor->license_no ?? $licenseNo;
+            $ptrNo = $doctor->ptr_no ?? $ptrNo;
+            $s2LicenseNo = $doctor->s2_license_no ?? $s2LicenseNo;
+        }
+
         return '
         <table width="100%" style="font-size: '.$fontSize.'; line-height:1.2;">
             <tr>
                 <!-- Left side -->
-                <td width="60%" style="vertical-align:bottom; text-align:left;">' . ($isPrescription ? '<b>Next Follow-up Schedule:</b> 
+                <td width="50%" style="vertical-align:bottom; text-align:left;">' . ($isPrescription ? '<b>Next Follow-up Schedule:</b>
                 <br><br><u>'.$nextFollowUp.'</u>' : '') . '
                 </td>
 
+                <!-- Spacer -->
+                <td width="15%"></td>
+
                 <!-- Right side -->
-                <td width="50%" style="text-align:left; vertical-align:bottom">
+                <td width="35%" style="text-align:left; vertical-align:bottom">
                     <b>Attending Physician:</b><br><br><br>
-                    <b>Juan Dela Cruz, MD, FPCP</b><br>
-                    License no: 0000000<br>
-                    PTR no: 0000000<br>
-                    S2 License no: _____________________
+                    <b>'.$doctorName.'</b><br>
+                    License No.: '.$licenseNo.'<br>
+                    PTR No.: '.$ptrNo.'<br>
+                    S2 License No.: '.$s2LicenseNo.'
                 </td>
             </tr>
         </table>
@@ -110,7 +127,7 @@ class AFivePaperController extends Controller
 
         if($request->custom_doc_id) {
             $custom_doc = CustomDoc::with([
-                                'consultation' => fn($query) => $query->withoutGlobalScope(TenantScope::class)
+                                'consultation' => fn($query) => $query->withoutGlobalScope(TenantScope::class)->with('doctor')
                             ])
                             ->find($request->custom_doc_id);
 
@@ -118,7 +135,7 @@ class AFivePaperController extends Controller
 
         } else {
 
-            $consultation = Consultation::withoutGlobalScope(TenantScope::class)->with(['patient', 'medicines'])->findOrFail($id);
+            $consultation = Consultation::withoutGlobalScope(TenantScope::class)->with(['patient', 'medicines', 'doctor'])->findOrFail($id);
 
         }
 
@@ -140,7 +157,7 @@ class AFivePaperController extends Controller
 
         $nextFollowUp = $consultation->next_follow_up_schedule ? Carbon::parse($consultation->next_follow_up_schedule)->format('F j, Y') : null;
         // Set footer content
-        $pdf->footerHtml = $this->getFooter(isPrescription: !$request->type, nextFollowUp: $nextFollowUp);
+        $pdf->footerHtml = $this->getFooter(isPrescription: !$request->type, nextFollowUp: $nextFollowUp, consultation: $consultation);
         $pdf->footerFontSize = $this->fontSize;
 
         // Margins and auto-break (bottom margin for footer)

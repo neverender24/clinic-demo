@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Consultations\Schemas;
 
+use App\Models\User;
 use App\Models\Patient;
 use App\Models\Medicine;
 use Illuminate\View\View;
@@ -34,6 +35,7 @@ use App\Filament\Forms\Components\PatientHistory;
 use Filament\Forms\Components\Repeater\TableColumn;
 use App\Filament\Resources\Patients\PatientResource;
 use App\Filament\Resources\Medicines\MedicineResource;
+use App\Filament\Resources\Patients\Schemas\PatientForm;
 use Filament\Schemas\Components\View as ComponentsView;
 
 class ConsultationForm
@@ -51,11 +53,20 @@ class ConsultationForm
                                 'default' => 1,
                                 'sm' => 2
                             ])
+                            ->compact()
+                            ->dense()
                             ->schema([
                                 DatePicker::make('date')
                                     ->default(now())
                                     ->required()
                                     ->native(false),
+                                Select::make('doctor_id')
+                                    ->label('Assigned Doctor')
+                                    ->options(function () {
+                                        return User::role('Doctor')->pluck('name', 'id');
+                                    })
+                                    ->searchable()
+                                    ->preload(),
                                 Select::make('patient_id')
                                     ->label('Patient')
                                     ->relationship('patient', 'full_name')
@@ -63,7 +74,7 @@ class ConsultationForm
                                     ->getOptionLabelsUsing(fn($value) => Patient::find($value)->full_name)
                                     ->preload()
                                     ->searchable()
-                                    ->createOptionForm(PatientResource::getFormSchema())
+                                    ->createOptionForm(fn(Schema $schema) => PatientForm::configure($schema)->columns(1)->extraAttributes(['class' => 'w-full']))
                                     ->createOptionAction(function (Action $action) {
                                         return $action
                                             ->modalWidth('xl')
@@ -73,7 +84,7 @@ class ConsultationForm
                                                 return $data;
                                             });
                                     })
-                                    ->editOptionForm(PatientResource::getFormSchema())
+                                    ->editOptionForm(fn(Schema $schema) => PatientForm::configure($schema)->columns(1)->extraAttributes(['class' => 'w-full']))
                                     ->editOptionAction(function (Action $action, $livewire) {
                                         return $action
                                             ->modalWidth('xl')
@@ -90,33 +101,35 @@ class ConsultationForm
                                     ->columnSpanFull()
                                     ->autosize()
                                     ->required()
+                                    ->hint(fn(): View => view('forms.components.vital-signs-hint'))
                                     ->afterStateHydrated(fn(Set $set, $state) => $set('chief_complaint', strip_tags($state)))
                                     ->visible(fn() => auth()->user()->can('addChiefComplaint', Consultation::class)),
-                                Textarea::make('vital_signs')
-                                    ->columnSpan(fn() => [
-                                        'sm' => auth()->user()->can('addVitalSign', Consultation::class) ? 1 : 2
-                                    ])
-                                    ->autosize()
-                                    ->required()
-                                    ->default(function () {
-                                        $words = ['BP: ', 'HR: ', 'Weight: '];
-                                        return implode("\n", $words); // line break per word
-                                    })
-                                    ->afterStateHydrated(function (Set $set, $state) {
-                                        if (!$state) {
-                                            # code...
-                                            $words = ['BP: ', 'HR: ', 'Weight: '];
-                                            $set('vital_signs', implode("\n", $words)); // line break per word
-                                        }
-                                    })
-                                    ->visible(fn() => auth()->user()->can('addVitalSign', Consultation::class)),
+                                // Textarea::make('vital_signs')
+                                //     ->columnSpan(fn() => [
+                                //         'sm' => auth()->user()->can('addVitalSign', Consultation::class) ? 1 : 2
+                                //     ])
+                                //     ->autosize()
+                                //     ->required()
+                                //     ->default(function () {
+                                //         $words = ['BP: ', 'HR: ', 'Weight: '];
+                                //         return implode("\n", $words); // line break per word
+                                //     })
+                                //     ->afterStateHydrated(function (Set $set, $state) {
+                                //         if (!$state) {
+                                //             # code...
+                                //             $words = ['BP: ', 'HR: ', 'Weight: '];
+                                //             $set('vital_signs', implode("\n", $words)); // line break per word
+                                //         }
+                                //     })
+                                //     ->visible(fn() => auth()->user()->can('addVitalSign', Consultation::class)),
 
                                 Textarea::make('test_results')
-                                    ->columnSpan(fn() => [
-                                        'sm' => auth()->user()->can('addVitalSign', Consultation::class) ? 1 : 2
-                                    ])
-                                    ->hint('test')
+                                    // ->columnSpan(fn() => [
+                                    //     'sm' => auth()->user()->can('addVitalSign', Consultation::class) ? 1 : 2
+                                    // ])
+                                    ->columnSpanFull()
                                     ->label('Objective')
+                                    ->autosize()
                                     // ->dehydrateStateUsing(fn($state) => strip_tags($state))
                                     ->afterStateHydrated(fn(Set $set, $state) => $set('test_results', strip_tags($state)))
                                     ->required()
@@ -124,6 +137,7 @@ class ConsultationForm
                                 Textarea::make('diagnosis')
                                     ->label('Assessment')
                                     ->columnSpanFull()
+                                    ->autosize()
                                     ->required()
                                     // ->toolbarButtons(self::onlyAllowedToolbar())
                                     // ->hint(fn($operation): View | null => $operation == 'create' ? null : view('forms.components.draw'))
@@ -131,6 +145,7 @@ class ConsultationForm
                                 Textarea::make('management')
                                     ->label('Plan')
                                     ->columnSpanFull()
+                                    ->autosize()
                                     ->required()
                                     ->visible(fn() => auth()->user()->doctor())
                                     ->columnSpan([

@@ -56,6 +56,11 @@ class Consultation extends Model
         return $this->belongsTo(Patient::class);
     }
 
+    public function doctor(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'doctor_id');
+    }
+
     public function medicines():BelongsToMany
     {
         return $this->belongsToMany(Medicine::class)->withPivot(['id', 'remarks', 'quantity', 'sort'])->orderByPivot('sort');
