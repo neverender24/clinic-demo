@@ -3,14 +3,16 @@
 namespace App\Filament\Widgets;
 
 use App\Models\Consultation;
+use App\Trait\Dashboard\HasAgeDistributationColumn;
 use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
 
 class FollowUpRateChart extends ApexChartWidget
 {
+    use HasAgeDistributationColumn;
+
     protected static ?string $chartId = 'followUpRateChart';
     protected static ?string $heading = 'Follow-up Rate (%)';
     protected static ?int $sort = 6;
-    protected int | string | array $columnSpan = 3;
     protected static ?int $contentHeight = 200; //px
 
     protected function getOptions(): array

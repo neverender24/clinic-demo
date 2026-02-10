@@ -5,11 +5,14 @@ namespace App\Filament\Widgets;
 use Carbon\Carbon;
 use App\Models\Patient;
 use App\Models\Consultation;
+use App\Trait\Dashboard\HasWidgetStatsColumn;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class NewPatientsThisMonth extends StatsOverviewWidget
 {
+    use HasWidgetStatsColumn;
+
     protected function getStats(): array
     {
         $startOfMonth = Carbon::now()->startOfMonth();

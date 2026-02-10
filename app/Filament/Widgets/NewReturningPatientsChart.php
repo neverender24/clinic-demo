@@ -3,14 +3,16 @@
 namespace App\Filament\Widgets;
 
 use Illuminate\Support\Facades\DB;
+use App\Trait\Dashboard\HasAgeDistributationColumn;
 use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
 
 class NewReturningPatientsChart extends ApexChartWidget
 {
+    use HasAgeDistributationColumn;
+
     protected static ?string $chartId = 'newReturningPatientsChart';
     protected static ?string $heading = 'New vs Returning Patients';
     protected static ?int $sort = 5;
-    protected int | string | array $columnSpan = 3;
     protected static ?int $contentHeight = 200; //px
 
     protected function getOptions(): array

@@ -3,15 +3,18 @@
 namespace App\Filament\Widgets;
 
 use App\Models\Patient;
+use App\Trait\Dashboard\HasWidgetStatsColumn;
+use App\Trait\Dashboard\HasAgeDistributationColumn;
 use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
 
 class GenderDistributionChart extends ApexChartWidget
 {
+    use HasAgeDistributationColumn;
+
     protected static ?string $chartId = 'genderDistributionChart';
 
     protected static ?string $heading = 'Patient Gender Distribution';
     protected static ?int $sort = 8;
-    protected int | string | array $columnSpan = 3;
     protected static ?int $contentHeight = 200; //px
 
     protected function getOptions(): array

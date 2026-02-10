@@ -1,5 +1,5 @@
 @import '../../../../vendor/filament/filament/resources/css/theme.css';
-@import './login.css';
+@import './custom-login.css';
 @import './sidebar.css';
 @import './filament-page.css';
 

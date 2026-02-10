@@ -3,13 +3,15 @@
 namespace App\Filament\Widgets;
 
 use Illuminate\Support\Facades\DB;
+use App\Trait\Dashboard\HasAgeDistributationColumn;
 use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
 
 class AgeDistributionChart extends ApexChartWidget
 {
+    use HasAgeDistributationColumn;
+
     protected static ?string $chartId = 'ageDistributionChart';
     protected static ?int $sort = 4;
-    protected int | string | array $columnSpan = 3;
     protected static ?string $heading = 'Age Group Distribution';
     protected static ?int $contentHeight = 200; //px
 
