@@ -102,6 +102,7 @@ class EditConsultation extends EditRecord
                             Section::make()
                                 ->schema([
                                     Textarea::make('medical_cert_remarks')
+                                        ->label('Remarks')
                                 ])
                         ])
                         ->fillForm(function($record) {
