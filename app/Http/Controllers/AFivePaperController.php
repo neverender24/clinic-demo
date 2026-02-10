@@ -143,7 +143,15 @@ class AFivePaperController extends Controller
 
         $paper = request('paper') ?? 'letter';
 
-        $this->image_header = $request->type !== 'Medical Certificate' ? public_path('images/prescription_header.png') : public_path('storage/' . $consultation->clinic->medcert_header_image);
+        // Use clinic's header image for prescriptions, or medcert header for Medical Certificate
+        if ($request->type === 'Medical Certificate') {
+            $this->image_header = public_path('storage/' . $consultation->clinic->medcert_header_image);
+        } else {
+            // Use clinic's prescription header image (dynamic height based on actual image)
+            $this->image_header = $consultation->clinic->header_image
+                ? public_path('storage/' . $consultation->clinic->header_image)
+                : public_path('images/prescription_header.png'); // fallback to default
+        }
         $pdf = new CustomTCPDF('P', 'mm', $paper, true, 'UTF-8', false);
 
         // Document info
