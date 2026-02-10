@@ -43,9 +43,14 @@ class MedicineResource extends Resource
                     ->label('Brand Name')
                    // ->required()
                     ->columnSpanFull(),
-                // Forms\Components\TextInput::make('type')
-                //     ->label('Preparation')
-                //     ->columnSpanFull(),
+                TextInput::make('supplier_company')
+                    ->label('Supplier (Company)')
+                    ->datalist(fn () => Medicine::query()->whereNotNull('supplier_company')->distinct()->pluck('supplier_company')->toArray())
+                    ->columnSpanFull(),
+                TextInput::make('supplier_name')
+                    ->label('Apply Person (Supplier Name)')
+                    ->datalist(fn () => Medicine::query()->whereNotNull('supplier_name')->distinct()->pluck('supplier_name')->toArray())
+                    ->columnSpanFull(),
             ]);
     }
 
@@ -65,6 +70,14 @@ class MedicineResource extends Resource
                     ->html(),
                 TextColumn::make('type')
                     ->html(),
+                TextColumn::make('supplier_company')
+                    ->label('Supplier (Company)')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('supplier_name')
+                    ->label('Apply Person')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('user.name')
                     ->label('Created By'),
                 TextColumn::make('created_at')

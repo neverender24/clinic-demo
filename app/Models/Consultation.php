@@ -29,8 +29,8 @@ class Consultation extends Model
             'next_follow_up_schedule' => 'date',
             'date' => 'date',
             'estimated_date' => 'date',
-            'attachments' => 'array'
-           
+            'attachments' => 'array',
+            'is_dialysis' => 'boolean',
         ];
     }
 

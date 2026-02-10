@@ -61,6 +61,14 @@ class ConsultationsTable
                     ])
                     ->selectablePlaceholder(false)
                     ->width(10),
+                \Filament\Tables\Columns\IconColumn::make('is_dialysis')
+                    ->label('Dialysis')
+                    ->boolean()
+                    ->trueIcon('heroicon-o-check-circle')
+                    ->falseIcon('heroicon-o-x-circle')
+                    ->trueColor('success')
+                    ->falseColor('gray')
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('fee')
                     // ->formatStateUsing(fn($record) => Number::format(static::getTotal($record->fee, $record->follow_up_fees, $record->procedure_fee, $record->discount), 2))
                     ->summarize(
@@ -94,6 +102,10 @@ class ConsultationsTable
             ->paginationMode(PaginationMode::Simple)
             // ->paginationPageOptions([5, 10, 15, 20, 50, 100])
             ->filters([
+                Filter::make('is_dialysis')
+                    ->label('Dialysis Only')
+                    ->toggle()
+                    ->query(fn (Builder $query): Builder => $query->where('is_dialysis', true)),
                 Filter::make('date')
                     ->schema([
                         Select::make('month')
@@ -293,6 +305,7 @@ class ConsultationsTable
                             Section::make()
                                 ->schema([
                                     Textarea::make('medical_cert_remarks')
+                                        ->label('Remarks')
                                 ])
                         ])
                         ->fillForm(function($record) {

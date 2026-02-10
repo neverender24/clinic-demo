@@ -71,7 +71,33 @@ class PatientForm
 
                         TagsInput::make('allergies')->separator(','),
                         TagsInput::make('surgeries')->separator(','),
-                        TagsInput::make('medical_conditions')->separator(','),
+                        TagsInput::make('medical_conditions')
+                            ->separator(',')
+                            ->suggestions([
+                                'Hypertension',
+                                'Diabetes Mellitus',
+                                'Diabetes Mellitus Type 1',
+                                'Diabetes Mellitus Type 2',
+                                'Stroke',
+                                'Heart Disease',
+                                'Coronary Artery Disease',
+                                'Chronic Kidney Disease',
+                                'Asthma',
+                                'COPD',
+                                'Thyroid Disease',
+                                'Hyperthyroidism',
+                                'Hypothyroidism',
+                                'Cancer',
+                                'Arthritis',
+                                'Epilepsy',
+                                'Hepatitis',
+                                'HIV/AIDS',
+                                'Tuberculosis',
+                                'Anemia',
+                                'Gout',
+                                'Psoriasis',
+                                'Lupus',
+                            ]),
                         TagsInput::make('medications')->separator(','), 
                         Select::make('smoker_type')
                                 ->options([

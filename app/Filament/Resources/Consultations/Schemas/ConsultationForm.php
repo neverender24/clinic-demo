@@ -67,6 +67,9 @@ class ConsultationForm
                                     })
                                     ->searchable()
                                     ->preload(),
+                                \Filament\Forms\Components\Toggle::make('is_dialysis')
+                                    ->label('Dialysis')
+                                    ->inline(false),
                                 Select::make('patient_id')
                                     ->label('Patient')
                                     ->relationship('patient', 'full_name')
