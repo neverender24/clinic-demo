@@ -214,6 +214,17 @@
                   <button id="italic" class="w-6 h-6 text-xs italic text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded hover:bg-gray-50 dark:hover:bg-gray-600">I</button>
                   <button id="underline" class="w-6 h-6 text-xs text-gray-700 dark:text-gray-200 underline border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded hover:bg-gray-50 dark:hover:bg-gray-600">U</button>
                 </div>
+                <div class="flex gap-1 mt-1">
+                  <button id="textAlignLeft" class="w-6 h-6 text-xs text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded hover:bg-gray-50 dark:hover:bg-gray-600" title="Align Left">
+                    <svg class="w-4 h-4 mx-auto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="15" y2="12"/><line x1="3" y1="18" x2="18" y2="18"/></svg>
+                  </button>
+                  <button id="textAlignCenter" class="w-6 h-6 text-xs text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded hover:bg-gray-50 dark:hover:bg-gray-600" title="Align Center">
+                    <svg class="w-4 h-4 mx-auto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="6" y1="12" x2="18" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
+                  </button>
+                  <button id="textAlignRight" class="w-6 h-6 text-xs text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded hover:bg-gray-50 dark:hover:bg-gray-600" title="Align Right">
+                    <svg class="w-4 h-4 mx-auto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="9" y1="12" x2="21" y2="12"/><line x1="6" y1="18" x2="21" y2="18"/></svg>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -576,6 +587,9 @@ function canvasBuilder() {
       this.$('bold').onclick = () => this.toggleStyle('fontWeight', 'bold', 'normal');
       this.$('italic').onclick = () => this.toggleStyle('fontStyle', 'italic', 'normal');
       this.$('underline').onclick = () => this.toggleStyle('underline', true, false);
+      this.$('textAlignLeft').onclick = () => this.setTextProp('textAlign', 'left');
+      this.$('textAlignCenter').onclick = () => this.setTextProp('textAlign', 'center');
+      this.$('textAlignRight').onclick = () => this.setTextProp('textAlign', 'right');
       this.$('fillColor').oninput = (e) => this.setProp('fill', e.target.value, false);
       this.$('fillColor').onchange = () => this.saveHistory();
       this.$('strokeColor').oninput = (e) => this.setProp('stroke', e.target.value, false);
