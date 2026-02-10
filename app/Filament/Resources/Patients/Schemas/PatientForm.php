@@ -72,7 +72,6 @@ class PatientForm
                         TagsInput::make('allergies')->separator(','),
                         TagsInput::make('surgeries')->separator(','),
                         TagsInput::make('medical_conditions')
-                            ->separator(',')
                             ->suggestions([
                                 'Hypertension',
                                 'Diabetes Mellitus',
@@ -98,7 +97,7 @@ class PatientForm
                                 'Psoriasis',
                                 'Lupus',
                             ]),
-                        TagsInput::make('medications')->separator(','), 
+                        TagsInput::make('medications'), 
                         Select::make('smoker_type')
                                 ->options([
                                     'Smoker' => 'Smoker',

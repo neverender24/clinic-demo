@@ -21,6 +21,7 @@ class Patient extends Model
     protected $casts = [
         'contact_details' => 'array',
         'medical_conditions' => 'array',
+        'medications' => 'array',
     ];
 
     public function user(): BelongsTo
