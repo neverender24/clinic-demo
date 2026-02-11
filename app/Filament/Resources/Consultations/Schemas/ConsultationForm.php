@@ -65,6 +65,7 @@ class ConsultationForm
                                     ->options(function () {
                                         return User::role('Doctor')->pluck('name', 'id');
                                     })
+                                    ->default(fn () => auth()->user()->hasRole('Doctor') ? auth()->id() : null)
                                     ->searchable()
                                     ->preload(),
                                 \Filament\Forms\Components\Toggle::make('is_dialysis')
