@@ -14,6 +14,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Components\Section;
@@ -153,12 +154,50 @@ class EditConsultation extends EditRecord
                                 ->reactive(),
                             Repeater::make('labRequests')
                                 ->relationship()
-                                ->simple(
+                                ->collapsible()
+                                ->schema([
+                                    CheckboxList::make('lab_tests')
+                                        ->label('Common Tests')
+                                        ->options([
+                                            'CBC' => 'CBC',
+                                            'Creatinine' => 'Creatinine',
+                                            'Sodium' => 'Sodium',
+                                            'Potassium' => 'Potassium',
+                                            'Calcium' => 'Calcium',
+                                            'Magnesium' => 'Magnesium',
+                                            'Uric acid' => 'Uric acid',
+                                            'Urine albumin-creatinine ratio' => 'Urine albumin-creatinine ratio',
+                                            'Urinalysis' => 'Urinalysis',
+                                            'FBS' => 'FBS',
+                                            'Lipid profile' => 'Lipid profile',
+                                            'HBA1C' => 'HBA1C',
+                                            'Anti-nuclear antibodies' => 'Anti-nuclear antibodies',
+                                            'ABG' => 'ABG',
+                                            'Ultrasound of whole abdomen with pre and post void scan' => 'Ultrasound of whole abdomen with pre and post void scan',
+                                            'Ultrasound KUB prostate' => 'Ultrasound KUB prostate',
+                                            'CT stonogram' => 'CT stonogram',
+                                            'CT-Scan of:' => 'CT-Scan of:',
+                                        ])
+                                        ->columns(3)
+                                        ->dehydrated(false)
+                                        ->reactive()
+                                        ->afterStateHydrated(function (CheckboxList $component, Get $get) {
+                                            $content = $get('content') ?? '';
+                                            $lines = array_filter(array_map('trim', explode("\n", $content)));
+                                            $options = array_keys($component->getOptions());
+                                            $component->state(array_values(array_intersect($lines, $options)));
+                                        })
+                                        ->afterStateUpdated(function ($state, callable $set) {
+                                            $set('content', implode("\n", $state ?? []));
+                                        })
+                                        ->disabled(fn() => ! auth()->user()->doctor()),
                                     Textarea::make('content')
                                         ->label('Content')
                                         ->required()
-                                        ->disabled(fn() => ! auth()->user()->doctor())
-                                )
+                                        ->rows(fn (Get $get) => max(3, count($get('lab_tests') ?? [])))
+                                        ->reactive()
+                                        ->disabled(fn() => ! auth()->user()->doctor()),
+                                ])
                                 ->visible(fn(Get $get) => $get('type') == 'Laboratory Request')
                                 ->deletable(fn() => auth()->user()->doctor())
                                 ->addable(fn() => auth()->user()->doctor()),
