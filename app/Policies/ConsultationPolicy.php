@@ -1,6 +1,6 @@
 <?php
 
-// declare(strict_types=1);
+declare(strict_types=1);
 
 namespace App\Policies;
 
@@ -99,7 +99,6 @@ class ConsultationPolicy
 
     public function addVitalSign(AuthUser $authUser): bool
     {
-        // dd('test');
         return $authUser->can('AddVitalSign:Consultation');
     }
 
