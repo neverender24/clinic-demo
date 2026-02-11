@@ -24,6 +24,7 @@ use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\DatePicker;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Filters\TrashedFilter;
@@ -126,6 +127,13 @@ class PatientResource extends Resource
             ->deferFilters(false)
             ->filters([
                 TrashedFilter::make(),
+                Filter::make('is_dialysis')
+                    ->label('Dialysis Patient')
+                    ->toggle()
+                    ->query(fn (Builder $query): Builder => $query->whereHas(
+                        'consultations',
+                        fn (Builder $query) => $query->where('is_dialysis', true)
+                    )),
                 SelectFilter::make('medical_conditions')
                     ->label('Medical Condition')
                     ->options([
