@@ -130,10 +130,12 @@ class MedCertController extends Controller
             $pageWidth = $pdf->getPageWidth();
             $usableWidth = $pageWidth - $leftMargin - $margins['right'];
 
+            $imgY = 5;
+
             $pdf->Image(
                 $this->image_header,
                 $leftMargin,
-                0, // No margin top
+                $imgY,
                 $usableWidth,
                 0,
                 '',
@@ -143,8 +145,11 @@ class MedCertController extends Controller
                 300
             );
 
-            // Reset Y properly (different for each paper type)
-            $pdf->SetY(25);
+            // Dynamically calculate image height and position cursor below it
+            list($origW, $origH) = getimagesize($this->image_header);
+            $aspectRatio = $origH / $origW;
+            $imgHeight = $usableWidth * $aspectRatio;
+            $pdf->SetY($imgY + $imgHeight - 2);
         } else {
             $pdf->SetY(20);
         }
@@ -251,7 +256,7 @@ class MedCertController extends Controller
         $fontSize = $this->fontSize;
        $content = '
     <div style="font-size:'.$fontSize.'pt; line-height:1.6; font-family: Arial, sans-serif;">
-            <div style="margin-top: 40px; text-align:center; font-size: 14pt; font-weight:bold">
+            <div style="text-align:center; font-size: 14pt; font-weight:bold">
                 <b>Medical Certificate</b>
             </div>
         <div style="text-align: right; margin-bottom: 20px;">
