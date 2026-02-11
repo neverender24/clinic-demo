@@ -174,7 +174,8 @@ class AFivePaperController extends Controller
         $pdf->SetFont('helvetica', '', $this->fontSize);
 
         // ---------- PAGE ADDER FUNCTION ----------
-        $addPage = function ($content, $showHeader = true) use ($pdf) {
+        $isMedcert = $request->type === 'Medical Certificate';
+        $addPage = function ($content, $showHeader = true) use ($pdf, $isMedcert) {
             $pdf->AddPage();
 
             // 🟩 HEADER IMAGE HANDLING
@@ -215,7 +216,8 @@ class AFivePaperController extends Controller
                 list($origW, $origH) = getimagesize($this->image_header);
                 $aspectRatio = $origH / $origW;
                 $imgHeight = $imgWidth * $aspectRatio;
-                $pdf->SetY($imgY + $imgHeight - 2);
+                $headerSpacing = $isMedcert ? 5 : -2;
+                $pdf->SetY($imgY + $imgHeight + $headerSpacing);
             } else {
                 $pdf->SetY(20);
             }
