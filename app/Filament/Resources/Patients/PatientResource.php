@@ -2,36 +2,39 @@
 
 namespace App\Filament\Resources\Patients;
 
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Section;
-use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Components\Grid;
-use Filament\Forms\Components\TagsInput;
-use Filament\Forms\Components\Repeater;
-use Filament\Actions\Action;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Actions\EditAction;
-use Filament\Actions\DeleteAction;
-use App\Filament\Resources\Patients\Pages\ListPatients;
-use App\Filament\Resources\Patients\Pages\CreatePatient;
-use App\Filament\Resources\Patients\Pages\EditPatient;
 use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Tables;
 use App\Models\Patient;
 use Filament\Tables\Table;
+use Filament\Actions\Action;
+use Filament\Schemas\Schema;
+use Filament\Actions\EditAction;
 use Filament\Resources\Resource;
+use App\Models\Scopes\TenantScope;
+use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Select;
+use Filament\Schemas\Components\Grid;
 use Filament\Support\Enums\Alignment;
 use Filament\Forms\Components\Actions;
+use Filament\Forms\Components\Repeater;
+use Filament\Tables\Columns\TextColumn;
 use App\Models\Scopes\ConsultationScope;
+use Filament\Forms\Components\TagsInput;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\DatePicker;
+use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Database\Eloquent\Builder;
+use Filament\Tables\Filters\TrashedFilter;
 use App\Filament\Resources\PatientResource\Pages;
+use App\Filament\Resources\Patients\Pages\EditPatient;
+use App\Filament\Resources\Patients\Pages\ListPatients;
+use App\Filament\Resources\Patients\Pages\CreatePatient;
+use App\Filament\Resources\Patients\Schemas\PatientForm;
 use App\Filament\Resources\PatientResource\RelationManagers;
 use App\Filament\Resources\Patients\RelationManagers\ConsultationsRelationManager;
 use App\Filament\Resources\Patients\RelationManagers\HospitalAdmissionsRelationManager;
-use App\Filament\Resources\Patients\Schemas\PatientForm;
-use App\Models\Scopes\TenantScope;
 
 class PatientResource extends Resource
 {
@@ -94,9 +97,67 @@ class PatientResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('smoker_type')
+                    ->label('Smoker')
+                    ->badge()
+                    ->color(fn ($state) => match ($state) {
+                        'Smoker' => 'danger',
+                        'Non-smoker' => 'success',
+                        'Vaper' => 'warning',
+                        'Quitter' => 'info',
+                        default => 'gray',
+                    })
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('medical_conditions')
+                    ->label('Medical Conditions')
+                    ->badge()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('medications')
+                    ->label('Medications')
+                    ->badge()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('allergies')
+                    ->label('Allergies')
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('surgeries')
+                    ->label('Surgeries')
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->deferFilters(false)
             ->filters([
-                //
+                TrashedFilter::make(),
+                SelectFilter::make('medical_conditions')
+                    ->label('Medical Condition')
+                    ->options([
+                        'Hypertension' => 'Hypertension',
+                        'Diabetes Mellitus' => 'Diabetes Mellitus',
+                        'Diabetes Mellitus Type 1' => 'Diabetes Mellitus Type 1',
+                        'Diabetes Mellitus Type 2' => 'Diabetes Mellitus Type 2',
+                        'Stroke' => 'Stroke',
+                        'Heart Disease' => 'Heart Disease',
+                        'Coronary Artery Disease' => 'Coronary Artery Disease',
+                        'Chronic Kidney Disease' => 'Chronic Kidney Disease',
+                        'Asthma' => 'Asthma',
+                        'COPD' => 'COPD',
+                        'Thyroid Disease' => 'Thyroid Disease',
+                        'Hyperthyroidism' => 'Hyperthyroidism',
+                        'Hypothyroidism' => 'Hypothyroidism',
+                        'Cancer' => 'Cancer',
+                        'Arthritis' => 'Arthritis',
+                        'Epilepsy' => 'Epilepsy',
+                        'Hepatitis' => 'Hepatitis',
+                        'HIV/AIDS' => 'HIV/AIDS',
+                        'Tuberculosis' => 'Tuberculosis',
+                        'Anemia' => 'Anemia',
+                        'Gout' => 'Gout',
+                        'Psoriasis' => 'Psoriasis',
+                        'Lupus' => 'Lupus',
+                    ])
+                    ->searchable()
+                    ->query(fn (Builder $query, array $data): Builder => $query->when(
+                        $data['value'],
+                        fn (Builder $query, $value): Builder => $query->whereJsonContains('medical_conditions', $value)
+                    )),
             ])
             ->paginationPageOptions([5, 10, 15, 20, 50, 100])
             ->recordActions([
