@@ -17,7 +17,7 @@ class CustomTCPDF extends TCPDF
 
     public function Footer()
     {
-        $this->SetY(-40);
+        $this->SetY(-32);
         $this->SetFont('helvetica', '', $this->footerFontSize);
         $this->writeHTMLCell(0, 0, '', '', $this->footerHtml, 0, 1, 0, true, 'L', true);
     }
@@ -31,7 +31,7 @@ class AFivePaperController extends Controller
 
     public function __construct()
     {
-        $this->fontSize = request('paper') == 'A5' ? 9 : 12;
+        $this->fontSize = request('paper') == 'A5' ? 8 : 10;
     }
 
     public function getHeader(): string
@@ -109,7 +109,7 @@ class AFivePaperController extends Controller
 
                 <!-- Right side -->
                 <td width="35%" style="text-align:left; vertical-align:bottom">
-                    <b>Attending Physician:</b><br><br><br>
+                    <b>Attending Physician:</b><br><br>
                     <b>'.$doctorName.'</b><br>
                     License No.: '.$licenseNo.'<br>
                     PTR No.: '.$ptrNo.'<br>
@@ -170,7 +170,7 @@ class AFivePaperController extends Controller
 
         // Margins and auto-break (bottom margin for footer)
         $pdf->SetMargins(10, 10, 10);
-        $pdf->SetAutoPageBreak(true, 45);
+        $pdf->SetAutoPageBreak(true, 35);
         $pdf->SetFont('helvetica', '', $this->fontSize);
 
         // ---------- PAGE ADDER FUNCTION ----------
@@ -215,7 +215,7 @@ class AFivePaperController extends Controller
                 list($origW, $origH) = getimagesize($this->image_header);
                 $aspectRatio = $origH / $origW;
                 $imgHeight = $imgWidth * $aspectRatio;
-                $pdf->SetY($imgY + $imgHeight + 5);
+                $pdf->SetY($imgY + $imgHeight - 2);
             } else {
                 $pdf->SetY(20);
             }

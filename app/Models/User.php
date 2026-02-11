@@ -92,6 +92,7 @@ class User extends Authenticatable implements FilamentUser, HasTenants, HasAvata
 
     public function canAccessTenant(Model $tenant): bool
     {
+        
         if ($this->doctor()) {
             return true;
         }

@@ -107,10 +107,10 @@ class ConsultationForm
                                     ->required()
                                     ->hint(fn(): View => view('forms.components.vital-signs-hint'))
                                     ->afterStateHydrated(fn(Set $set, $state) => $set('chief_complaint', strip_tags($state)))
-                                    ->visible(fn() => auth()->user()->can('addChiefComplaint', Consultation::class)),
+                                    ->visible(fn() => request()->user()->can('addChiefComplaint', Consultation::class)),
                                 // Textarea::make('vital_signs')
                                 //     ->columnSpan(fn() => [
-                                //         'sm' => auth()->user()->can('addVitalSign', Consultation::class) ? 1 : 2
+                                //         'sm' => request()->user()->can('addVitalSign', Consultation::class) ? 1 : 2
                                 //     ])
                                 //     ->autosize()
                                 //     ->required()
@@ -125,11 +125,11 @@ class ConsultationForm
                                 //             $set('vital_signs', implode("\n", $words)); // line break per word
                                 //         }
                                 //     })
-                                //     ->visible(fn() => auth()->user()->can('addVitalSign', Consultation::class)),
+                                //     ->visible(fn() => request()->user()->can('addVitalSign', Consultation::class)),
 
                                 Textarea::make('test_results')
                                     // ->columnSpan(fn() => [
-                                    //     'sm' => auth()->user()->can('addVitalSign', Consultation::class) ? 1 : 2
+                                    //     'sm' => request()->user()->can('addVitalSign', Consultation::class) ? 1 : 2
                                     // ])
                                     ->columnSpanFull()
                                     ->label('Objective')
@@ -137,7 +137,7 @@ class ConsultationForm
                                     // ->dehydrateStateUsing(fn($state) => strip_tags($state))
                                     ->afterStateHydrated(fn(Set $set, $state) => $set('test_results', strip_tags($state)))
                                     ->required()
-                                    ->visible(fn() => auth()->user()->can('addTestResult', Consultation::class)),
+                                    ->visible(fn() => request()->user()->can('addTestResult', Consultation::class)),
                                 Textarea::make('diagnosis')
                                     ->label('Assessment')
                                     ->columnSpanFull()
@@ -145,13 +145,13 @@ class ConsultationForm
                                     ->required()
                                     // ->toolbarButtons(self::onlyAllowedToolbar())
                                     // ->hint(fn($operation): View | null => $operation == 'create' ? null : view('forms.components.draw'))
-                                    ->visible(fn() => auth()->user()->doctor()),
+                                    ->visible(fn() => request()->user()->doctor()),
                                 Textarea::make('management')
                                     ->label('Plan')
                                     ->columnSpanFull()
                                     ->autosize()
                                     ->required()
-                                    ->visible(fn() => auth()->user()->doctor())
+                                    ->visible(fn() => request()->user()->doctor())
                                     ->columnSpan([
                                         'xl' => 'full'
                                     ]),
@@ -180,7 +180,8 @@ class ConsultationForm
                                     DatePicker::make('next_follow_up_schedule')
                                         ->label('Follow up schedule')
                                         // ->inlineLabel()
-                                        ->visible(fn($livewire) => auth()->user()->can('addFollowupSchedule', $livewire->record)),
+                                        ->visible(fn($livewire) => request()->user()->can('addFollowupSchedule', Consultation::class))
+                                        ,
                                     TextInput::make('fee')
                                         ->label('Consultation Fee')
                                 ])
@@ -188,7 +189,7 @@ class ConsultationForm
 
                                 Section::make('Prescriptions')
                                     ->columnSpan(2)
-                                    ->visible(fn() => auth()->user()->hasRole('Doctor') || auth()->user()->superAdmin())
+                                    ->visible(fn() => request()->user()->hasRole('Doctor') || request()->user()->superAdmin())
                                     ->compact()
                                     ->schema([
                                         Repeater::make('medicines')
@@ -301,7 +302,7 @@ class ConsultationForm
                                             ])
                                     ])
                                     ->columnSpan(2)
-                                    ->visible(fn() => auth()->user()->doctor()),
+                                    ->visible(fn() => request()->user()->doctor()),
 
                             ]),
                         Section::make()
