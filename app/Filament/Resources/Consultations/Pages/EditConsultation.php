@@ -116,25 +116,15 @@ class EditConsultation extends EditRecord
                                 'medical_cert_remarks' => $data->medical_cert_remarks 
                             ];
                         })
-                        ->modalSubmitActionLabel('Save')
-                        ->action(function ($data, $record) {
+                        ->modalSubmitActionLabel('Save & Print')
+                        ->action(function ($data, $record, $livewire) {
                             try {
 
                                 $record->update($data);
 
                                 $url = route('pdf.a5.medcert', ['id' => $record->id, 'type' => 'Medical Certificate', 'paper' => 'A5']);
 
-                                Notification::make()
-                                    ->success()
-                                    ->title('Saved successfully')
-                                    ->actions([
-                                        Action::make('print_medcert')
-                                            ->label('Print')
-                                            ->url($url, shouldOpenInNewTab: true)
-                                            ->button(),
-                                    ])
-                                    ->persistent()
-                                    ->send();
+                                $livewire->js("window.location.href = '{$url}'");
 
                             } catch (\Throwable $th) {
                                 Notification::make()
@@ -260,25 +250,15 @@ class EditConsultation extends EditRecord
                                 }
                             }
                         })
-                        ->modalSubmitActionLabel('Save')
-                        ->after(function ($record, $data) {
+                        ->modalSubmitActionLabel('Save & Print')
+                        ->after(function ($livewire, $record, $data) {
                             $url = route('pdf.new-tab', [
                                 'id' => $record->id,
                                 'paper' => 'A5',
                                 'type' => $data['type']
                             ]);
 
-                            Notification::make()
-                                ->success()
-                                ->title('Saved successfully')
-                                ->actions([
-                                    Action::make('print_clinical')
-                                        ->label('Print')
-                                        ->url($url, shouldOpenInNewTab: true)
-                                        ->button(),
-                                ])
-                                ->persistent()
-                                ->send();
+                            $livewire->js("window.location.href = '{$url}'");
                         });
     }
     // protected function getViewData(): array
