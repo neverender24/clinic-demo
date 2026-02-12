@@ -116,25 +116,31 @@ class EditConsultation extends EditRecord
                                 'medical_cert_remarks' => $data->medical_cert_remarks 
                             ];
                         })
-                        ->modalSubmitActionLabel('Print')
+                        ->modalSubmitAction(fn(Action $action) => $action
+                            ->label('Print')
+                            ->extraAttributes([
+                                'x-on:click' => "window.__printWindow = window.open('', '_blank')",
+                            ])
+                        )
                         ->action(function ($data, $record) {
-                            // dd($data);
-                            
                             try {
-                                
+
                                 $record->update($data);
                                 Notification::make()
                                     ->success()
                                     ->title('Success')
                                     ->body('The changes have been saved');
-                                
+
                             } catch (\Throwable $th) {
                                 Notification::make()
                                     ->title('Error')
                                     ->body($th->getMessage());
                             }
                         })
-                        ->after(fn($livewire, $record) =>  $livewire->js("window.open('".route('pdf.a5.medcert', ['id' => $record->id, 'type' => 'Medical Certificate', 'paper' => 'A5'])."', '_blank')"));
+                        ->after(function ($livewire, $record) {
+                            $url = route('pdf.a5.medcert', ['id' => $record->id, 'type' => 'Medical Certificate', 'paper' => 'A5']);
+                            $livewire->js("if (window.__printWindow) { window.__printWindow.location.href = '{$url}'; window.__printWindow = null; } else { window.open('{$url}', '_blank'); }");
+                        });
     }
 
     protected function printClinicalAction(): Action
@@ -251,13 +257,20 @@ class EditConsultation extends EditRecord
                                 }
                             }
                         })
-                        ->modalSubmitAction(fn(Action $action) => $action->label('Print')->color('success'))
+                        ->modalSubmitAction(fn(Action $action) => $action
+                            ->label('Print')
+                            ->color('success')
+                            ->extraAttributes([
+                                'x-on:click' => "window.__printWindow = window.open('', '_blank')",
+                            ])
+                        )
                         ->after(function ($livewire, $record, $data) {
-                            $livewire->js("window.open('" . route('pdf.new-tab', [
+                            $url = route('pdf.new-tab', [
                                 'id' => $record->id,
                                 'paper' => 'A5',
                                 'type' => $data['type']
-                            ]) . "', '_blank')");
+                            ]);
+                            $livewire->js("if (window.__printWindow) { window.__printWindow.location.href = '{$url}'; window.__printWindow = null; } else { window.open('{$url}', '_blank'); }");
                         });
     }
     // protected function getViewData(): array
