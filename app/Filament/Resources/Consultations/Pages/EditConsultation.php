@@ -116,30 +116,33 @@ class EditConsultation extends EditRecord
                                 'medical_cert_remarks' => $data->medical_cert_remarks 
                             ];
                         })
-                        ->modalSubmitAction(fn(Action $action) => $action
-                            ->label('Print')
-                            ->extraAttributes([
-                                'x-on:click' => "window.__printWindow = window.open('', '_blank')",
-                            ])
-                        )
+                        ->modalSubmitActionLabel('Save')
                         ->action(function ($data, $record) {
                             try {
 
                                 $record->update($data);
+
+                                $url = route('pdf.a5.medcert', ['id' => $record->id, 'type' => 'Medical Certificate', 'paper' => 'A5']);
+
                                 Notification::make()
                                     ->success()
-                                    ->title('Success')
-                                    ->body('The changes have been saved');
+                                    ->title('Saved successfully')
+                                    ->actions([
+                                        Action::make('print_medcert')
+                                            ->label('Print')
+                                            ->url($url, shouldOpenInNewTab: true)
+                                            ->button(),
+                                    ])
+                                    ->persistent()
+                                    ->send();
 
                             } catch (\Throwable $th) {
                                 Notification::make()
+                                    ->danger()
                                     ->title('Error')
-                                    ->body($th->getMessage());
+                                    ->body($th->getMessage())
+                                    ->send();
                             }
-                        })
-                        ->after(function ($livewire, $record) {
-                            $url = route('pdf.a5.medcert', ['id' => $record->id, 'type' => 'Medical Certificate', 'paper' => 'A5']);
-                            $livewire->js("if (window.__printWindow) { window.__printWindow.location.href = '{$url}'; window.__printWindow = null; } else { window.open('{$url}', '_blank'); }");
                         });
     }
 
@@ -257,20 +260,25 @@ class EditConsultation extends EditRecord
                                 }
                             }
                         })
-                        ->modalSubmitAction(fn(Action $action) => $action
-                            ->label('Print')
-                            ->color('success')
-                            ->extraAttributes([
-                                'x-on:click' => "window.__printWindow = window.open('', '_blank')",
-                            ])
-                        )
-                        ->after(function ($livewire, $record, $data) {
+                        ->modalSubmitActionLabel('Save')
+                        ->after(function ($record, $data) {
                             $url = route('pdf.new-tab', [
                                 'id' => $record->id,
                                 'paper' => 'A5',
                                 'type' => $data['type']
                             ]);
-                            $livewire->js("if (window.__printWindow) { window.__printWindow.location.href = '{$url}'; window.__printWindow = null; } else { window.open('{$url}', '_blank'); }");
+
+                            Notification::make()
+                                ->success()
+                                ->title('Saved successfully')
+                                ->actions([
+                                    Action::make('print_clinical')
+                                        ->label('Print')
+                                        ->url($url, shouldOpenInNewTab: true)
+                                        ->button(),
+                                ])
+                                ->persistent()
+                                ->send();
                         });
     }
     // protected function getViewData(): array
