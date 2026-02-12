@@ -117,15 +117,9 @@ class EditConsultation extends EditRecord
                             ];
                         })
                         ->modalSubmitActionLabel('Save & Print')
-                        ->action(function ($data, $record, $livewire) {
+                        ->action(function ($data, $record) {
                             try {
-
                                 $record->update($data);
-
-                                $url = route('pdf.a5.medcert', ['id' => $record->id, 'type' => 'Medical Certificate', 'paper' => 'A5']);
-
-                                $livewire->js("window.location.href = '{$url}'");
-
                             } catch (\Throwable $th) {
                                 Notification::make()
                                     ->danger()
@@ -133,6 +127,17 @@ class EditConsultation extends EditRecord
                                     ->body($th->getMessage())
                                     ->send();
                             }
+                        })
+                        ->after(function ($livewire, $record) {
+                            $url = route('pdf.a5.medcert', ['id' => $record->id, 'type' => 'Medical Certificate', 'paper' => 'A5']);
+                            $livewire->js("
+                                const a = document.createElement('a');
+                                a.href = '{$url}';
+                                a.target = '_blank';
+                                document.body.appendChild(a);
+                                a.click();
+                                a.remove();
+                            ");
                         });
     }
 
@@ -258,7 +263,14 @@ class EditConsultation extends EditRecord
                                 'type' => $data['type']
                             ]);
 
-                            $livewire->js("window.location.href = '{$url}'");
+                            $livewire->js("
+                                const a = document.createElement('a');
+                                a.href = '{$url}';
+                                a.target = '_blank';
+                                document.body.appendChild(a);
+                                a.click();
+                                a.remove();
+                            ");
                         });
     }
     // protected function getViewData(): array
