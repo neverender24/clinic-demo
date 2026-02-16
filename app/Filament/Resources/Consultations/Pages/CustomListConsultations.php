@@ -18,12 +18,12 @@ class CustomListConsultations extends Page
     {
         return [
             'consultations' => static::$resource::getModel()::with('patient')
-                                    ->get()
-                                    ->each(function($item) {
-                                        $item->date_consult = $item->date->format('M j, Y');
-                                    }),
+                ->get()
+                ->each(function ($item) {
+                    $item->date_consult = $item->date->format('M j, Y');
+                }),
 
-            'tenant' => Filament::getTenant()->id
+            'tenant' => Filament::getTenant()->id,
         ];
     }
 }

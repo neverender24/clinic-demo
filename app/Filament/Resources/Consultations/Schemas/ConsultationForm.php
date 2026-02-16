@@ -2,47 +2,35 @@
 
 namespace App\Filament\Resources\Consultations\Schemas;
 
-use App\Models\User;
-use App\Models\Patient;
-use App\Models\Medicine;
-use Illuminate\View\View;
-use App\Models\DrawFinding;
-use Filament\Support\RawJs;
-use App\Models\Consultation;
-use Filament\Actions\Action;
-use Filament\Schemas\Schema;
-use App\Models\HospitalAdmission;
-use Illuminate\Support\HtmlString;
-use App\Models\ConsultationMedicine;
-use Filament\Support\Enums\IconSize;
-use Filament\Forms\Components\Select;
-use Filament\Schemas\Components\Flex;
-use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\Text;
-use App\Forms\Components\HistoryField;
-use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Textarea;
-use Illuminate\Database\Eloquent\Model;
-use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Components\Section;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\RichEditor;
-use Filament\Schemas\Components\Utilities\Set;
 use App\Filament\Forms\Components\PatientField;
-use App\Filament\Forms\Components\PatientDetail;
-use App\Filament\Forms\Components\PatientHistory;
-use Filament\Forms\Components\Repeater\TableColumn;
-use App\Filament\Resources\Patients\PatientResource;
 use App\Filament\Resources\Medicines\MedicineResource;
 use App\Filament\Resources\Patients\Schemas\PatientForm;
-use Filament\Schemas\Components\View as ComponentsView;
+use App\Models\Consultation;
+use App\Models\ConsultationMedicine;
+use App\Models\Medicine;
+use App\Models\Patient;
+use App\Models\User;
+use Filament\Actions\Action;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Repeater\TableColumn;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Flex;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\View\View;
 
 class ConsultationForm
 {
     public static function configure(Schema $schema): Schema
     {
-        
+
         return $schema
             ->components([
                 Grid::make(3)
@@ -51,7 +39,7 @@ class ConsultationForm
                             ->columnSpan(2)
                             ->columns([
                                 'default' => 1,
-                                'sm' => 2
+                                'sm' => 2,
                             ])
                             ->compact()
                             ->dense()
@@ -75,26 +63,28 @@ class ConsultationForm
                                     ->label('Patient')
                                     ->relationship('patient', 'full_name')
                                     // ->getSearchResultsUsing(fn (string $search) => Patient::query()->where('full_name', 'like', "%$search%")->pluck('full_name', 'id'))
-                                    ->getOptionLabelsUsing(fn($value) => Patient::find($value)->full_name)
+                                    ->getOptionLabelsUsing(fn ($value) => Patient::find($value)->full_name)
                                     ->preload()
                                     ->searchable()
-                                    ->createOptionForm(fn(Schema $schema) => PatientForm::configure($schema)->columns(1)->extraAttributes(['class' => 'w-full']))
+                                    ->createOptionForm(fn (Schema $schema) => PatientForm::configure($schema)->columns(1)->extraAttributes(['class' => 'w-full']))
                                     ->createOptionAction(function (Action $action) {
                                         return $action
                                             ->modalWidth('xl')
                                             ->modalHeading('Create Patient')
                                             ->mutateDataUsing(function (array $data) {
                                                 $data['user_id'] = auth()->id();
+
                                                 return $data;
                                             });
                                     })
-                                    ->editOptionForm(fn(Schema $schema) => PatientForm::configure($schema)->columns(1)->extraAttributes(['class' => 'w-full']))
+                                    ->editOptionForm(fn (Schema $schema) => PatientForm::configure($schema)->columns(1)->extraAttributes(['class' => 'w-full']))
                                     ->editOptionAction(function (Action $action, $livewire) {
                                         return $action
                                             ->modalWidth('xl')
-                                            ->modalHeading(fn($data) => 'Edit ' . Patient::findOrFail($livewire->data['patient_id'])?->full_name)
+                                            ->modalHeading(fn ($data) => 'Edit '.Patient::findOrFail($livewire->data['patient_id'])?->full_name)
                                             ->mutateDataUsing(function (array $data) {
                                                 $data['user_id'] = auth()->id();
+
                                                 return $data;
                                             });
                                     })
@@ -105,9 +95,9 @@ class ConsultationForm
                                     ->columnSpanFull()
                                     ->autosize()
                                     ->required()
-                                    ->hint(fn(): View => view('forms.components.vital-signs-hint'))
-                                    ->afterStateHydrated(fn(Set $set, $state) => $set('chief_complaint', strip_tags($state)))
-                                    ->visible(fn() => request()->user()->can('addChiefComplaint', Consultation::class)),
+                                    ->hint(fn (): View => view('forms.components.vital-signs-hint'))
+                                    ->afterStateHydrated(fn (Set $set, $state) => $set('chief_complaint', strip_tags($state)))
+                                    ->visible(fn () => request()->user()->can('addChiefComplaint', Consultation::class)),
                                 // Textarea::make('vital_signs')
                                 //     ->columnSpan(fn() => [
                                 //         'sm' => request()->user()->can('addVitalSign', Consultation::class) ? 1 : 2
@@ -135,9 +125,9 @@ class ConsultationForm
                                     ->label('Objective')
                                     ->autosize()
                                     // ->dehydrateStateUsing(fn($state) => strip_tags($state))
-                                    ->afterStateHydrated(fn(Set $set, $state) => $set('test_results', strip_tags($state)))
+                                    ->afterStateHydrated(fn (Set $set, $state) => $set('test_results', strip_tags($state)))
                                     ->required()
-                                    ->visible(fn() => request()->user()->can('addTestResult', Consultation::class)),
+                                    ->visible(fn () => request()->user()->can('addTestResult', Consultation::class)),
                                 Textarea::make('diagnosis')
                                     ->label('Assessment')
                                     ->columnSpanFull()
@@ -145,15 +135,15 @@ class ConsultationForm
                                     ->required()
                                     // ->toolbarButtons(self::onlyAllowedToolbar())
                                     // ->hint(fn($operation): View | null => $operation == 'create' ? null : view('forms.components.draw'))
-                                    ->visible(fn() => request()->user()->doctor()),
+                                    ->visible(fn () => request()->user()->doctor()),
                                 Textarea::make('management')
                                     ->label('Plan')
                                     ->columnSpanFull()
                                     ->autosize()
                                     ->required()
-                                    ->visible(fn() => request()->user()->doctor())
+                                    ->visible(fn () => request()->user()->doctor())
                                     ->columnSpan([
-                                        'xl' => 'full'
+                                        'xl' => 'full',
                                     ]),
                                 FileUpload::make('attachments')
                                     ->multiple()
@@ -164,14 +154,14 @@ class ConsultationForm
                                     ->openable()
                                     ->imagePreviewHeight('250')
                                     ->rules([
-                                        fn(): \Closure => function (string $attribute, $value, \Closure $fail) {
+                                        fn (): \Closure => function (string $attribute, $value, \Closure $fail) {
                                             // Skip validation if it's already a stored path (string)
                                             if (is_string($value)) {
                                                 return;
                                             }
 
                                             // Validate new uploads
-                                            if ($value instanceof \Illuminate\Http\UploadedFile && !str_starts_with($value->getMimeType(), 'image/')) {
+                                            if ($value instanceof \Illuminate\Http\UploadedFile && ! str_starts_with($value->getMimeType(), 'image/')) {
                                                 $fail('The file must be an image.');
                                             }
                                         },
@@ -180,16 +170,15 @@ class ConsultationForm
                                     DatePicker::make('next_follow_up_schedule')
                                         ->label('Follow up schedule')
                                         // ->inlineLabel()
-                                        ->visible(fn($livewire) => request()->user()->can('addFollowupSchedule', Consultation::class))
-                                        ,
+                                        ->visible(fn ($livewire) => request()->user()->can('addFollowupSchedule', Consultation::class)),
                                     TextInput::make('fee')
-                                        ->label('Consultation Fee')
+                                        ->label('Consultation Fee'),
                                 ])
-                                ->columnSpanFull(),
+                                    ->columnSpanFull(),
 
                                 Section::make('Prescriptions')
                                     ->columnSpan(2)
-                                    ->visible(fn() => request()->user()->hasRole('Doctor') || request()->user()->superAdmin())
+                                    ->visible(fn () => request()->user()->hasRole('Doctor') || request()->user()->superAdmin())
                                     ->compact()
                                     ->schema([
                                         Repeater::make('medicines')
@@ -209,7 +198,7 @@ class ConsultationForm
                                             //         dd($livewire);
                                             //     });
                                             // })
-                                            ->default(fn($state) => is_array($state) ? $state : [])
+                                            ->default(fn ($state) => is_array($state) ? $state : [])
                                             ->reorderable()
                                             ->orderColumn()
                                             ->compact()
@@ -233,7 +222,7 @@ class ConsultationForm
                                                         // modifyQueryUsing: fn(Builder $query) => $query->where('active', 1)
                                                     )
                                                     // ->preload()
-                                                    ->getOptionLabelFromRecordUsing(fn(Model $record) => "{$record->name}" . ($record->brand ? ' - ' . "<b>{$record->brand}</b>" : ''))
+                                                    ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->name}".($record->brand ? ' - '."<b>{$record->brand}</b>" : ''))
                                                     ->allowHtml()
                                                     // ->preload()
                                                     ->searchable(['name', 'brand'])
@@ -252,11 +241,11 @@ class ConsultationForm
                                                             ->where('active', 1)
                                                             ->limit(20)
                                                             ->get()
-                                                            ->map(fn($item) => [
+                                                            ->map(fn ($item) => [
                                                                 'id' => $item->id,
                                                                 'name' => "
                                                                         <div class='flex items-center gap-2'><div>$item->name</div><div class='text-indigo-500'>($item->brand)</div></div>
-                                                                    "
+                                                                    ",
                                                             ])
                                                             ->pluck('name', 'id')
                                                             ->toArray();
@@ -271,6 +260,7 @@ class ConsultationForm
                                                             ->modalHeading('Add Medicine')
                                                             ->mutateDataUsing(function (array $data) {
                                                                 $data['user_id'] = auth()->id();
+
                                                                 return $data;
                                                             });
                                                     })
@@ -279,17 +269,18 @@ class ConsultationForm
                                                     })
                                                     ->editOptionAction(function (Action $action, $state) {
                                                         Medicine::with('consultations')->find($state);
+
                                                         return $action
-                                                            ->visible(fn($state) => Medicine::with('consultations')->find($state)?->consultations->isEmpty());
+                                                            ->visible(fn ($state) => Medicine::with('consultations')->find($state)?->consultations->isEmpty());
                                                     })
                                                     ->columnSpan([
                                                         'lg' => 2,
                                                     ]),
                                                 TextInput::make('remarks')
-                                                    ->datalist(fn() => ConsultationMedicine::distinct('remarks')->pluck('remarks')->toArray())
+                                                    ->datalist(fn () => ConsultationMedicine::distinct('remarks')->pluck('remarks')->toArray())
                                                     ->required()
                                                     ->columnSpan([
-                                                        'lg' => 2
+                                                        'lg' => 2,
                                                     ]),
                                                 TextInput::make('quantity')
                                                     ->required()
@@ -299,16 +290,16 @@ class ConsultationForm
                                                         'lg' => 1,
                                                         // 'xl' => 1
                                                     ]),
-                                            ])
+                                            ]),
                                     ])
                                     ->columnSpan(2)
-                                    ->visible(fn() => request()->user()->doctor()),
+                                    ->visible(fn () => request()->user()->doctor()),
 
                             ]),
                         Section::make()
                             ->columnSpan(1)
                             ->columns([
-                                'default' => 1
+                                'default' => 1,
                             ])
                             ->schema([
                                 PatientField::make('patient_detail')
@@ -317,7 +308,7 @@ class ConsultationForm
                                     ->columnSpanFull(),
                                 PatientField::make('hospital_admission')
                                     ->columnSpanFull(),
-                            ])
+                            ]),
                     ]),
             ]);
     }
@@ -331,7 +322,7 @@ class ConsultationForm
             'orderedList',
             'redo',
             'undo',
-            'attachFiles'
+            'attachFiles',
         ];
     }
 }

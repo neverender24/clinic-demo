@@ -2,14 +2,12 @@
 
 namespace App\Filament\Resources\Consultations\Pages;
 
+use App\Filament\Resources\Consultations\ConsultationResource;
 use Filament\Actions\CreateAction;
-use Filament\Schemas\Components\Tabs\Tab;
-use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Schemas\Components\Tabs\Tab;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Resources\Consultations\ConsultationResource;
-use App\Models\Scopes\ConsultationScope;
 
 class ListConsultations extends ListRecords
 {
@@ -31,17 +29,17 @@ class ListConsultations extends ListRecords
     {
         return [
             'current' => Tab::make()
-                ->modifyQueryUsing(fn(Builder $query) => $query->with(['medicines', 'patient'])->currentConsultations()),
+                ->modifyQueryUsing(fn (Builder $query) => $query->with(['medicines', 'patient'])->currentConsultations()),
             'current_year' => Tab::make()
-                ->label(now()->year." Consultations")
+                ->label(now()->year.' Consultations')
                 ->modifyQueryUsing(fn (Builder $query) => $query->with(['medicines', 'patient'])->whereYear('date', now()->year)),
             'all' => Tab::make()
-                        ->modifyQueryUsing(fn (Builder $query) => $query->with([
-                                'medicines',
-                                'patient'
-                            ])
-                            // ->whereHas('patient', fn($query) => $query->withTrashed())
-                        ),
+                ->modifyQueryUsing(fn (Builder $query) => $query->with([
+                    'medicines',
+                    'patient',
+                ])
+                    // ->whereHas('patient', fn($query) => $query->withTrashed())
+                ),
         ];
     }
 }

@@ -2,21 +2,19 @@
 
 namespace App\Filament\Resources\Consultations;
 
-use Filament\Tables\Table;
-use App\Models\Consultation;
-use Filament\Schemas\Schema;
-use App\Trait\HasStatusAction;
-use Filament\Resources\Resource;
-use App\Filament\Resources\Consultations\Pages\CustomDoc;
-use App\Filament\Resources\Consultations\Pages\EditWithHistory;
-use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
-use App\Filament\Resources\Consultations\Pages\EditConsultation;
-
-use App\Filament\Resources\Consultations\Pages\ListConsultations;
 use App\Filament\Resources\Consultations\Pages\CreateConsultation;
+use App\Filament\Resources\Consultations\Pages\CustomDoc;
+use App\Filament\Resources\Consultations\Pages\EditConsultation;
+use App\Filament\Resources\Consultations\Pages\ListConsultations;
 use App\Filament\Resources\Consultations\Schemas\ConsultationForm;
 use App\Filament\Resources\Consultations\Schemas\ConsultationInfolist;
 use App\Filament\Resources\Consultations\Tables\ConsultationsTable;
+use App\Models\Consultation;
+use App\Trait\HasStatusAction;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Tables\Table;
 
 class ConsultationResource extends Resource implements HasShieldPermissions
 {
@@ -24,12 +22,11 @@ class ConsultationResource extends Resource implements HasShieldPermissions
 
     protected static ?string $model = Consultation::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'healthicons-o-telemedicine';
+    protected static string|\BackedEnum|null $navigationIcon = 'healthicons-o-telemedicine';
 
     protected static bool $shouldRegisterNavigation = true;
-    
 
-    public static function  getPermissionPrefixes(): array
+    public static function getPermissionPrefixes(): array
     {
         return [
             'view',
@@ -50,7 +47,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
             'add_prescription',
             'add_test_results',
             'edit_as_doctor',
-            'add_followup_schedule'
+            'add_followup_schedule',
         ];
     }
 
@@ -64,7 +61,6 @@ class ConsultationResource extends Resource implements HasShieldPermissions
         return ConsultationInfolist::configure($schema);
     }
 
-   
     public static function table(Table $table): Table
     {
         return ConsultationsTable::configure($table);
@@ -86,7 +82,6 @@ class ConsultationResource extends Resource implements HasShieldPermissions
             // 'create' => Pages\CreateConsultation::route('/create'),
             'edit' => EditConsultation::route('/{record}/edit'),
             'custom.doc' => CustomDoc::route('/{record}/custom-doc'),
-            'edit.consultation' => EditWithHistory::route('/{record}/edit-consultation'),
         ];
     }
 
@@ -94,6 +89,6 @@ class ConsultationResource extends Resource implements HasShieldPermissions
 
     public static function getNavigationBadge(): ?string
     {
-        return transform(static::getModel()::query()->where('status', 'Pending')->currentConsultations()->count(), fn($value) => $value > 0 ? $value : null);
+        return transform(static::getModel()::query()->where('status', 'Pending')->currentConsultations()->count(), fn ($value) => $value > 0 ? $value : null);
     }
 }
