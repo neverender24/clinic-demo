@@ -280,7 +280,6 @@ class ConsultationForm
                                                     ->datalist(fn () => ConsultationMedicine::distinct('remarks')->pluck('remarks')->toArray())
                                                      ->extraInputAttributes([
                                                         'onchange' => 'this.focus()',
-                                                        'onkeydown' => 'this.setSelectionRange(this.value.length, this.value.length)',
                                                     ])
                                                     ->required()
                                                     ->columnSpan([
