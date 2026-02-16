@@ -278,6 +278,10 @@ class ConsultationForm
                                                     ]),
                                                 TextInput::make('remarks')
                                                     ->datalist(fn () => ConsultationMedicine::distinct('remarks')->pluck('remarks')->toArray())
+                                                     ->extraInputAttributes([
+                                                        'onchange' => 'this.focus()',
+                                                        'onkeydown' => 'this.setSelectionRange(this.value.length, this.value.length)',
+                                                    ])
                                                     ->required()
                                                     ->columnSpan([
                                                         'lg' => 2,
