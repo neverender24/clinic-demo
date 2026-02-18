@@ -16,6 +16,11 @@ class MedicineTableWidget extends BaseWidget
     // use HasWidgetShield;
     protected static ?int $sort = 10;
     protected int | string | array $columnSpan = 'full';
+
+    public function getColumnSpan(): int | string | array
+    {
+        return ['default' => 'full'];
+    }
     public function table(Table $table): Table
     {
         return $table

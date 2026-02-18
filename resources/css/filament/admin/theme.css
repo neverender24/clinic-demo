@@ -51,3 +51,20 @@
 {
     @apply shadow-lg;
 }
+
+/* Dashboard chart responsiveness */
+.fi-wi-widget {
+    min-width: 0;
+}
+
+.filament-apex-charts-chart-container {
+    min-width: 0;
+}
+
+.apexcharts-canvas {
+    max-width: 100% !important;
+}
+
+.apexcharts-canvas svg {
+    max-width: 100% !important;
+}

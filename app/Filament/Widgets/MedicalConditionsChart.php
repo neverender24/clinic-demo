@@ -18,6 +18,11 @@ class MedicalConditionsChart extends ApexChartWidget
 
     protected int|string|array $columnSpan = 'full';
 
+    public function getColumnSpan(): int | string | array
+    {
+        return ['default' => 'full'];
+    }
+
     protected function getOptions(): array
     {
         $conditions = $this->getMedicalConditionsData();
@@ -89,10 +94,11 @@ class MedicalConditionsChart extends ApexChartWidget
             ],
             'responsive' => [
                 [
-                    'breakpoint' => 480,
+                    'breakpoint' => 1024,
                     'options' => [
                         'legend' => [
                             'position' => 'bottom',
+                            'fontSize' => '10px',
                         ],
                     ],
                 ],

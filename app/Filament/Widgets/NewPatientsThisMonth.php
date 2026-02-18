@@ -13,6 +13,11 @@ class NewPatientsThisMonth extends StatsOverviewWidget
 {
     use HasWidgetStatsColumn;
 
+    public function getColumnSpan(): int | string | array
+    {
+        return ['default' => 'full'];
+    }
+
     protected function getStats(): array
     {
         $startOfMonth = Carbon::now()->startOfMonth();

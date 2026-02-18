@@ -11,8 +11,13 @@ use Illuminate\Support\HtmlString;
 
 class MostPrescribedDrugs extends BaseWidget
 {
-    protected static ?int $sort = 9;
+    protected static ?int $sort = 10;
     protected $medicines;
+
+    public function getColumnSpan(): int | string | array
+    {
+        return ['default' => 'full'];
+    }
 
     protected function getHeading(): ?string
     {

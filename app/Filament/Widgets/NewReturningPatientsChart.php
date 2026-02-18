@@ -48,6 +48,19 @@ class NewReturningPatientsChart extends ApexChartWidget
                     'fontSize' => '13px',
                 ],
             ],
+            'responsive' => [
+                [
+                    'breakpoint' => 640,
+                    'options' => [
+                        'dataLabels' => [
+                            'style' => ['fontSize' => '10px'],
+                        ],
+                        'legend' => [
+                            'fontSize' => '10px',
+                        ],
+                    ],
+                ],
+            ],
         ];
     }
 }

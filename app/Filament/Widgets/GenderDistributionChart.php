@@ -48,6 +48,19 @@ class GenderDistributionChart extends ApexChartWidget
                     'fontSize' => '14px',
                 ],
             ],
+            'responsive' => [
+                [
+                    'breakpoint' => 640,
+                    'options' => [
+                        'dataLabels' => [
+                            'style' => ['fontSize' => '11px'],
+                        ],
+                        'legend' => [
+                            'fontSize' => '11px',
+                        ],
+                    ],
+                ],
+            ],
         ];
     }
 }

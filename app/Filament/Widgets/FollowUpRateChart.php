@@ -14,7 +14,7 @@ class FollowUpRateChart extends ApexChartWidget
     protected static ?string $heading = 'Follow-up Rate (%)';
     protected static ?int $sort = 6;
     protected static ?int $contentHeight = 200; //px
-
+ 
     protected function getOptions(): array
     {
         // 🧠 Step 1: Get consultations that have a follow-up scheduled

@@ -27,6 +27,14 @@ class ConsultationChart extends ApexChartWidget
     protected static ?int $sort = 2;
     protected int | string | array $columnSpan = 6;
 
+    public function getColumnSpan(): int | string | array
+    {
+        return [
+            'default' => 'full',
+            'lg' => 6,
+        ];
+    }
+
     protected static ?string $chartId = 'consultationChart';
 
     protected static ?string $heading = 'Out-Patient Chart';
@@ -131,7 +139,19 @@ class ConsultationChart extends ApexChartWidget
             ],
             'tooltip' => [
                 'shared' => false, // Disable shared tooltips
-                //
+            ],
+            'responsive' => [
+                [
+                    'breakpoint' => 640,
+                    'options' => [
+                        'chart' => ['height' => 250],
+                        'xaxis' => [
+                            'labels' => [
+                                'style' => ['fontSize' => '9px'],
+                            ],
+                        ],
+                    ],
+                ],
             ],
         ];
 
