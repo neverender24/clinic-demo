@@ -5,6 +5,8 @@ namespace App\Filament\Resources\Patients\RelationManagers;
 use Filament\Schemas\Schema;
 use Filament\Actions\CreateAction;
 use App\Filament\Resources\Consultations\ConsultationResource;
+use App\Filament\Resources\Consultations\Schemas\ConsultationInfolist;
+use Filament\Actions\ViewAction;
 use Filament\Forms;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
@@ -21,6 +23,11 @@ class ConsultationsRelationManager extends RelationManager
         return ConsultationResource::form($schema);
     }
 
+    public function infolist(Schema $schema): Schema
+    {
+        return ConsultationInfolist::configure($schema)->columns(1);
+    }
+
     public function table(Table $table): Table
     {
         return $table
@@ -32,6 +39,7 @@ class ConsultationsRelationManager extends RelationManager
             ->headerActions([
                 CreateAction::make(),
             ])
-            ->recordActions(ConsultationResource::table($table)->getActions());
+            ->recordActions(ConsultationResource::table($table)->getRecordActions());
     }
+    
 }
