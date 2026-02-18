@@ -295,7 +295,7 @@ class ConsultationForm
                                                     ]),
                                             ]),
                                     ])
-                                    ->columnSpan(2)
+                                    ->columnSpanFull()
                                     ->visible(fn () => request()->user()->doctor()),
 
                             ]),
