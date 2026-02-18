@@ -12,6 +12,7 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Filters\TrashedFilter;
@@ -88,6 +89,13 @@ class PatientsTable
             ->deferFilters(false)
             ->filters([
                 TrashedFilter::make(),
+                Filter::make('is_dialysis')
+                    ->label('Dialysis Patient')
+                    ->toggle()
+                    ->query(fn (Builder $query): Builder => $query->whereHas(
+                        'consultations',
+                        fn (Builder $query) => $query->where('is_dialysis', true)
+                    )),
                 SelectFilter::make('medical_conditions')
                     ->label('Medical Condition')
                     ->options([
