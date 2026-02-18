@@ -15,6 +15,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Columns\TextColumn;
@@ -130,9 +131,15 @@ class ConsultationsTable
             ])
             ->recordActions([
                 ViewAction::make(),
-                EditAction::make()
-                    ->label(fn () => request()->user()->doctor() ? 'Encounter' : 'Edit')
+                Action::make('encounter')
+                    ->label('Encounter')
+                    ->color('primary')
+                    ->icon(Heroicon::PencilSquare)
+                    ->url(fn ($record) => route('filament.admin.resources.consultations.edit', [filament()->getTenant()->id, $record]))
                     ->disabled(fn ($record) => $record->status->value == 'Done'),
+                // EditAction::make()
+                //     ->label(fn () => request()->user()->doctor() ? 'Encounter' : 'Edit')
+                //     ->disabled(fn ($record) => $record->status->value == 'Done'),
                 ActionGroup::make([
                     Action::make('clinical_orders')
                         ->color('success')
