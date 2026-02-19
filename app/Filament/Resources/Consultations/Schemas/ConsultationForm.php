@@ -288,7 +288,7 @@ class ConsultationForm
                                                     ]),
                                                 TextInput::make('quantity')
                                                     ->required()
-
+                                                    ->numeric()
                                                     ->columnSpan(2)
                                                     ->columnSpan([
                                                         'lg' => 1,

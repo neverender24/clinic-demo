@@ -189,14 +189,26 @@ class EditConsultation extends EditRecord
                                 $options = array_keys($component->getOptions());
                                 $component->state(array_values(array_intersect($lines, $options)));
                             })
-                            ->afterStateUpdated(function ($state, callable $set) {
-                                $set('content', implode("\n", $state ?? []));
+                            ->afterStateUpdated(function ($state, callable $set, Get $get) {
+                                $content = $get('content') ?? '';
+                                $options = [
+                                    'CBC', 'Creatinine', 'Sodium', 'Potassium', 'Calcium',
+                                    'Magnesium', 'Uric acid', 'Urine albumin-creatinine ratio',
+                                    'Urinalysis', 'FBS', 'Lipid profile', 'HBA1C',
+                                    'Anti-nuclear antibodies', 'ABG',
+                                    'Ultrasound of whole abdomen with pre and post void scan',
+                                    'Ultrasound KUB prostate', 'CT stonogram', 'CT-Scan of:',
+                                ];
+                                $lines = array_map('trim', explode("\n", $content));
+                                $preserved = array_filter($lines, fn ($line) => $line !== '' && !in_array($line, $options));
+                                $merged = array_merge($preserved, $state ?? []);
+                                $set('content', implode("\n", $merged));
                             })
                             ->disabled(fn () => ! auth()->user()->doctor()),
                         Textarea::make('content')
                             ->label('Content')
                             ->required()
-                            ->rows(fn (Get $get) => max(3, count($get('lab_tests') ?? [])))
+                            ->rows(fn (Get $get) => max(3, substr_count($get('content') ?? '', "\n") + 1))
                             ->reactive()
                             ->default(fn (Get $get) => 'Diagnosis: '.strip_tags($get('../../diagnosis') ?? ''))
                             ->disabled(fn () => ! auth()->user()->doctor()),
