@@ -152,6 +152,7 @@ class ConsultationForm
                                     ->columnSpanFull()
                                     ->removeUploadedFileButtonPosition('right')
                                     ->openable()
+                                    ->maxSize(5120)
                                     ->imagePreviewHeight('250')
                                     ->rules([
                                         fn (): \Closure => function (string $attribute, $value, \Closure $fail) {
