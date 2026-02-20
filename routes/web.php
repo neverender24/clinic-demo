@@ -33,7 +33,8 @@ Route::get('/pdf/new-tab', function () {
             'id' => request('id'),
             'paper' => request('paper'),
             'type' => request('type'),
-            'custom_doc_id' => request('custom_doc_id')
+            'custom_doc_id' => request('custom_doc_id'),
+            'batch' => request('batch'),
         ]);
     }
     return view('pdf.new-tab', [

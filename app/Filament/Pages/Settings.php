@@ -292,6 +292,7 @@ class Settings extends Page
                                                 'age' => 'Age',
                                                 'address' => 'Address',
                                                 'sex' => 'Sex',
+                                                'consultation_date' => 'Date of Consultation',
                                             ])
                                             ->default(['name', 'date', 'age', 'address', 'sex'])
                                             ->columns(3)
@@ -299,7 +300,7 @@ class Settings extends Page
 
                                         TextEntry::make('merge_tags_hint')
                                             ->label('Available Merge Tags')
-                                            ->default('Use these tags in the content below and they will be replaced with actual patient data when printing: {{name}}, {{age}}, {{sex}}, {{address}}, {{date}}, {{diagnosis}}, {{remarks}}'),
+                                            ->default('Use these tags in the content below and they will be replaced with actual patient data when printing: {{name}}, {{age}}, {{sex}}, {{address}}, {{date}}, {{consultation_date}}, {{diagnosis}}, {{remarks}}'),
 
                                         RichEditor::make('reports.med_cert.content')
                                             ->label('Certificate Content')
@@ -310,6 +311,7 @@ class Settings extends Page
                                                 'sex',
                                                 'address',
                                                 'date',
+                                                'consultation_date',
                                                 'diagnosis',
                                                 'remarks',
                                             ])

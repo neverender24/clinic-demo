@@ -232,7 +232,10 @@ class AFivePaperController extends Controller
         // ---------- CONTENT ----------
         // Split medicines into chunks of 5 per page
         if (! $request->type) {
-            $chunks = $consultation->medicines->chunk(5);
+            $medicines = $request->batch
+                ? $consultation->medicines()->wherePivot('batch', $request->batch)->get()
+                : $consultation->medicines;
+            $chunks = $medicines->chunk(5);
             $pageIndex = 0;
             $totalChunks = count($chunks);
 

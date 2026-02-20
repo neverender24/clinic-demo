@@ -63,7 +63,7 @@ class Consultation extends Model
 
     public function medicines():BelongsToMany
     {
-        return $this->belongsToMany(Medicine::class)->withPivot(['id', 'remarks', 'quantity', 'sort'])->orderByPivot('sort');
+        return $this->belongsToMany(Medicine::class)->withPivot(['id', 'remarks', 'quantity', 'sort', 'batch'])->orderByPivot('sort');
     }
 
     public function consultationMedicines(): HasMany

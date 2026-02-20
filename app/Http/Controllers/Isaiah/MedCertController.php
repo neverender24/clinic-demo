@@ -276,12 +276,17 @@ class MedCertController extends Controller
         $remarks = $consultation->medical_cert_remarks ?? '___________________________';
         $fontSize = $this->fontSize;
 
+        $consultationDate = $consultation->created_at
+            ? Carbon::parse($consultation->created_at)->format('F d, Y')
+            : $dateToday;
+
         $mergeTagValues = [
             'name' => $patientName,
             'age' => (string) $age,
             'sex' => $sex,
             'address' => $address,
             'date' => $dateToday,
+            'consultation_date' => $consultationDate,
             'diagnosis' => $diagnosis,
             'remarks' => $remarks,
         ];
@@ -292,6 +297,7 @@ class MedCertController extends Controller
             '{{ sex }}' => $sex,
             '{{ address }}' => $address,
             '{{ date }}' => $dateToday,
+            '{{ consultation_date }}' => $consultationDate,
         ];
 
         $content = '';
@@ -368,6 +374,9 @@ class MedCertController extends Controller
         }
         if (in_array('sex', $fields)) {
             $rightParts[] = '<b>Sex:</b> '.$mergeTags['{{ sex }}'];
+        }
+        if (in_array('consultation_date', $fields)) {
+            $rightParts[] = '<b>Date of Consultation:</b> '.$mergeTags['{{ consultation_date }}'];
         }
 
         $html = '<table width="100%" style="font-size:'.$fontSize.'pt; border-collapse:collapse;">';

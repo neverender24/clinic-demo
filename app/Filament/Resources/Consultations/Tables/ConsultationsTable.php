@@ -2,7 +2,10 @@
 
 namespace App\Filament\Resources\Consultations\Tables;
 
+use App\Filament\Resources\Medicines\MedicineResource;
 use App\Models\ClinicSetting;
+use App\Models\ConsultationMedicine;
+use App\Models\Medicine;
 use App\Models\Scopes\ConsultationScope;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
@@ -11,11 +14,14 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Repeater\TableColumn;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\Summarizers\Sum;
@@ -24,6 +30,7 @@ use Filament\Tables\Enums\PaginationMode;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Throwable;
 
@@ -298,12 +305,124 @@ class ConsultationsTable
                             $livewire->js("window.open('".route('pdf.a5.medcert', ['id' => $record->id, 'type' => 'Medical Certificate', 'paper' => $paper])."', '_blank')");
                         }),
                     Action::make('prescription')
+                        ->label('Print Prescription')
                         ->color('success')
                         ->icon('heroicon-o-printer')
-                        ->url(fn ($record) => route('pdf.new-tab', [
-                            'id' => $record->id,
-                            'paper' => 'A5',
-                        ]), shouldOpenInNewTab: true),
+                        ->schema([
+                            Select::make('batch')
+                                ->label('Select Prescription Batch')
+                                ->options(function ($record) {
+                                    $batches = $record->medicines->pluck('pivot.batch')->unique()->sort()->values();
+                                    if ($batches->count() <= 1) {
+                                        return ['' => 'All Medicines'];
+                                    }
+                                    $options = ['' => 'All Medicines'];
+                                    foreach ($batches as $b) {
+                                        $options[$b] = "Prescription {$b}";
+                                    }
+                                    return $options;
+                                })
+                                ->default(''),
+                        ])
+                        ->action(function ($data, $record, $livewire) {
+                            $params = [
+                                'id' => $record->id,
+                                'paper' => 'A5',
+                            ];
+                            if (!empty($data['batch'])) {
+                                $params['batch'] = $data['batch'];
+                            }
+                            $livewire->js("window.open('".route('pdf.new-tab', $params)."', '_blank')");
+                        }),
+                    Action::make('create_prescription')
+                        ->label('Create New Prescription')
+                        ->color('primary')
+                        ->icon('heroicon-o-plus-circle')
+                        ->schema([
+                            Repeater::make('medicines')
+                                ->label('Medicines')
+                                ->schema([
+                                    Select::make('medicine_id')
+                                        ->label('Medicine')
+                                        ->searchable()
+                                        ->getSearchResultsUsing(function (string $search) {
+                                            return Medicine::where(function ($q) use ($search) {
+                                                $q->where('brand', 'like', "%{$search}%")
+                                                    ->orWhere('name', 'like', "%{$search}%");
+                                            })
+                                                ->where('active', 1)
+                                                ->limit(20)
+                                                ->get()
+                                                ->map(fn ($item) => [
+                                                    'id' => $item->id,
+                                                    'name' => "<div class='flex items-center gap-2'><div>$item->name</div><div class='text-indigo-500'>($item->brand)</div></div>",
+                                                ])
+                                                ->pluck('name', 'id')
+                                                ->toArray();
+                                        })
+                                        ->getOptionLabelUsing(function ($value) {
+                                            $med = Medicine::find($value);
+                                            return $med ? "{$med->name}" . ($med->brand ? " - <b>{$med->brand}</b>" : '') : '';
+                                        })
+                                        ->allowHtml()
+                                        ->required()
+                                        ->createOptionForm(function (Schema $schema) {
+                                            return MedicineResource::form($schema)->extraAttributes(['class' => 'w-full']);
+                                        })
+                                        ->createOptionAction(function (Action $action) {
+                                            return $action
+                                                ->modalHeading('Add Medicine')
+                                                ->mutateDataUsing(function (array $data) {
+                                                    $data['user_id'] = auth()->id();
+                                                    return $data;
+                                                });
+                                        }),
+                                    TextInput::make('remarks')
+                                        ->datalist(fn () => ConsultationMedicine::distinct('remarks')->pluck('remarks')->toArray())
+                                        ->required(),
+                                    TextInput::make('quantity')
+                                        ->required()
+                                        ->numeric(),
+                                ])
+                                ->table([
+                                    TableColumn::make('Generic'),
+                                    TableColumn::make('Instruction'),
+                                    TableColumn::make('Qty')
+                                        ->width('100px'),
+                                ])
+                                ->defaultItems(1)
+                                ->reorderable()
+                                ->required(),
+                        ])
+                        ->modalHeading('Create New Prescription')
+                        ->modalWidth('7xl')
+                        ->closeModalByClickingAway(false)
+                        ->extraModalWindowAttributes(['style' => 'min-height: 500px; overflow: visible;'])
+                        ->modalSubmitActionLabel('Save & Print')
+                        ->action(function ($data, $record, $livewire) {
+                            $nextBatch = ($record->medicines()->max('consultation_medicine.batch') ?? 0) + 1;
+
+                            foreach ($data['medicines'] as $sort => $med) {
+                                $record->medicines()->attach($med['medicine_id'], [
+                                    'remarks' => $med['remarks'],
+                                    'quantity' => $med['quantity'],
+                                    'sort' => $sort,
+                                    'batch' => $nextBatch,
+                                ]);
+                            }
+
+                            Notification::make()
+                                ->success()
+                                ->title('Prescription saved')
+                                ->body("Batch #{$nextBatch} created with " . count($data['medicines']) . " medicine(s).")
+                                ->send();
+
+                            $livewire->js("window.open('".route('pdf.new-tab', [
+                                'id' => $record->id,
+                                'paper' => 'A5',
+                                'batch' => $nextBatch,
+                            ])."', '_blank')");
+                        }),
                     DeleteAction::make()
                         ->disabled(fn ($record) => $record->status->value == 'Done'),
                 ]),

@@ -82,10 +82,41 @@ class EditConsultation extends EditRecord
         return Action::make('prescription')
             ->color('success')
             ->icon(Heroicon::OutlinedPrinter)
-            ->url(fn ($record) => route('pdf.new-tab', [
-                'id' => $record->id,
-                'paper' => 'A5',
-            ]), shouldOpenInNewTab: true);
+            ->schema([
+                Select::make('batch')
+                    ->label('Select Prescription Batch')
+                    ->options(function ($record) {
+                        $batches = $record->medicines->pluck('pivot.batch')->unique()->sort()->values();
+                        if ($batches->count() <= 1) {
+                            return ['' => 'All Medicines'];
+                        }
+                        $options = ['' => 'All Medicines'];
+                        foreach ($batches as $b) {
+                            $options[$b] = "Prescription {$b}";
+                        }
+                        return $options;
+                    })
+                    ->default(''),
+            ])
+            ->modalSubmitActionLabel('Print')
+            ->action(function ($data, $record, $livewire) {
+                $params = [
+                    'id' => $record->id,
+                    'paper' => 'A5',
+                ];
+                if (!empty($data['batch'])) {
+                    $params['batch'] = $data['batch'];
+                }
+                $url = route('pdf.new-tab', $params);
+                $livewire->js("
+                    const a = document.createElement('a');
+                    a.href = '{$url}';
+                    a.target = '_blank';
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                ");
+            });
     }
 
     protected function printMedcertAction(): Action

@@ -31,7 +31,7 @@
 document.addEventListener('DOMContentLoaded', async function() {
 
     const paper = "{{ $paper ?? 'letter' }}"; // 'A5' or 'letter'
-    const pdfUrl = "{!! route('tcpdf.print.a5', [$id, 'paper' => 'A5', 'type' => $type, 'custom_doc_id' => $custom_doc_id]) !!}";
+    const pdfUrl = "{!! route('tcpdf.print.a5', [$id, 'paper' => 'A5', 'type' => $type, 'custom_doc_id' => $custom_doc_id, 'batch' => $batch ?? null]) !!}";
     const messageEl = document.getElementById('message');
 
     // PDF.js worker

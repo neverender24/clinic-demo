@@ -39,10 +39,16 @@ trait HasHistoryAction
 
     public function copyPrescription($record)
     {
-        // dd($record);   
-        $previous_meds = $record->where('active', 1)->mapWithKeys(fn($item) => ['record-'.$item['pivot']['id'] => collect($item['pivot'])->except('consultation_id')])->toArray();
+        // Determine next batch number from existing medicines
+        $existingBatches = collect($this->data['medicines'] ?? [])
+            ->pluck('batch')
+            ->filter()
+            ->max() ?? 0;
 
-        // dd($previous_meds);
+        $nextBatch = $existingBatches + 1;
+
+        $previous_meds = $record->where('active', 1)->mapWithKeys(fn($item) => ['record-'.$item['pivot']['id'] => collect($item['pivot'])->except('consultation_id')->merge(['batch' => $nextBatch])])->toArray();
+
         $new_meds = array_merge($this->data['medicines'], $previous_meds);
 
         $this->data['medicines'] = $new_meds;

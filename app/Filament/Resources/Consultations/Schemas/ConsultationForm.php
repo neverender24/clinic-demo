@@ -13,6 +13,7 @@ use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Repeater\TableColumn;
 use Filament\Forms\Components\Select;
@@ -294,6 +295,8 @@ class ConsultationForm
                                                         'lg' => 1,
                                                         // 'xl' => 1
                                                     ]),
+                                                Hidden::make('batch')
+                                                    ->default(1),
                                             ]),
                                     ])
                                     ->columnSpanFull()
