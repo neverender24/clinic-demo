@@ -81,6 +81,14 @@ class ClinicSetting extends Model
                 'show_occupation'         => true,
             ],
             'reports'  => [
+                'med_cert' => [
+                    'paper_size' => 'letter',
+                    'with_header' => true,
+                    'header_fields' => ['name', 'date', 'age', 'address', 'sex'],
+                    'content' => null,
+                ],
+            ],
+            'clinical_orders' => [
                 'lab_tests' => [
                     ['name' => 'CBC'],
                     ['name' => 'Creatinine'],
@@ -233,13 +241,24 @@ class ClinicSetting extends Model
      */
     public static function getLabTests(): array
     {
-        $tests = static::getForCurrentClinic()['reports']['lab_tests'] ?? [];
+        $tests = static::getForCurrentClinic()['clinical_orders']['lab_tests'] ?? [];
 
         return collect($tests)
             ->pluck('name')
             ->filter()
             ->mapWithKeys(fn (string $name): array => [$name => $name])
             ->toArray();
+    }
+
+    // -------------------------------------------------------------------------
+    // Medical Certificate helpers
+    // -------------------------------------------------------------------------
+
+    public static function getMedCertSettings(): array
+    {
+        $settings = static::getForCurrentClinic();
+
+        return $settings['reports']['med_cert'] ?? static::defaults()['reports']['med_cert'];
     }
 
     // -------------------------------------------------------------------------

@@ -86,6 +86,7 @@ class ConsultationResource extends Resource implements HasShieldPermissions
     }
 
     // additional methods
+    
 
     public static function getNavigationBadge(): ?string
     {

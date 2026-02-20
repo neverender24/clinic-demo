@@ -15,6 +15,9 @@ use Filament\Forms\Components\Repeater\TableColumn;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\CheckboxList;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 
 class Settings extends Page
@@ -230,14 +233,14 @@ class Settings extends Page
                                     ]),
                             ]),
 
-                        Tabs\Tab::make('Reports')
+                        Tabs\Tab::make('Clinical Orders')
                             ->icon('heroicon-o-document-text')
                             ->schema([
                                 Section::make('Laboratory Request — Common Tests')
                                     ->description('Manage the list of tests shown as checkboxes in the Laboratory Request form. Drag to reorder.')
                                     ->icon('heroicon-o-beaker')
                                     ->schema([
-                                        Repeater::make('reports.lab_tests')
+                                        Repeater::make('clinical_orders.lab_tests')
                                             ->table([
                                                 TableColumn::make('Test name'),
                                             ])
@@ -252,6 +255,65 @@ class Settings extends Page
                                                     ->placeholder('e.g. CBC'),
                                             ])
                                             ->itemLabel(fn (array $state): string => $state['name'] ?? 'New test'),
+                                    ]),
+                            ]),
+
+                        Tabs\Tab::make('Reports')
+                            ->icon('heroicon-o-document-chart-bar')
+                            ->schema([
+                                Section::make('Medical Certificate Template')
+                                    ->description('Design the content and layout of the medical certificate. Use merge tags like {{name}}, {{age}}, {{sex}}, {{address}}, {{date}}, {{diagnosis}} to insert patient data.')
+                                    ->icon('heroicon-o-document-text')
+                                    ->schema([
+                                        Select::make('reports.med_cert.paper_size')
+                                            ->label('Paper Size')
+                                            ->options([
+                                                'A5' => 'A5',
+                                                'A4' => 'A4',
+                                                'legal' => 'Legal',
+                                                'letter' => 'Letter',
+                                            ])
+                                            ->default('letter')
+                                            ->selectablePlaceholder(false),
+
+                                        Toggle::make('reports.med_cert.with_header')
+                                            ->label('Include Patient Details Header')
+                                            ->helperText('When enabled, patient details (Name, Date, Age, Address, Sex) will be printed above the content.')
+                                            ->inline(false)
+                                            ->default(true)
+                                            ->live(),
+
+                                        CheckboxList::make('reports.med_cert.header_fields')
+                                            ->label('Header Fields')
+                                            ->helperText('Select which patient details to include in the header.')
+                                            ->options([
+                                                'name' => 'Name',
+                                                'date' => 'Date',
+                                                'age' => 'Age',
+                                                'address' => 'Address',
+                                                'sex' => 'Sex',
+                                            ])
+                                            ->default(['name', 'date', 'age', 'address', 'sex'])
+                                            ->columns(3)
+                                            ->visible(fn ($get) => $get('reports.med_cert.with_header')),
+
+                                        TextEntry::make('merge_tags_hint')
+                                            ->label('Available Merge Tags')
+                                            ->default('Use these tags in the content below and they will be replaced with actual patient data when printing: {{name}}, {{age}}, {{sex}}, {{address}}, {{date}}, {{diagnosis}}, {{remarks}}'),
+
+                                        RichEditor::make('reports.med_cert.content')
+                                            ->label('Certificate Content')
+                                            ->helperText('Design the body of the medical certificate. Use merge tags to insert dynamic patient data.')
+                                            ->mergeTags([
+                                                'name',
+                                                'age',
+                                                'sex',
+                                                'address',
+                                                'date',
+                                                'diagnosis',
+                                                'remarks',
+                                            ])
+                                            ->columnSpanFull(),
                                     ]),
                             ]),
                     ]),
