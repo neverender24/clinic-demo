@@ -5,13 +5,15 @@ namespace App\Filament\Widgets;
 use Throwable;
 use App\Models\Medicine;
 use App\Models\Scopes\ConsultationScope;
+use App\Trait\Dashboard\HasDashboardSettings;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Support\HtmlString;
 
 class MostPrescribedDrugs extends BaseWidget
 {
-    protected static ?int $sort = 10;
+    use HasDashboardSettings;
+
     protected $medicines;
 
     public function getColumnSpan(): int | string | array

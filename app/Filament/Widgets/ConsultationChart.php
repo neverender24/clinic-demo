@@ -8,6 +8,7 @@ use Filament\Support\RawJs;
 use App\Models\Consultation;
 use Filament\Schemas\Schema;
 use App\Trait\HasPeriodFilter;
+use App\Trait\Dashboard\HasDashboardSettings;
 use Filament\Facades\Filament;
 use App\Models\Scopes\TenantScope;
 use Filament\Forms\Components\Select;
@@ -19,12 +20,11 @@ use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
 
 class ConsultationChart extends ApexChartWidget
 {
-
+    use HasDashboardSettings;
     use HasPeriodFilter, HasFiltersSchema;
 
     // protected static ?string $pollingInterval = '';
 
-    protected static ?int $sort = 2;
     protected int | string | array $columnSpan = 6;
 
     public function getColumnSpan(): int | string | array

@@ -5,6 +5,7 @@ namespace App\Filament\Widgets;
 use Filament\Tables;
 use App\Models\Medicine;
 use Filament\Tables\Table;
+use App\Trait\Dashboard\HasDashboardSettings;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Widgets\TableWidget as BaseWidget;
 use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
@@ -12,9 +13,9 @@ use Dom\Text;
 
 class MedicineTableWidget extends BaseWidget
 {
+    use HasDashboardSettings;
 
     // use HasWidgetShield;
-    protected static ?int $sort = 10;
     protected int | string | array $columnSpan = 'full';
 
     public function getColumnSpan(): int | string | array

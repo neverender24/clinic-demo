@@ -6,11 +6,13 @@ use Carbon\Carbon;
 use App\Models\Patient;
 use App\Models\Consultation;
 use App\Trait\Dashboard\HasWidgetStatsColumn;
+use App\Trait\Dashboard\HasDashboardSettings;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class NewPatientsThisMonth extends StatsOverviewWidget
 {
+    use HasDashboardSettings;
     use HasWidgetStatsColumn;
 
     public function getColumnSpan(): int | string | array

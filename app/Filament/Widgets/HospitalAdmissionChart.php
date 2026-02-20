@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Filament\Support\RawJs;
 use Filament\Schemas\Schema;
 use App\Trait\HasPeriodFilter;
+use App\Trait\Dashboard\HasDashboardSettings;
 use Filament\Facades\Filament;
 use App\Models\HospitalAdmission;
 use Filament\Forms\Components\Select;
@@ -14,6 +15,7 @@ use Filament\Widgets\ChartWidget\Concerns\HasFiltersSchema;
 
 class HospitalAdmissionChart extends ApexChartWidget
 {
+    use HasDashboardSettings;
     use HasPeriodFilter, HasFiltersSchema;
     /**
      * Chart Id
@@ -22,10 +24,9 @@ class HospitalAdmissionChart extends ApexChartWidget
      */
     protected static ?string $chartId = 'hospitalAdmissionChart';
 
-    
+
     // protected static ?string $pollingInterval = '';
-    
-    protected static ?int $sort = 3;
+
     protected int | string | array $columnSpan = 6;
 
     public function getColumnSpan(): int | string | array

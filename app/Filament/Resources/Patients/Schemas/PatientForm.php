@@ -11,6 +11,7 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
+use App\Models\ClinicSetting;
 use Filament\Forms\Components\DatePicker;
 
 class PatientForm
@@ -72,31 +73,7 @@ class PatientForm
                         TagsInput::make('allergies')->separator(','),
                         TagsInput::make('surgeries')->separator(','),
                         TagsInput::make('medical_conditions')
-                            ->suggestions([
-                                'Hypertension',
-                                'Diabetes Mellitus',
-                                'Diabetes Mellitus Type 1',
-                                'Diabetes Mellitus Type 2',
-                                'Stroke',
-                                'Heart Disease',
-                                'Coronary Artery Disease',
-                                'Chronic Kidney Disease',
-                                'Asthma',
-                                'COPD',
-                                'Thyroid Disease',
-                                'Hyperthyroidism',
-                                'Hypothyroidism',
-                                'Cancer',
-                                'Arthritis',
-                                'Epilepsy',
-                                'Hepatitis',
-                                'HIV/AIDS',
-                                'Tuberculosis',
-                                'Anemia',
-                                'Gout',
-                                'Psoriasis',
-                                'Lupus',
-                            ]),
+                            ->suggestions(fn () => ClinicSetting::getMedicalConditionSuggestions()),
                         TagsInput::make('medications'), 
                         Select::make('smoker_type')
                                 ->options([

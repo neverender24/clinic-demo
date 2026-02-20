@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Consultations\Tables;
 
+use App\Models\ClinicSetting;
 use App\Models\Scopes\ConsultationScope;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
@@ -162,26 +163,7 @@ class ConsultationsTable
                                 ->schema([
                                     CheckboxList::make('lab_tests')
                                         ->label('Common Tests')
-                                        ->options([
-                                            'CBC' => 'CBC',
-                                            'Creatinine' => 'Creatinine',
-                                            'Sodium' => 'Sodium',
-                                            'Potassium' => 'Potassium',
-                                            'Calcium' => 'Calcium',
-                                            'Magnesium' => 'Magnesium',
-                                            'Uric acid' => 'Uric acid',
-                                            'Urine albumin-creatinine ratio' => 'Urine albumin-creatinine ratio',
-                                            'Urinalysis' => 'Urinalysis',
-                                            'FBS' => 'FBS',
-                                            'Lipid profile' => 'Lipid profile',
-                                            'HBA1C' => 'HBA1C',
-                                            'Anti-nuclear antibodies' => 'Anti-nuclear antibodies',
-                                            'ABG' => 'ABG',
-                                            'Ultrasound of whole abdomen with pre and post void scan' => 'Ultrasound of whole abdomen with pre and post void scan',
-                                            'Ultrasound KUB prostate' => 'Ultrasound KUB prostate',
-                                            'CT stonogram' => 'CT stonogram',
-                                            'CT-Scan of:' => 'CT-Scan of:',
-                                        ])
+                                        ->options(fn () => ClinicSetting::getLabTests())
                                         ->columns(3)
                                         ->dehydrated(false)
                                         ->reactive()
@@ -193,16 +175,9 @@ class ConsultationsTable
                                         })
                                         ->afterStateUpdated(function ($state, callable $set, Get $get) {
                                             $content = $get('content') ?? '';
-                                            $options = [
-                                                'CBC', 'Creatinine', 'Sodium', 'Potassium', 'Calcium',
-                                                'Magnesium', 'Uric acid', 'Urine albumin-creatinine ratio',
-                                                'Urinalysis', 'FBS', 'Lipid profile', 'HBA1C',
-                                                'Anti-nuclear antibodies', 'ABG',
-                                                'Ultrasound of whole abdomen with pre and post void scan',
-                                                'Ultrasound KUB prostate', 'CT stonogram', 'CT-Scan of:',
-                                            ];
+                                            $options = array_keys(ClinicSetting::getLabTests());
                                             $lines = array_map('trim', explode("\n", $content));
-                                            $preserved = array_filter($lines, fn ($line) => $line !== '' && !in_array($line, $options));
+                                            $preserved = array_filter($lines, fn ($line) => $line !== '' && ! in_array($line, $options));
                                             $merged = array_merge($preserved, $state ?? []);
                                             $set('content', implode("\n", $merged));
                                         })

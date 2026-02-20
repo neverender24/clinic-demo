@@ -4,15 +4,16 @@ namespace App\Filament\Widgets;
 
 use App\Models\Patient;
 use Illuminate\Support\Collection;
+use App\Trait\Dashboard\HasDashboardSettings;
 use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
 
 class MedicalConditionsChart extends ApexChartWidget
 {
+    use HasDashboardSettings;
+
     protected static ?string $chartId = 'medicalConditionsChart';
 
     protected static ?string $heading = 'Medical Conditions Distribution';
-
-    protected static ?int $sort = 9;
 
     protected static ?int $contentHeight = 200;
 
