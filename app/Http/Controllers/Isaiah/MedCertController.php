@@ -9,6 +9,8 @@ use App\Models\Scopes\TenantScope;
 use Illuminate\Support\Number;
 use TCPDF;
 use App\Models\Consultation;
+use App\Models\ClinicSetting;
+use Filament\Forms\Components\RichEditor\RichContentRenderer;
 
 class MedCertController extends Controller
 {
@@ -51,14 +53,14 @@ class MedCertController extends Controller
         }
 
         return '
-        <table width="100%" style="font-size: '.$fontSize.'; line-height:1.2;">
+        <table width="100%" style="font-size:'.$fontSize.'pt; line-height:1.2;">
             <tr>
-                <td width="50%" style="vertical-align:bottom; text-align:left;">
+                <td width="55%" style="vertical-align:bottom; text-align:left;">
                     ' . ($isPrescription ? '<b>Next Follow-up Schedule:</b> ________________________' : '') . '
                 </td>
-                <td width="15%"></td>
+                <td width="10%"></td>
                 <td width="35%" style="text-align:left; vertical-align:bottom;">
-                    <b>Attending Physician:</b><br><br><br>
+                    <b>Attending Physician:</b><br><br>
                     <b>'.$doctorName.'</b><br>
                     License No.: '.$licenseNo.'<br>
                     PTR No.: '.$ptrNo.'<br>
@@ -77,20 +79,23 @@ class MedCertController extends Controller
             ->with(['patient', 'medicines', 'doctor'])
             ->findOrFail($id);
 
-        $paper = strtolower($request->paper ?? 'letter');
-        $this->image_header =  public_path('images/prescription_header.png');
-        // $this->image_header =  public_path('images/prescription_header.png');
+        $medCertSettings = ClinicSetting::getMedCertSettings($consultation->clinic_id);
+        $paper = strtolower($medCertSettings['paper_size'] ?? $request->paper ?? 'letter');
+        $this->fontSize = match ($paper) {
+            'a5'    => 8,
+            'a4'    => 11,
+            'legal' => 12,
+            default => 11, // letter
+        };
+        $this->image_header = public_path('images/prescription_header.png');
 
         $pdf = $this->setupPdf($paper);
         $headerHtml = $this->getHeader();
         $footerHtml = $this->getFooter(isPrescription: !$request->type, consultation: $consultation);
 
-        // ------------------------------ CONTENT ------------------------------
-        $this->generateMedicalCertificateContent($consultation);
+        $this->generateMedicalCertificateContent($consultation, $medCertSettings);
 
-        // $content = $this->content;
-
-         $this->addCustomPage($pdf, $this->content, $headerHtml, $footerHtml, true, true, $paper);
+        $this->addCustomPage($pdf, $this->content, $headerHtml, $footerHtml, true, true, $paper);
 
         $pdf->Output('prescription.pdf', 'I');
     }
@@ -98,6 +103,16 @@ class MedCertController extends Controller
     /** ------------------------------
      *  PAGE SETUP SEPARATION
      *  ------------------------------ */
+    protected function getFooterHeight(string $paper): int
+    {
+        return match ($paper) {
+            'a5'     => 45,
+            'legal'  => 52,
+            'a4'     => 55,
+            default  => 55, // letter
+        };
+    }
+
     protected function setupPdf(string $paper): TCPDF
     {
         $pdf = new TCPDF('P', 'mm', strtoupper($paper), true, 'UTF-8', false);
@@ -107,12 +122,18 @@ class MedCertController extends Controller
         $pdf->setPrintHeader(false);
         $pdf->setPrintFooter(false);
 
-        if ($paper === 'a5') {
-            $pdf->SetMargins(10, 10, 10);
-            $pdf->SetAutoPageBreak(true, 5);
-        }
+        $margins = match ($paper) {
+            'a5'     => ['left' => 10, 'top' => 10, 'right' => 10],
+            'a4'     => ['left' => 15, 'top' => 15, 'right' => 15],
+            'legal'  => ['left' => 10, 'top' => 15, 'right' => 10],
+            default  => ['left' => 15, 'top' => 15, 'right' => 15], // letter
+        };
 
+        $pdf->SetMargins($margins['left'], $margins['top'], $margins['right']);
+        // Use a small bottom margin for content pages; footer space is handled manually on the last page
+        $pdf->SetAutoPageBreak(true, 10);
         $pdf->SetFont('helvetica', '', $this->fontSize);
+
         return $pdf;
     }
 
@@ -157,17 +178,24 @@ class MedCertController extends Controller
         // --- CONTENT ---
         $pdf->writeHTML($content, true, false, true, false, '');
 
-        // --- FOOTER ---
+        // --- FOOTER (last page only, fixed at bottom) ---
         if ($isLastPage) {
+            $footerHeight = $this->getFooterHeight($paper);
             $pageHeight = $pdf->getPageHeight();
-            $footerHeight = $paper === 'a5' ? 40 : 53;
             $footerY = $pageHeight - $footerHeight;
 
-            if ($pdf->GetY() > $footerY - 5) {
+            // Go to the last page
+            $pdf->setPage($pdf->getNumPages());
+            $currentY = $pdf->GetY();
+
+            // If content overlaps the footer zone, add a new page
+            if ($currentY > $footerY) {
                 $pdf->AddPage();
             }
 
-            $pdf->SetY(-$footerHeight);
+            // Place footer at fixed bottom position
+            $pdf->SetAutoPageBreak(false);
+            $pdf->SetY($footerY);
             $pdf->writeHTMLCell(0, 0, '', '', $footerHtml, 0, 1, 0, true, 'R', true);
         }
     }
@@ -237,45 +265,122 @@ class MedCertController extends Controller
         $this->content = $content;
     }
 
-    protected function generateMedicalCertificateContent($consultation): void
+    protected function generateMedicalCertificateContent($consultation, array $medCertSettings = []): void
     {
         $patientName = $consultation->patient->full_name;
         $age = Carbon::parse($consultation->patient->birthday)->age;
         $sex = $consultation->patient->sex == 'M' ? 'Male' : 'Female';
         $address = $consultation->patient->address;
-        $chiefComplaint = $consultation->chief_complaint ?? '';
         $diagnosis = $consultation->diagnosis ?? 'Diagnosis';
         $dateToday = now()->format('F d, Y');
-
-        // $restStart = Carbon::parse($consultation->estimated_date)->format('F d, Y');
-        // $restEnd = Carbon::parse($consultation->estimated_date_to)->addDays(3)->format('F d, Y');
-        // $recovery = Number::spell($consultation->approximate_days);
-        // $returnDate = Carbon::parse($consultation->created_at)->addDays(4)->format('F d, Y');
         $remarks = $consultation->medical_cert_remarks ?? '___________________________';
-
         $fontSize = $this->fontSize;
-       $content = '
-    <div style="font-size:'.$fontSize.'pt; line-height:1.6; font-family: Arial, sans-serif;">
-            <div style="text-align:center; font-size: 14pt; font-weight:bold">
-                <b>Medical Certificate</b>
-            </div>
-        <div style="text-align: right; margin-bottom: 20px;">
-            Date: <u>'.$dateToday.'</u>
-        </div>
 
-       
+        $mergeTagValues = [
+            'name' => $patientName,
+            'age' => (string) $age,
+            'sex' => $sex,
+            'address' => $address,
+            'date' => $dateToday,
+            'diagnosis' => $diagnosis,
+            'remarks' => $remarks,
+        ];
 
-        <div style="margin-top: 30px; text-align: justify;">To whom it may concern:
-            <br><br>This is to certify that <u>'.$patientName.'</u>, <u>'.$age.'</u> years old, <u>'.$sex.'</u>, 
-            currently residing at <u>'.$address.'</u>, sought medical consult last
-            <u>'.$consultation->date->format('F j, Y').'</u> for medical checkup and assessment:
-            <br><u>'.$diagnosis.'</u><br>
-            <br><b>Remarks:</b> '.$remarks.'
-            <br><br>
-        </div>
-    </div>';
+        $headerMergeTags = [
+            '{{ name }}' => $patientName,
+            '{{ age }}' => $age,
+            '{{ sex }}' => $sex,
+            '{{ address }}' => $address,
+            '{{ date }}' => $dateToday,
+        ];
 
+        $content = '';
+
+        // Patient details header
+        $withHeader = $medCertSettings['with_header'] ?? true;
+        $headerFields = $medCertSettings['header_fields'] ?? ['name', 'date', 'age', 'address', 'sex'];
+
+        if ($withHeader && !empty($headerFields)) {
+            $content .= $this->buildPatientHeader($headerFields, $headerMergeTags, $fontSize);
+        }
+
+        // Body content from settings template
+        $templateContent = $medCertSettings['content'] ?? null;
+
+        if ($templateContent) {
+            if (is_array($templateContent)) {
+                // JSON content from RichEditor with .json()
+                // First try RichContentRenderer for proper mergeTag nodes
+                $body = RichContentRenderer::make($templateContent)
+                    ->mergeTags($mergeTagValues)
+                    ->toUnsafeHtml();
+            } else {
+                $body = $templateContent;
+            }
+
+            // Also replace any text-based {{ tag }} patterns in the rendered HTML
+            $htmlMergeTags = [];
+            foreach ($mergeTagValues as $key => $value) {
+                $htmlMergeTags['{{ '.$key.' }}'] = $value;
+            }
+            $body = str_replace(array_keys($htmlMergeTags), array_values($htmlMergeTags), $body);
+
+            $content .= '<div style="font-size:'.$fontSize.'pt; line-height:1.6; font-family: Arial, sans-serif;">'.$body.'</div>';
+        } else {
+            // Fallback to original hardcoded content
+            $content .= '
+            <div style="font-size:'.$fontSize.'pt; line-height:1.6; font-family: Arial, sans-serif;">
+                <div style="text-align:center; font-size: 14pt; font-weight:bold">
+                    <b>Medical Certificate</b>
+                </div>
+                <div style="text-align: right; margin-bottom: 20px;">
+                    Date: <u>'.$dateToday.'</u>
+                </div>
+                <div style="margin-top: 30px; text-align: justify;">To whom it may concern:
+                    <br><br>This is to certify that <u>'.$patientName.'</u>, <u>'.$age.'</u> years old, <u>'.$sex.'</u>,
+                    currently residing at <u>'.$address.'</u>, sought medical consult for medical checkup and assessment:
+                    <br><u>'.$diagnosis.'</u><br>
+                    <br><b>Remarks:</b> '.$remarks.'
+                    <br><br>
+                </div>
+            </div>';
+        }
 
         $this->content = $content;
+    }
+
+    protected function buildPatientHeader(array $fields, array $mergeTags, int $fontSize): string
+    {
+        $leftParts = [];
+        $rightParts = [];
+
+        if (in_array('name', $fields)) {
+            $leftParts[] = '<b>Name:</b> '.$mergeTags['{{ name }}'];
+        }
+        if (in_array('date', $fields)) {
+            $rightParts[] = '<b>Date:</b> '.$mergeTags['{{ date }}'];
+        }
+        if (in_array('address', $fields)) {
+            $leftParts[] = '<b>Address:</b> '.$mergeTags['{{ address }}'];
+        }
+        if (in_array('age', $fields)) {
+            $rightParts[] = '<b>Age:</b> '.$mergeTags['{{ age }}'];
+        }
+        if (in_array('sex', $fields)) {
+            $rightParts[] = '<b>Sex:</b> '.$mergeTags['{{ sex }}'];
+        }
+
+        $html = '<table width="100%" style="font-size:'.$fontSize.'pt; border-collapse:collapse;">';
+
+        $maxRows = max(count($leftParts), count($rightParts));
+        for ($i = 0; $i < $maxRows; $i++) {
+            $left = $leftParts[$i] ?? '';
+            $right = $rightParts[$i] ?? '';
+            $html .= '<tr><td>'.$left.'</td><td style="text-align:right;">'.$right.'</td></tr>';
+        }
+
+        $html .= '</table><br>';
+
+        return $html;
     }
 }

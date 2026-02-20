@@ -293,7 +293,10 @@ class ConsultationsTable
                                     ->body($th->getMessage());
                             }
                         })
-                        ->after(fn ($livewire, $record) => $livewire->js("window.open('".route('pdf.a5.medcert', ['id' => $record->id, 'type' => 'Medical Certificate', 'paper' => 'A5'])."', '_blank')")),
+                        ->after(function ($livewire, $record) {
+                            $paper = \App\Models\ClinicSetting::getMedCertSettings()['paper_size'] ?? 'letter';
+                            $livewire->js("window.open('".route('pdf.a5.medcert', ['id' => $record->id, 'type' => 'Medical Certificate', 'paper' => $paper])."', '_blank')");
+                        }),
                     Action::make('prescription')
                         ->color('success')
                         ->icon('heroicon-o-printer')

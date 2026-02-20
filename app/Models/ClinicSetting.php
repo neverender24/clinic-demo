@@ -254,11 +254,26 @@ class ClinicSetting extends Model
     // Medical Certificate helpers
     // -------------------------------------------------------------------------
 
-    public static function getMedCertSettings(): array
+    public static function getMedCertSettings(?int $clinicId = null): array
     {
-        $settings = static::getForCurrentClinic();
+        if ($clinicId) {
+            $settings = static::getForClinic($clinicId);
+        } else {
+            $settings = static::getForCurrentClinic();
+        }
 
         return $settings['reports']['med_cert'] ?? static::defaults()['reports']['med_cert'];
+    }
+
+    public static function getForClinic(int $clinicId): array
+    {
+        $setting = static::where('clinic_id', $clinicId)->first();
+
+        if (! $setting || empty($setting->data)) {
+            return static::defaults();
+        }
+
+        return static::mergeSettings(static::defaults(), $setting->data);
     }
 
     // -------------------------------------------------------------------------

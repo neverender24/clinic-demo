@@ -313,6 +313,7 @@ class Settings extends Page
                                                 'diagnosis',
                                                 'remarks',
                                             ])
+                                            ->json()
                                             ->columnSpanFull(),
                                     ]),
                             ]),

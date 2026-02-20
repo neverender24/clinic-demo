@@ -30,20 +30,29 @@
 <script>
 document.addEventListener('DOMContentLoaded', async function() {
 
-    const paper = "{{ $paper ?? 'letter' }}"; // 'A5' or 'letter'
-    const pdfUrl = "{!! route('tcpdf.print.a5-medcert', [$id, 'paper' => $paper ?? 'A5', 'type' => $type]) !!}";
+    const paper = "{{ $paper ?? 'letter' }}";
+    const pdfUrl = "{!! route('tcpdf.print.a5-medcert', [$id, 'type' => $type]) !!}";
     const messageEl = document.getElementById('message');
 
     // PDF.js worker
     pdfjsLib.GlobalWorkerOptions.workerSrc = "{{ asset('js/pdf/pdf.worker.min.js') }}";
 
     // Set dynamic print CSS
+    // Map paper sizes for @page CSS
+    const paperSizeMap = {
+        'a5': 'A5',
+        'a4': 'A4',
+        'legal': 'legal',
+        'letter': 'letter',
+    };
+    const cssSize = paperSizeMap[paper.toLowerCase()] || 'letter';
+
     const style = document.createElement('style');
     style.innerHTML = `
         @media print {
             @page {
-                size: A5;
-                margin: 10px; /* top/side margin */
+                size: ${cssSize};
+                margin: 10px;
             }
             body, html {
                 margin: 0;
@@ -51,9 +60,15 @@ document.addEventListener('DOMContentLoaded', async function() {
             }
             canvas {
                 display: block;
-                width: 98%;
+                width: 100%;
                 height: auto;
+                max-height: 100vh;
+                object-fit: contain;
                 page-break-after: always;
+                page-break-inside: avoid;
+            }
+            canvas:last-child {
+                page-break-after: avoid;
             }
         }
     `;
@@ -67,7 +82,8 @@ document.addEventListener('DOMContentLoaded', async function() {
         document.body.appendChild(container);
 
         // Adjust scale for paper type
-        const scale = paper === 'letter' ? 1.2 : 1.5;
+        const scaleMap = { 'a5': 1.5, 'a4': 1.2, 'legal': 1.0, 'letter': 1.2 };
+        const scale = scaleMap[paper.toLowerCase()] || 1.2;
 
         for (let i = 1; i <= pdf.numPages; i++) {
             const page = await pdf.getPage(i);

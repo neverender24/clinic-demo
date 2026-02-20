@@ -126,7 +126,8 @@ class EditConsultation extends EditRecord
                 }
             })
             ->after(function ($livewire, $record) {
-                $url = route('pdf.a5.medcert', ['id' => $record->id, 'type' => 'Medical Certificate', 'paper' => 'A5']);
+                $paper = \App\Models\ClinicSetting::getMedCertSettings()['paper_size'] ?? 'letter';
+                $url = route('pdf.a5.medcert', ['id' => $record->id, 'type' => 'Medical Certificate', 'paper' => $paper]);
                 $livewire->js("
                                 const a = document.createElement('a');
                                 a.href = '{$url}';
