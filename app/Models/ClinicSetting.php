@@ -82,6 +82,7 @@ class ClinicSetting extends Model
             ],
             'reports'  => [
                 'med_cert' => [
+                    'header_image' => null,
                     'paper_size' => 'letter',
                     'with_header' => true,
                     'header_fields' => ['name', 'date', 'age', 'address', 'sex'],

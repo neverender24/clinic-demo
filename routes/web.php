@@ -57,6 +57,7 @@ Route::post('/save-header-image', function (Request $request) {
     $data = $request->input('image');
     $template = $request->input('template');
     $type = $request->input('type');
+    $clinicId = $request->input('clinic_id');
 
     if (!$data || !str_starts_with($data, 'data:image')) {
         return response()->json(['status' => 'error', 'message' => 'Invalid image data']);
@@ -66,7 +67,8 @@ Route::post('/save-header-image', function (Request $request) {
     $image = str_replace(' ', '+', $image);
     $imageData = base64_decode($image);
 
-    $path = public_path("images/{$type}_header.png");
+    $folder = $clinicId ? "images/clinic_{$clinicId}" : "images";
+    $path = public_path("{$folder}/{$type}_header.png");
     if (!file_exists(dirname($path))) {
         mkdir(dirname($path), 0777, true);
     }
@@ -79,9 +81,9 @@ Route::post('/save-header-image', function (Request $request) {
     $height = $templateData['height'] ?? null;
 
     DB::table('headers')->updateOrInsert(
-        ['type' => $type],
+        ['type' => $type, 'clinic_id' => $clinicId],
         [
-            'file_path' => "images/{$type}_header.png",
+            'file_path' => "{$folder}/{$type}_header.png",
             'template_json' => $template,
             'width' => $width,
             'height' => $height,
@@ -89,11 +91,15 @@ Route::post('/save-header-image', function (Request $request) {
         ]
     );
 
-    return response()->json(['status' => 'success', 'path' => "images/{$type}_header.png"]);
+    return response()->json(['status' => 'success', 'path' => "{$folder}/{$type}_header.png"]);
 });
 
 Route::get('/get-header-template/{type}', function ($type) {
-    $header = DB::table('headers')->where('type', $type)->first();
+    $clinicId = request('clinic_id');
+    $header = DB::table('headers')
+        ->where('type', $type)
+        ->where('clinic_id', $clinicId)
+        ->first();
 
     if (!$header) {
         return response()->json(['template_json' => null, 'file_path' => null]);

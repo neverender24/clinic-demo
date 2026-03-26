@@ -87,7 +87,26 @@ class MedCertController extends Controller
             'legal' => 12,
             default => 11, // letter
         };
-        $this->image_header = public_path('images/prescription_header.png');
+        $clinicId = $consultation->clinic_id;
+
+        // Check for medcert-specific header from settings (uploaded via FileUpload)
+        $headerImage = $medCertSettings['header_image'] ?? null;
+        if ($headerImage) {
+            $this->image_header = storage_path('app/public/' . $headerImage);
+        } else {
+            // Fall back to header maker's certificate header, then prescription header
+            $certHeader = public_path("images/clinic_{$clinicId}/certificate_header.png");
+            $prescriptionHeader = public_path("images/clinic_{$clinicId}/prescription_header.png");
+            $defaultHeader = public_path('images/prescription_header.png');
+
+            if (file_exists($certHeader)) {
+                $this->image_header = $certHeader;
+            } elseif (file_exists($prescriptionHeader)) {
+                $this->image_header = $prescriptionHeader;
+            } else {
+                $this->image_header = $defaultHeader;
+            }
+        }
 
         $pdf = $this->setupPdf($paper);
         $headerHtml = $this->getHeader();
@@ -273,12 +292,27 @@ class MedCertController extends Controller
         $address = $consultation->patient->address;
         $diagnosis = $consultation->diagnosis ?? 'Diagnosis';
         $dateToday = now()->format('F d, Y');
-        $remarks = $consultation->medical_cert_remarks ?? '___________________________';
+        $remarks = $consultation->medical_cert_remarks
+            ? strip_tags($consultation->medical_cert_remarks)
+            : '___________________________';
         $fontSize = $this->fontSize;
 
         $consultationDate = $consultation->created_at
             ? Carbon::parse($consultation->created_at)->format('F d, Y')
             : $dateToday;
+
+        $estimatedDate = $consultation->estimated_date
+            ? Carbon::parse($consultation->estimated_date)->format('F d, Y')
+            : '___________________________';
+        $estimatedDateTo = $consultation->estimated_date_to
+            ? Carbon::parse($consultation->estimated_date_to)->format('F d, Y')
+            : '___________________________';
+        $approximateDays = $consultation->approximate_days
+            ? Number::spell($consultation->approximate_days) . '(' . $consultation->approximate_days . ')'
+            : '___________________________';
+        $returnDate = $consultation->return_date
+            ? Carbon::parse($consultation->return_date)->format('F d, Y')
+            : '___________________________';
 
         $mergeTagValues = [
             'name' => $patientName,
@@ -289,6 +323,11 @@ class MedCertController extends Controller
             'consultation_date' => $consultationDate,
             'diagnosis' => $diagnosis,
             'remarks' => $remarks,
+            'estimated_date' => $estimatedDate,
+            'estimated_date_to' => $estimatedDateTo,
+            'approximate_days' => (string) $approximateDays,
+            'return_date' => $returnDate,
+            'chief_complaint' => $consultation->chief_complaint ?? '___________________________',
         ];
 
         $headerMergeTags = [

@@ -16,9 +16,14 @@ use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Repeater\TableColumn;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Grid;
 use Filament\Notifications\Notification;
+use Illuminate\Support\Facades\DB;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
@@ -268,33 +273,42 @@ class ConsultationsTable
                         ->color('success')
                         ->icon('heroicon-o-printer')
                         // ->visible(fn($record) => !filled($record->approximate_days) && !filled($record->estimated_date) && !filled($record->medical_cert_remarks))
-                        ->schema([
-                            Section::make()
+                        ->form([
+                            Fieldset::make('Date of rest')
                                 ->schema([
-                                    Textarea::make('medical_cert_remarks')
-                                        ->label('Remarks'),
+                                    DatePicker::make('estimated_date')
+                                        ->label('From'),
+                                    DatePicker::make('estimated_date_to')
+                                        ->label('To')
+                                        ->validationAttribute('End of date to rest'),
                                 ]),
+                            Grid::make(2)
+                                ->schema([
+                                    TextInput::make('approximate_days')
+                                        ->label('Days of rest and recovery')
+                                        ->numeric(),
+                                    DatePicker::make('return_date')
+                                        ->afterOrEqual('estimated_date_to')
+                                        ->validationMessages([
+                                            'after_or_equal' => 'The value must be after the \'Date to\' in the Date of Rest.'
+                                        ]),
+                                ]),
+                            RichEditor::make('medical_cert_remarks')
+                                ->label('Remarks'),
                         ])
-                        ->fillForm(function ($record) {
-                            $data = $record;
-
-                            return [
-                                'medical_cert_remarks' => $data->medical_cert_remarks,
-                            ];
-                        })
+                        ->fillForm(fn($record) => $record->toArray())
                         ->modalSubmitActionLabel('Print')
                         ->action(function ($data, $record) {
-                            // dd($data);
-
+                            DB::beginTransaction();
                             try {
-
                                 $record->update($data);
+                                DB::commit();
                                 Notification::make()
                                     ->success()
                                     ->title('Success')
                                     ->body('The changes have been saved');
-
-                            } catch (Throwable $th) {
+                            } catch (\Throwable $th) {
+                                DB::rollBack();
                                 Notification::make()
                                     ->title('Error')
                                     ->body($th->getMessage());

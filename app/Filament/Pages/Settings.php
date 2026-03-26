@@ -15,6 +15,7 @@ use Filament\Forms\Components\Repeater\TableColumn;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Infolists\Components\TextEntry;
@@ -265,6 +266,15 @@ class Settings extends Page
                                     ->description('Design the content and layout of the medical certificate. Use merge tags like {{name}}, {{age}}, {{sex}}, {{address}}, {{date}}, {{diagnosis}} to insert patient data.')
                                     ->icon('heroicon-o-document-text')
                                     ->schema([
+                                        FileUpload::make('reports.med_cert.header_image')
+                                            ->label('Header Image')
+                                            ->helperText('Upload a header image for the medical certificate.')
+                                            ->image()
+                                            ->disk('public')
+                                            ->directory('medcert-headers')
+                                            ->visibility('public')
+                                            ->columnSpanFull(),
+
                                         Select::make('reports.med_cert.paper_size')
                                             ->label('Paper Size')
                                             ->options([
@@ -300,7 +310,7 @@ class Settings extends Page
 
                                         TextEntry::make('merge_tags_hint')
                                             ->label('Available Merge Tags')
-                                            ->default('Use these tags in the content below and they will be replaced with actual patient data when printing: {{name}}, {{age}}, {{sex}}, {{address}}, {{date}}, {{consultation_date}}, {{diagnosis}}, {{remarks}}'),
+                                            ->default('Use these tags in the content below and they will be replaced with actual patient data when printing: {{name}}, {{age}}, {{sex}}, {{address}}, {{date}}, {{consultation_date}}, {{diagnosis}}, {{remarks}}, {{estimated_date}}, {{estimated_date_to}}, {{approximate_days}}, {{return_date}}, {{chief_complaint}}'),
 
                                         RichEditor::make('reports.med_cert.content')
                                             ->label('Certificate Content')
@@ -314,6 +324,11 @@ class Settings extends Page
                                                 'consultation_date',
                                                 'diagnosis',
                                                 'remarks',
+                                                'estimated_date',
+                                                'estimated_date_to',
+                                                'approximate_days',
+                                                'return_date',
+                                                'chief_complaint',
                                             ])
                                             ->json()
                                             ->columnSpanFull(),

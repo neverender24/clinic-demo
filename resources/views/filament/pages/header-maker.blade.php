@@ -1083,7 +1083,8 @@ function canvasBuilder() {
       const type = this.$('templateType').value;
       this.toast('Loading template...');
       
-      fetch(`/get-header-template/${type}`)
+      const clinicId = @json(\Filament\Facades\Filament::getTenant()?->id);
+      fetch(`/get-header-template/${type}?clinic_id=${clinicId}`)
         .then(r => {
           if (!r.ok) throw new Error('Network response was not ok');
           return r.json();
@@ -1165,10 +1166,11 @@ function canvasBuilder() {
       fetch('/save-header-image', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '' },
-        body: JSON.stringify({ 
-          image: this.canvas.toDataURL({ format: 'png', multiplier: 2 }), 
-          template: JSON.stringify(canvasData), 
-          type 
+        body: JSON.stringify({
+          image: this.canvas.toDataURL({ format: 'png', multiplier: 2 }),
+          template: JSON.stringify(canvasData),
+          type,
+          clinic_id: @json(\Filament\Facades\Filament::getTenant()?->id)
         })
       }).then(r => r.json()).then(d => this.toast(d.status === 'success' ? 'Saved!' : 'Save failed')).catch(() => this.toast('Save failed'));
     },
