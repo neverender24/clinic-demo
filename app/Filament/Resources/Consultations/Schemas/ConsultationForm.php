@@ -59,7 +59,8 @@ class ConsultationForm
                                     ->preload(),
                                 \Filament\Forms\Components\Toggle::make('is_dialysis')
                                     ->label('Dialysis')
-                                    ->inline(false),
+                                    ->inline(false)
+                                    ->visible(fn () => \App\Models\ClinicSetting::getConsultationSetting('show_dialysis')),
                                 Select::make('patient_id')
                                     ->label('Patient')
                                     ->relationship('patient', 'full_name')
