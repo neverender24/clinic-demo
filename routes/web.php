@@ -1,12 +1,14 @@
 <?php
 
-use Illuminate\Http\Request;
 use App\Filament\Pages\Auth\Login;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Route;
-use Spatie\Activitylog\Models\Activity;
 use App\Http\Controllers\ConsultationController;
 use App\Http\Controllers\Isaiah\MedCertController;
+use Filament\Notifications\Notification;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Process;
+use Illuminate\Support\Facades\Route;
+use Spatie\Activitylog\Models\Activity;
 
 Route::get('/', function () {
     return redirect('/admin');
@@ -110,3 +112,90 @@ Route::get('/get-header-template/{type}', function ($type) {
         'file_path' => $header->file_path,
     ]);
 });
+
+
+Route::middleware(['auth'])->get('/admin/backup/run', function () {
+
+    $date = now()->format('Y-m-d_H-i-s');
+
+    $driveLetter = strtolower(config('app.backup_drive', 'e'));
+    $backupDir = "/mnt/$driveLetter/laravel-backups";
+    $tmpDir = storage_path("app/tmp_backup_$date");
+
+    $dbName = config('database.connections.mysql.database');
+    $dbUser = config('database.connections.mysql.username');
+    $dbPass = config('database.connections.mysql.password');
+
+    $dbDump = "$tmpDir/db_$dbName.sql";
+    $storageZip = "$tmpDir/storage.zip";
+    $finalZip = "$backupDir/laravel_backup_$date.zip";
+
+    // Ensure directories exist
+    if (!is_dir($tmpDir)) {
+        mkdir($tmpDir, 0777, true);
+    }
+    if (!is_dir($backupDir)) {
+        mkdir($backupDir, 0777, true);
+    }
+
+    /* ===============================
+       1️⃣ DATABASE BACKUP
+    =============================== */
+    $mysqldumpCmd = [
+        '/usr/bin/mysqldump',
+        "-u{$dbUser}",
+    ];
+    if (!empty($dbPass)) {
+        $mysqldumpCmd[] = "-p{$dbPass}";
+    }
+    $mysqldumpCmd[] = $dbName;
+
+    $dbResult = Process::run($mysqldumpCmd);
+
+    if ($dbResult->failed()) {
+        return Notification::make()
+            ->title('Database backup failed')
+            ->danger()
+            ->body($dbResult->errorOutput())
+            ->send();
+    }
+
+    file_put_contents($dbDump, $dbResult->output());
+
+    /* ===============================
+       2️⃣ STORAGE ZIP
+    =============================== */
+    $storagePath = storage_path('app/public');
+    Process::run([
+        'zip',
+        '-r',
+        $storageZip,
+        $storagePath,
+    ]);
+
+    /* ===============================
+       3️⃣ FINAL ZIP
+    =============================== */
+    $zip = new ZipArchive();
+    $zip->open($finalZip, ZipArchive::CREATE);
+
+    $zip->addFile($dbDump, 'database.sql');
+    $zip->addFile($storageZip, 'storage.zip');
+
+    $zip->close();
+
+    /* ===============================
+       4️⃣ CLEANUP
+    =============================== */
+    unlink($dbDump);
+    unlink($storageZip);
+    rmdir($tmpDir);
+
+    Notification::make()
+        ->title('Backup completed')
+        ->success()
+        ->body("Saved to " . strtoupper($driveLetter) . ":\\laravel-backups")
+        ->send();
+
+    return redirect()->back();
+})->name('backup.run');

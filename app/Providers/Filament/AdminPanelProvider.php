@@ -129,6 +129,14 @@ class AdminPanelProvider extends PanelProvider
             )
             // ->spa()
             ->maxContentWidth('full')
-            ->viteTheme('resources/css/filament/admin/theme.css');
+            ->viteTheme('resources/css/filament/admin/theme.css')
+            ->navigationItems([
+                NavigationItem::make('Backup')
+                    ->url(fn () => route('backup.run'))
+                    ->icon('heroicon-o-circle-stack')
+                    ->group('Administration')
+                    ->visible(fn() => auth()->user()->doctor())
+                    ->sort(3),
+            ]);
     }
 }
