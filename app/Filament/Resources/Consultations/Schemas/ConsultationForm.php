@@ -17,6 +17,7 @@ use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Repeater\TableColumn;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Flex;
@@ -92,14 +93,12 @@ class ConsultationForm
                                     })
                                     ->live()
                                     ->required(),
-                                Textarea::make('chief_complaint')
-                                    ->label('Subjective')
-                                    ->columnSpanFull()
-                                    ->autosize()
-                                    ->required()
-                                    ->hint(fn (): View => view('forms.components.vital-signs-hint'))
-                                    ->afterStateHydrated(fn (Set $set, $state) => $set('chief_complaint', strip_tags($state)))
-                                    ->visible(fn () => request()->user()->can('addChiefComplaint', Consultation::class)),
+                                ...self::soapField('chief_complaint', 'label_subjective', 'Subjective', 'editor_subjective',
+                                    fn ($field) => $field->hint(fn (): View => view('forms.components.vital-signs-hint'))
+                                                         ->afterStateHydrated(fn (Set $set, $state) => $set('chief_complaint', strip_tags($state))),
+                                    fn ($field) => $field->hint(fn (): View => view('forms.components.vital-signs-hint')),
+                                    fn () => request()->user()->can('addChiefComplaint', Consultation::class),
+                                ),
                                 // Textarea::make('vital_signs')
                                 //     ->columnSpan(fn() => [
                                 //         'sm' => request()->user()->can('addVitalSign', Consultation::class) ? 1 : 2
@@ -119,34 +118,21 @@ class ConsultationForm
                                 //     })
                                 //     ->visible(fn() => request()->user()->can('addVitalSign', Consultation::class)),
 
-                                Textarea::make('test_results')
-                                    // ->columnSpan(fn() => [
-                                    //     'sm' => request()->user()->can('addVitalSign', Consultation::class) ? 1 : 2
-                                    // ])
-                                    ->columnSpanFull()
-                                    ->label('Objective')
-                                    ->autosize()
-                                    // ->dehydrateStateUsing(fn($state) => strip_tags($state))
-                                    ->afterStateHydrated(fn (Set $set, $state) => $set('test_results', strip_tags($state)))
-                                    ->required()
-                                    ->visible(fn () => request()->user()->can('addTestResult', Consultation::class)),
-                                Textarea::make('diagnosis')
-                                    ->label('Assessment')
-                                    ->columnSpanFull()
-                                    ->autosize()
-                                    ->required()
-                                    // ->toolbarButtons(self::onlyAllowedToolbar())
-                                    // ->hint(fn($operation): View | null => $operation == 'create' ? null : view('forms.components.draw'))
-                                    ->visible(fn () => request()->user()->doctor()),
-                                Textarea::make('management')
-                                    ->label('Plan')
-                                    ->columnSpanFull()
-                                    ->autosize()
-                                    ->required()
-                                    ->visible(fn () => request()->user()->doctor())
-                                    ->columnSpan([
-                                        'xl' => 'full',
-                                    ]),
+                                ...self::soapField('test_results', 'label_objective', 'Objective', 'editor_objective',
+                                    fn ($field) => $field->afterStateHydrated(fn (Set $set, $state) => $set('test_results', strip_tags($state))),
+                                    fn ($field) => $field,
+                                    fn () => request()->user()->can('addTestResult', Consultation::class),
+                                ),
+                                ...self::soapField('diagnosis', 'label_assessment', 'Assessment', 'editor_assessment',
+                                    fn ($field) => $field,
+                                    fn ($field) => $field,
+                                    fn () => request()->user()->doctor(),
+                                ),
+                                ...self::soapField('management', 'label_plan', 'Plan', 'editor_plan',
+                                    fn ($field) => $field,
+                                    fn ($field) => $field,
+                                    fn () => request()->user()->doctor(),
+                                ),
                                 FileUpload::make('attachments')
                                     ->multiple()
                                     ->panelLayout('grid')
@@ -319,6 +305,44 @@ class ConsultationForm
                             ]),
                     ]),
             ]);
+    }
+
+    /**
+     * Returns an array with exactly one SOAP field — either a Textarea or RichEditor —
+     * based on the editor setting. This avoids having two components with the same name
+     * in the schema simultaneously, which causes [object Object] JS conflicts.
+     */
+    protected static function soapField(
+        string $fieldName,
+        string $labelKey,
+        string $labelDefault,
+        string $editorKey,
+        \Closure $textareaDecorator,
+        \Closure $richEditorDecorator,
+        \Closure $visibleWhen,
+    ): array {
+        $label = fn () => \App\Models\ClinicSetting::getConsultationValue($labelKey, $labelDefault);
+        $isRich = \App\Models\ClinicSetting::getConsultationValue($editorKey, 'textarea') === 'richeditor';
+
+        if ($isRich) {
+            $field = RichEditor::make($fieldName)
+                ->label($label)
+                ->columnSpanFull()
+                ->required()
+                ->toolbarButtons(['bold', 'underline', 'italic'])
+                ->visible($visibleWhen);
+
+            return [$richEditorDecorator($field)];
+        }
+
+        $field = Textarea::make($fieldName)
+            ->label($label)
+            ->columnSpanFull()
+            ->autosize()
+            ->required()
+            ->visible($visibleWhen);
+
+        return [$textareaDecorator($field)];
     }
 
     protected static function onlyAllowedToolbar(): array

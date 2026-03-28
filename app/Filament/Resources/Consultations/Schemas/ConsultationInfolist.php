@@ -42,14 +42,14 @@ class ConsultationInfolist
                                         Section::make()
                                             ->schema([
                                                 TextEntry::make('chief_complaint')
-                                                    ->label('Subjective')
+                                                    ->label(fn () => \App\Models\ClinicSetting::getConsultationValue('label_subjective', 'Subjective'))
                                                     ->formatStateUsing(fn ($state) => static::renderToHtml($state))
                                                     ->html(),
                                             ]),
                                         Section::make()
                                             ->schema([
                                                 TextEntry::make('test_results')
-                                                    ->label('Objective')
+                                                    ->label(fn () => \App\Models\ClinicSetting::getConsultationValue('label_objective', 'Objective'))
                                                     ->formatStateUsing(fn ($state) => static::renderToHtml($state))
                                                     ->html(),
                                             ])
@@ -57,7 +57,7 @@ class ConsultationInfolist
                                         Section::make()
                                             ->schema([
                                                 TextEntry::make('diagnosis')
-                                                    ->label('Assessment')
+                                                    ->label(fn () => \App\Models\ClinicSetting::getConsultationValue('label_assessment', 'Assessment'))
                                                     ->formatStateUsing(fn ($state) => static::renderToHtml($state))
                                                     ->html(),
                                             ])
@@ -65,7 +65,7 @@ class ConsultationInfolist
                                         Section::make()
                                             ->schema([
                                                 TextEntry::make('management')
-                                                    ->label('Plan')
+                                                    ->label(fn () => \App\Models\ClinicSetting::getConsultationValue('label_plan', 'Plan'))
                                                     ->formatStateUsing(fn ($state) => static::renderToHtml($state))
                                                     ->html(),
                                             ])
