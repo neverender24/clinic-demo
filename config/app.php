@@ -123,4 +123,6 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'backup_drive' => env('BACKUP_DRIVE', 'd'),
+
 ];
