@@ -145,14 +145,20 @@ class AFivePaperController extends Controller
 
         // Use clinic's header image for prescriptions, or medcert header for Medical Certificate
         if ($request->type === 'Medical Certificate') {
-            $this->image_header = public_path('storage/' . $consultation->clinic->medcert_header_image);
+            $tenantCertHeader = public_path("images/clinic_{$consultation->clinic_id}/certificate_header.png");
+            if (file_exists($tenantCertHeader)) {
+                $this->image_header = $tenantCertHeader;
+            } elseif ($consultation->clinic->medcert_header_image) {
+                $this->image_header = public_path('storage/' . $consultation->clinic->medcert_header_image);
+            } else {
+                $this->image_header = public_path('images/certificate_header.png');
+            }
         } else {
-            // Use clinic's prescription header image (dynamic height based on actual image)
-            $clinicFolder = public_path("images/clinic_{$consultation->clinic_id}/prescription_header.png");
-            if ($consultation->clinic->header_image) {
+            $tenantPrescriptionHeader = public_path("images/clinic_{$consultation->clinic_id}/prescription_header.png");
+            if (file_exists($tenantPrescriptionHeader)) {
+                $this->image_header = $tenantPrescriptionHeader;
+            } elseif ($consultation->clinic->header_image) {
                 $this->image_header = public_path('storage/' . $consultation->clinic->header_image);
-            } elseif (file_exists($clinicFolder)) {
-                $this->image_header = $clinicFolder;
             } else {
                 $this->image_header = public_path('images/prescription_header.png');
             }
