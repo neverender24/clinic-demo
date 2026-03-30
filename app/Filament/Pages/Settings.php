@@ -269,10 +269,11 @@ class Settings extends Page
                                         FileUpload::make('reports.med_cert.header_image')
                                             ->label('Header Image')
                                             ->helperText('Upload a header image for the medical certificate.')
-                                            ->image()
+                                            ->acceptedFileTypes(['image/png', 'image/jpeg', 'image/jpg'])
                                             ->disk('public')
                                             ->directory('medcert-headers')
                                             ->visibility('public')
+                                            ->fetchFileInformation(false)
                                             ->columnSpanFull(),
 
                                         TextInput::make('reports.med_cert.header_margin_top')
