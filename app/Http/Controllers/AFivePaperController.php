@@ -221,7 +221,7 @@ class AFivePaperController extends Controller
                 list($origW, $origH) = getimagesize($this->image_header);
                 $aspectRatio = $origH / $origW;
                 $imgHeight = $imgWidth * $aspectRatio;
-                $headerSpacing = $isMedcert ? 5 : -2;
+                $headerSpacing = $isMedcert ? 5 : 5;
                 $pdf->SetY($imgY + $imgHeight + $headerSpacing);
             } else {
                 $pdf->SetY(20);
