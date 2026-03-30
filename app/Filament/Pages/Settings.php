@@ -275,6 +275,33 @@ class Settings extends Page
                                             ->visibility('public')
                                             ->columnSpanFull(),
 
+                                        TextInput::make('reports.med_cert.header_margin_top')
+                                            ->label('Header Top Margin (mm)')
+                                            ->helperText('Distance from the top of the page to the header image.')
+                                            ->numeric()
+                                            ->default(5)
+                                            ->minValue(0)
+                                            ->maxValue(50)
+                                            ->suffix('mm'),
+
+                                        TextInput::make('reports.med_cert.header_width_percent')
+                                            ->label('Header Width (%)')
+                                            ->helperText('Width of the header image relative to the page width.')
+                                            ->numeric()
+                                            ->default(100)
+                                            ->minValue(10)
+                                            ->maxValue(100)
+                                            ->suffix('%'),
+
+                                        TextInput::make('reports.med_cert.header_spacing')
+                                            ->label('Header Bottom Spacing (mm)')
+                                            ->helperText('Gap between the header image and the content below.')
+                                            ->numeric()
+                                            ->default(3)
+                                            ->minValue(0)
+                                            ->maxValue(30)
+                                            ->suffix('mm'),
+
                                         Select::make('reports.med_cert.paper_size')
                                             ->label('Paper Size')
                                             ->options([

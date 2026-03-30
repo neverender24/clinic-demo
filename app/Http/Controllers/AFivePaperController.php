@@ -385,7 +385,8 @@ class AFivePaperController extends Controller
         $final_content = $this->patientinfo($consultation);
         // Convert newlines to <br> tags for plain text content
         $content = nl2br(htmlspecialchars($content));
-        $final_content .= '<div style="font-size:' . $this->fontSize . 'pt; line-height:1.4;"><br><br>' . $content . '</div>';
+        $final_content .= '<style>p { margin: 0; line-height: 1.3; }</style>';
+        $final_content .= '<div style="font-size:' . $this->fontSize . 'pt; line-height:1.3;"><br>' . $content . '</div>';
         $this->content = $final_content;
     }
 

@@ -87,6 +87,9 @@ class ClinicSetting extends Model
                     'with_header' => true,
                     'header_fields' => ['name', 'date', 'age', 'address', 'sex'],
                     'content' => null,
+                    'header_margin_top' => 5,
+                    'header_width_percent' => 100,
+                    'header_spacing' => 3,
                 ],
             ],
             'clinical_orders' => [

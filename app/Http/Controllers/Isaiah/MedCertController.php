@@ -17,6 +17,7 @@ class MedCertController extends Controller
     public $image_header = '';
     protected $content = '';
     protected int $fontSize;
+    protected array $medCertSettings = [];
 
     public function __construct()
     {
@@ -80,6 +81,7 @@ class MedCertController extends Controller
             ->findOrFail($id);
 
         $medCertSettings = ClinicSetting::getMedCertSettings($consultation->clinic_id);
+        $this->medCertSettings = $medCertSettings;
         $paper = strtolower($medCertSettings['paper_size'] ?? $request->paper ?? 'letter');
         $this->fontSize = match ($paper) {
             'a5'    => 8,
@@ -170,13 +172,18 @@ class MedCertController extends Controller
             $pageWidth = $pdf->getPageWidth();
             $usableWidth = $pageWidth - $leftMargin - $margins['right'];
 
-            $imgY = 5;
+            $imgY        = (float) ($this->medCertSettings['header_margin_top'] ?? 5);
+            $widthPct    = (float) ($this->medCertSettings['header_width_percent'] ?? 100);
+            $spacing     = (float) ($this->medCertSettings['header_spacing'] ?? 3);
+
+            $imgWidth = $usableWidth * ($widthPct / 100);
+            $imgX     = $leftMargin + ($usableWidth - $imgWidth) / 2;
 
             $pdf->Image(
                 $this->image_header,
-                $leftMargin,
+                $imgX,
                 $imgY,
-                $usableWidth,
+                $imgWidth,
                 0,
                 '',
                 '',
@@ -188,8 +195,8 @@ class MedCertController extends Controller
             // Dynamically calculate image height and position cursor below it
             list($origW, $origH) = getimagesize($this->image_header);
             $aspectRatio = $origH / $origW;
-            $imgHeight = $usableWidth * $aspectRatio;
-            $pdf->SetY($imgY + $imgHeight - 2);
+            $imgHeight   = $imgWidth * $aspectRatio;
+            $pdf->SetY($imgY + $imgHeight + $spacing);
         } else {
             $pdf->SetY(20);
         }
@@ -370,11 +377,12 @@ class MedCertController extends Controller
             }
             $body = str_replace(array_keys($htmlMergeTags), array_values($htmlMergeTags), $body);
 
-            $content .= '<div style="font-size:'.$fontSize.'pt; line-height:1.6; font-family: Arial, sans-serif;">'.$body.'</div>';
+            $content .= '<style>p { margin:0; line-height:1.3; }</style>';
+            $content .= '<div style="font-size:'.$fontSize.'pt; line-height:1.3; font-family: Arial, sans-serif;">'.$body.'</div>';
         } else {
             // Fallback to original hardcoded content
             $content .= '
-            <div style="font-size:'.$fontSize.'pt; line-height:1.6; font-family: Arial, sans-serif;">
+            <div style="font-size:'.$fontSize.'pt; line-height:1.3; font-family: Arial, sans-serif;">
                 <div style="text-align:center; font-size: 14pt; font-weight:bold">
                     <b>Medical Certificate</b>
                 </div>

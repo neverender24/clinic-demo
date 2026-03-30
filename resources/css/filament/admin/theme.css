@@ -43,6 +43,14 @@
     margin-bottom: 0;
 }
 
+.fi-fo-rich-editor .ProseMirror {
+    line-height: 1.3;
+}
+
+.fi-fo-rich-editor .ProseMirror p {
+    line-height: 1.3;
+}
+
 .fi-fo-component-ctn {
     @apply gap-y-1;
 }
