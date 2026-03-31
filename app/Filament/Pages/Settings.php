@@ -67,6 +67,16 @@ class Settings extends Page
                                             ->helperText('Show the Consultation Fee field')
                                             ->inline(false),
 
+                                        Toggle::make('consultation.show_attachments')
+                                            ->label('Attachments')
+                                            ->helperText('Show the Attachments field on the consultation form')
+                                            ->inline(false),
+
+                                        Toggle::make('consultation.show_vital_signs')
+                                            ->label('Vital Signs')
+                                            ->helperText('Show the Vital Signs field on the consultation form')
+                                            ->inline(false),
+
                                         Toggle::make('consultation.show_patient_section')
                                             ->label('Patient Details Sidebar')
                                             ->helperText('Show or hide the entire patient details panel on the right')

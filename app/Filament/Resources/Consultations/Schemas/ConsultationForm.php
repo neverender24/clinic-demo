@@ -99,24 +99,23 @@ class ConsultationForm
                                     fn ($field) => $field->hint(fn (): View => view('forms.components.vital-signs-hint')),
                                     fn () => request()->user()->can('addChiefComplaint', Consultation::class),
                                 ),
-                                // Textarea::make('vital_signs')
-                                //     ->columnSpan(fn() => [
-                                //         'sm' => request()->user()->can('addVitalSign', Consultation::class) ? 1 : 2
-                                //     ])
-                                //     ->autosize()
-                                //     ->required()
-                                //     ->default(function () {
-                                //         $words = ['BP: ', 'HR: ', 'Weight: '];
-                                //         return implode("\n", $words); // line break per word
-                                //     })
-                                //     ->afterStateHydrated(function (Set $set, $state) {
-                                //         if (!$state) {
-                                //             # code...
-                                //             $words = ['BP: ', 'HR: ', 'Weight: '];
-                                //             $set('vital_signs', implode("\n", $words)); // line break per word
-                                //         }
-                                //     })
-                                //     ->visible(fn() => request()->user()->can('addVitalSign', Consultation::class)),
+                                Textarea::make('vital_signs')
+                                    ->columnSpan(fn() => [
+                                        'sm' => request()->user()->can('addVitalSign', Consultation::class) ? 1 : 2
+                                    ])
+                                    ->autosize()
+                                    ->default(function () {
+                                        $words = ['BP: ', 'HR: ', 'Weight: '];
+                                        return implode("\n", $words);
+                                    })
+                                    ->afterStateHydrated(function (Set $set, $state) {
+                                        if (!$state) {
+                                            $words = ['BP: ', 'HR: ', 'Weight: '];
+                                            $set('vital_signs', implode("\n", $words));
+                                        }
+                                    })
+                                    ->visible(fn() => \App\Models\ClinicSetting::getConsultationSetting('show_vital_signs')
+                                        && request()->user()->can('addVitalSign', Consultation::class)),
 
                                 ...self::soapField('test_results', 'label_objective', 'Objective', 'editor_objective',
                                     fn ($field) => $field->afterStateHydrated(fn (Set $set, $state) => $set('test_results', strip_tags($state))),
@@ -142,6 +141,7 @@ class ConsultationForm
                                     ->openable()
                                     ->maxSize(5120)
                                     ->imagePreviewHeight('250')
+                                    ->visible(fn () => \App\Models\ClinicSetting::getConsultationSetting('show_attachments'))
                                     ->rules([
                                         fn (): \Closure => function (string $attribute, $value, \Closure $fail) {
                                             // Skip validation if it's already a stored path (string)
@@ -161,7 +161,8 @@ class ConsultationForm
                                         // ->inlineLabel()
                                         ->visible(fn ($livewire) => request()->user()->can('addFollowupSchedule', Consultation::class)),
                                     TextInput::make('fee')
-                                        ->label('Consultation Fee'),
+                                        ->label('Consultation Fee')
+                                        ->visible(fn () => \App\Models\ClinicSetting::getConsultationSetting('show_consultation_fee')),
                                 ])
                                     ->columnSpanFull(),
 

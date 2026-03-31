@@ -53,6 +53,8 @@ class ClinicSetting extends Model
                 // Form field visibility
                 'show_dialysis'           => true,
                 'show_consultation_fee'   => true,
+                'show_attachments'        => true,
+                'show_vital_signs'        => true,
                 'show_patient_section'    => true,
 
                 // SOAP labels
