@@ -94,9 +94,13 @@ class ConsultationForm
                                     ->live()
                                     ->required(),
                                 ...self::soapField('chief_complaint', 'label_subjective', 'Subjective', 'editor_subjective',
-                                    fn ($field) => $field->hint(fn (): View => view('forms.components.vital-signs-hint'))
-                                                         ->afterStateHydrated(fn (Set $set, $state) => $set('chief_complaint', strip_tags($state))),
-                                    fn ($field) => $field->hint(fn (): View => view('forms.components.vital-signs-hint')),
+                                    fn ($field) => \App\Models\ClinicSetting::getConsultationSetting('show_vital_signs')
+                                        ? $field->hint(fn (): View => view('forms.components.vital-signs-hint'))
+                                                ->afterStateHydrated(fn (Set $set, $state) => $set('chief_complaint', strip_tags($state)))
+                                        : $field->afterStateHydrated(fn (Set $set, $state) => $set('chief_complaint', strip_tags($state))),
+                                    fn ($field) => \App\Models\ClinicSetting::getConsultationSetting('show_vital_signs')
+                                        ? $field->hint(fn (): View => view('forms.components.vital-signs-hint'))
+                                        : $field,
                                     fn () => request()->user()->can('addChiefComplaint', Consultation::class),
                                 ),
                                 Textarea::make('vital_signs')
