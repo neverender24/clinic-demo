@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Consultation;
 use App\Models\CustomDoc;
 use App\Models\Scopes\TenantScope;
+use Filament\Forms\Components\RichEditor\RichContentRenderer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\HtmlString;
 use Illuminate\Support\Number;
 use TCPDF;
 
@@ -168,7 +170,7 @@ class AFivePaperController extends Controller
         // Document info
         $pdf->SetCreator('TCPDF');
         $pdf->SetAuthor('Dr. Ben Jay Porcadilla');
-        $pdf->SetTitle(request('type') ?? 'Prescription');
+        $pdf->SetTitle(isset($custom_doc) ? $custom_doc->doc_name : (request('type') ?? 'Prescription'));
 
         // Disable TCPDF's default header, enable footer
         $pdf->setPrintHeader(false);
@@ -274,20 +276,23 @@ class AFivePaperController extends Controller
                 } else if($request->type == 'Laboratory Request') {
 
                     $custom_content = $consultation->lab_request_content;
-                    
+
                 } else if($request->type == 'Referral Form') {
-                    
+
                     $custom_content = $consultation->referral_content;
 
                 } else if($request->type == 'Medical Abstract') {
-                    
+
                     $custom_content = $consultation->medical_abstract;
                 }
-            }
-             else {
 
-                $custom_content = $custom_doc->content;
-                
+            } else {
+                $custom_content = RichContentRenderer::make($custom_doc->content)
+                    ->mergeTags([
+                        'name' => $consultation->patient->full_name,
+                        'diagnosis' => new HtmlString($consultation->diagnosis),
+                    ])
+                    ->toHtml();
             }
 
             if($request->type == 'Laboratory Request') {
@@ -299,7 +304,8 @@ class AFivePaperController extends Controller
             });
 
         } else {
-            $this->generateCustomContent($request->type, $custom_content, $consultation);
+            $title = isset($custom_doc) ? $custom_doc->doc_name : $request->type;
+            $this->generateCustomContent($title, $custom_content, $consultation, (bool) $request->custom_doc_id);
             $contentParts = explode('<!--pagebreak-->', $this->content);
 
             foreach ($contentParts as $index => $part) {
@@ -380,13 +386,12 @@ class AFivePaperController extends Controller
 
     // content generation
 
-    protected function generateCustomContent($title, $content, $consultation): void
+    protected function generateCustomContent($title, $content, $consultation, bool $isHtml = false): void
     {
         $final_content = $this->patientinfo($consultation);
-        // Convert newlines to <br> tags for plain text content
-        $content = nl2br(htmlspecialchars($content));
+        $rendered = $isHtml ? $content : nl2br(htmlspecialchars($content));
         $final_content .= '<style>p { margin: 0; line-height: 1.3; }</style>';
-        $final_content .= '<div style="font-size:' . $this->fontSize . 'pt; line-height:1.3;"><br>' . $content . '</div>';
+        $final_content .= '<div style="font-size:' . $this->fontSize . 'pt; line-height:1.3;"><br>' . $rendered . '</div>';
         $this->content = $final_content;
     }
 

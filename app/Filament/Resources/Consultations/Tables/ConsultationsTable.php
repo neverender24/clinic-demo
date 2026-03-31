@@ -154,6 +154,9 @@ class ConsultationsTable
                 //     ->label(fn () => request()->user()->doctor() ? 'Encounter' : 'Edit')
                 //     ->disabled(fn ($record) => $record->status->value == 'Done'),
                 ActionGroup::make([
+                    Action::make('custom_docs')
+                            ->icon('heroicon-s-document-text')
+                            ->url(fn($record) => route('filament.admin.resources.consultations.custom.doc', [filament()->getTenant()->id, $record->id])),
                     Action::make('clinical_orders')
                         ->color('success')
                         ->icon('heroicon-o-printer')

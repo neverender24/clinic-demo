@@ -137,7 +137,12 @@ class CustomDoc extends ManageRelatedRecords implements HasForms, HasTable
                     ->url(''),
                 DeleteAction::make(),
                 Action::make('print')
-                    ->url(fn ($record) => route('print.custom.doc', [$record->id]), true),
+                    ->url(fn ($record) => route('pdf.new-tab', [
+                        'id' => $record->consultation_id,
+                        'paper' => 'A5',
+                        'type' => 'Custom Doc',
+                        'custom_doc_id' => $record->id,
+                    ]), true),
                 // Html2MediaAction::make('print')
                 //     ->label(fn($record) => 'Print ')
                 //     ->color('success')
