@@ -41,47 +41,55 @@ class PatientForm
                                 DatePicker::make('birthday')
                                     ->required()
                                     ->displayFormat('d/m/Y')
-                                    ->native(true),
+                                    ->native(true)
+                                    ->visible(fn () => ClinicSetting::getConsultationSetting('show_birthday')),
                                 Select::make('sex')
                                     ->options([
                                         'M' => 'Male',
                                         'F' => 'Female'
                                     ])
-                                    ->required(),
+                                    ->required()
+                                    ->visible(fn () => ClinicSetting::getConsultationSetting('show_sex')),
                                 Select::make('civil_status')
                                     ->columnSpanFull()
                                     ->required()
                                     ->options([
-                                         'Child' => 'Child', 
-                                         'Single' => 'Single', 
-                                         'Married' => 'Married', 
+                                         'Child' => 'Child',
+                                         'Single' => 'Single',
+                                         'Married' => 'Married',
                                          'Widow' => 'Widow',
                                          'Widower' => 'Widower',
-                                    ]),
+                                    ])
+                                    ->visible(fn () => ClinicSetting::getConsultationSetting('show_civil_status')),
                             ])
                             ->columns(2),
                         TagsInput::make('contact_details')
-                            // ->separator(',')
                             ->hint('Can be a phone number, email, and/or any other contact detail'),
                         TextInput::make('address')
-                            ->required(),
+                            ->required()
+                            ->visible(fn () => ClinicSetting::getConsultationSetting('show_address')),
                         TextInput::make('occupation')
-                            // ->required()
-                            // ->separator(',')
-                            ,
+                            ->visible(fn () => ClinicSetting::getConsultationSetting('show_occupation')),
 
-                        TagsInput::make('allergies')->separator(','),
-                        TagsInput::make('surgeries')->separator(','),
+                        TagsInput::make('allergies')
+                            ->separator(',')
+                            ->visible(fn () => ClinicSetting::getConsultationSetting('show_allergies')),
+                        TagsInput::make('surgeries')
+                            ->separator(',')
+                            ->visible(fn () => ClinicSetting::getConsultationSetting('show_surgeries')),
                         TagsInput::make('medical_conditions')
-                            ->suggestions(fn () => ClinicSetting::getMedicalConditionSuggestions()),
-                        TagsInput::make('medications'), 
+                            ->suggestions(fn () => ClinicSetting::getMedicalConditionSuggestions())
+                            ->visible(fn () => ClinicSetting::getConsultationSetting('show_medical_conditions')),
+                        TagsInput::make('medications')
+                            ->visible(fn () => ClinicSetting::getConsultationSetting('show_medications')),
                         Select::make('smoker_type')
-                                ->options([
-                                    'Smoker' => 'Smoker',
-                                    'Non-smoker' => 'Non-smoker',
-                                    'Vaper' => 'Vaper',
-                                    'Quitter' => 'Quitter',
-                                ]),
+                            ->options([
+                                'Smoker' => 'Smoker',
+                                'Non-smoker' => 'Non-smoker',
+                                'Vaper' => 'Vaper',
+                                'Quitter' => 'Quitter',
+                            ])
+                            ->visible(fn () => ClinicSetting::getConsultationSetting('show_smoker_type')),
                         Repeater::make('patientHmos')
                             ->label('Patient HMOs')
                             // ->addActionLabel('Click here to add HMO')

@@ -428,46 +428,34 @@ class AFivePaperController extends Controller
 
         ' . $this->patientinfo($consultation) . '
 
-        <!-- Add vertical spacing between patient info and medicines -->
         <div style="height:10px;"></div>
 
         <table width="100%" cellspacing="0" cellpadding="0">
             <tr>
-                <!-- RX Label Column -->
-                <td width="8%" style="vertical-align:top; padding-top:10px;">
-                    <img src="' . public_path('images/clinic/rx.png') . '"
-                         style="width:35px; height:auto; display:block; margin-top:2px;">
+                <td style="padding-bottom:4px;">
+                    <img src="' . public_path('images/clinic/rx.png') . '" style="width:30px; height:auto;">
                 </td>
+            </tr>
+        </table>
 
-                <!-- Medicines Column -->
-                <td width="92%" style="vertical-align:top; padding-top:3px;">
-                    <ol class="medicine-list" style="margin-top:0;">';
+        <table width="100%" cellspacing="0" cellpadding="0">';
 
+        $index = 1;
         foreach ($prescribe_meds as $medicine) {
             $content .= '
-                        <li>
-                            <table width="100%" cellspacing="0" cellpadding="0">
-                                <tr>
-                                    <!-- Medicine name + brand -->
-                                    <td width="80%" style="vertical-align:top; padding-bottom:2px; font-size:' . $fontSize . 'pt; line-height:1.2;">
-                                        ' . htmlspecialchars($medicine->name) . '<br>
-                                        <b>(' . htmlspecialchars($medicine->brand ?? "") . ')</b><br>
-                                        Sig: ' . htmlspecialchars($medicine->pivot?->remarks ?? "") . '
-                                    </td>
-
-                                    <!-- Quantity aligned right -->
-                                    <td width="20%" style="text-align:right; vertical-align:top; font-size:' . $fontSize . 'pt;">
-                                        <b>#' . htmlspecialchars($medicine->pivot?->quantity ?? "") . '</b>
-                                    </td>
-                                </tr>
-                            </table>
-                        </li>';
+            <tr>
+                <td width="6%" style="vertical-align:top; font-size:' . $fontSize . 'pt; line-height:1.3;">
+                    ' . $index++ . '.
+                </td>
+                <td width="74%" style="vertical-align:top; font-size:' . $fontSize . 'pt; line-height:1.3;">' . htmlspecialchars($medicine->name) . '<br><b>(' . htmlspecialchars($medicine->brand ?? "") . ')</b><br>Sig: ' . htmlspecialchars($medicine->pivot?->remarks ?? "") . '
+                </td>
+                <td width="20%" style="vertical-align:top; text-align:right; font-size:' . $fontSize . 'pt; line-height:1.3;"><b>#' . htmlspecialchars($medicine->pivot?->quantity ?? "") . '</b>
+                </td>
+            </tr>
+            <tr><td colspan="3" style="height:8px;"></td></tr>';
         }
 
         $content .= '
-                    </ol>
-                </td>
-            </tr>
         </table>';
 
         $this->content = $content;
