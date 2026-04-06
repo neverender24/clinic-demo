@@ -74,7 +74,7 @@
                         {{-- <span class="">To whom it may concern,</span> --}}
                     </p>
                     <p class="text-justify">This certifies that the above-mentioned patient
-                        was seen and evaluated at this clinic/hospital on <u>{{$consultation_date}}</u> due to <u>{!!$chief_complaint!!}</u>
+                        was seen and evaluated at this clinic/hospital on <u>{{$consultation_date}}</u> due to <u>{!! \App\Support\PrintableContent::toHtml($chief_complaint) !!}</u>
                     </p>
                     {{-- <div class="flex">
                         <div class=""> Diagnosis: </div>  <span class="border-b border-b border-gray-950">testsdfdsf</span>
@@ -83,7 +83,7 @@
                     <div class="diagnosis">
                         Diagnosis:
                         <br>
-                        {!!$diagnosis!!}
+                        {!! \App\Support\PrintableContent::toHtml($diagnosis) !!}
                     </div>
                     <p>
                         This patient is advised to have
@@ -100,7 +100,7 @@
                     <div class="flex flex-col gap-y-0.5">
                         <div>Remarks: </div>
                         <div>
-                            <u>{!!$medical_cert_remarks!!}</u>
+                            <u>{!! \App\Support\PrintableContent::toHtml($medical_cert_remarks) !!}</u>
                         </div>
                     </div>
                     <p class="italic">

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Consultation;
 use App\Models\CustomDoc;
+use App\Support\PrintableContent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Number;
@@ -66,7 +67,9 @@ class ConsultationController extends Controller
         $record = $this->getRecord($id);
         $bday = Carbon::parse($record->patient?->birthday);
         $record->patient->age = $bday->age == 0 ? $bday->month : $bday->age;
-        $record->diagnosis = str_replace(['<p>', '</p>'], ['<span>', '</span>'], $record->diagnosis);
+        $record->diagnosis = PrintableContent::toHtml($record->diagnosis);
+        $record->chief_complaint = PrintableContent::toHtml($record->chief_complaint);
+        $record->medical_cert_remarks = PrintableContent::toHtml($record->medical_cert_remarks);
         $total = $record->fee + floatval($record->follow_up_fees) + floatval($record->procedure_fee);
         // dd(Number::percentage($record->discount));
         $record->total = $total - ($total *  floatval("0.{$record->discount}"));

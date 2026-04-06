@@ -166,7 +166,7 @@ class ConsultationForm
                                         ->visible(fn ($livewire) => request()->user()->can('addFollowupSchedule', Consultation::class)),
                                     TextInput::make('fee')
                                         ->label('Consultation Fee')
-                                        ->visible(fn () => \App\Models\ClinicSetting::getConsultationSetting('show_consultation_fee')),
+                                        ->visible(fn () => \App\Models\ClinicSetting::getConsultationSetting('show_consultation_fee_form')),
                                 ])
                                     ->columnSpanFull(),
 

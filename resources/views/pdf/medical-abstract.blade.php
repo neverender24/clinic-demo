@@ -75,7 +75,7 @@
     <div class="content">
         <p>
             This is to certify that <b>{{$record->patient_name}}</b>, 
-            {{$record->patient->age}} months/years old, {{$record->patient->sex}} from {{$record->patient?->address}}, was seen at the clinic on {{$record->date->format('F j, Y')}} and was diagnosed to have <span style="display:inline">{!!$record->diagnosis!!}</span>.
+            {{$record->patient->age}} months/years old, {{$record->patient->sex}} from {{$record->patient?->address}}, was seen at the clinic on {{$record->date->format('F j, Y')}} and was diagnosed to have <span style="display:inline">{!! \App\Support\PrintableContent::toHtml($record->diagnosis) !!}</span>.
         </p>
 
         <p>

@@ -19,13 +19,45 @@ trait HasHistoryAction
 
     public function selectHistory($record)
     {
-        // dd($this->renderToHtml($this->data['test_results']));
-        // dd($this->renderToHtml($this->data['test_results']));
-        $this->data['test_results'] = $this->data['test_results']."\n".(strip_tags($record->test_results));
-        $this->data['chief_complaint'] = $this->data['chief_complaint']."\n".(strip_tags($record->chief_complaint));
-        $this->data['diagnosis'] = $this->data['diagnosis']."\n".(strip_tags($record->diagnosis));
-        $this->data['management'] = $this->data['management']."\n".(strip_tags($record->management));
-        
+        $this->data['test_results'] = $this->appendHistoryText(
+            $this->data['test_results'] ?? '',
+            $record->test_results ?? '',
+        );
+        $this->data['chief_complaint'] = $this->appendHistoryText(
+            $this->data['chief_complaint'] ?? '',
+            $record->chief_complaint ?? '',
+        );
+        $this->data['diagnosis'] = $this->appendHistoryText(
+            $this->data['diagnosis'] ?? '',
+            $record->diagnosis ?? '',
+        );
+        $this->data['management'] = $this->appendHistoryText(
+            $this->data['management'] ?? '',
+            $record->management ?? '',
+        );
+    }
+
+    protected function appendHistoryText(mixed $current, mixed $incoming): string
+    {
+        $currentText = $this->normalizeHistoryText($current);
+        $incomingText = $this->normalizeHistoryText($incoming);
+
+        return collect([$currentText, $incomingText])
+            ->filter(fn (string $value) => $value !== '')
+            ->implode("\n");
+    }
+
+    protected function normalizeHistoryText(mixed $content): string
+    {
+        if (blank($content)) {
+            return '';
+        }
+
+        if (is_array($content)) {
+            $content = $this->renderToHtml($content);
+        }
+
+        return trim(strip_tags((string) $content));
     }
 
     protected function renderToHtml($content): string 

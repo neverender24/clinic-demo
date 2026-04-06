@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use TCPDF;
 use App\Models\Consultation;
+use App\Support\PrintableContent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use App\Models\Scopes\TenantScope;
@@ -241,15 +242,15 @@ class LetterPaperController extends Controller
     protected function generateMedicalCertificateContent($consultation): void
     {
         $patientName = $consultation->patient->full_name;
-        $chiefComplaint = $consultation->chief_complaint ?? '';
-        $diagnosis = $consultation->diagnosis ?? 'Diagnosis';
+        $chiefComplaint = PrintableContent::toHtml($consultation->chief_complaint ?? '');
+        $diagnosis = PrintableContent::toHtml($consultation->diagnosis ?? 'Diagnosis');
         $dateToday = now()->format('F d, Y');
 
         $restStart = Carbon::parse($consultation->estimated_date)->format('F d, Y');
         $restEnd = Carbon::parse($consultation->estimated_date_to)->addDays(3)->format('F d, Y');
         $recovery = Number::spell($consultation->approximate_days);
         $returnDate = Carbon::parse($consultation->created_at)->addDays(4)->format('F d, Y');
-        $remarks = $consultation->medical_cert_remarks ?? '___________________________';
+        $remarks = PrintableContent::toHtml($consultation->medical_cert_remarks ?? '___________________________');
 
         $fontSize = $this->fontSize;
         $content = $this->patientinfo($consultation) . '

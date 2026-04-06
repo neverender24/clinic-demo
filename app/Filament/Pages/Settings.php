@@ -62,9 +62,14 @@ class Settings extends Page
                                             ->helperText('Show the Dialysis toggle on the consultation form')
                                             ->inline(false),
 
-                                        Toggle::make('consultation.show_consultation_fee')
-                                            ->label('Consultation Fee')
-                                            ->helperText('Show the Consultation Fee field')
+                                        Toggle::make('consultation.show_consultation_fee_form')
+                                            ->label('Consultation Fee in Form')
+                                            ->helperText('Show the Consultation Fee field on the consultation form')
+                                            ->inline(false),
+
+                                        Toggle::make('consultation.show_consultation_fee_table')
+                                            ->label('Consultation Fee in Table')
+                                            ->helperText('Show the Consultation Fee column on the consultations table')
                                             ->inline(false),
 
                                         Toggle::make('consultation.show_attachments')

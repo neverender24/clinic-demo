@@ -81,6 +81,7 @@ class ConsultationsTable
                     ->falseColor('gray')
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('fee')
+                    ->visible(fn () => ClinicSetting::getConsultationSetting('show_consultation_fee_table'))
                     ->summarize(
                         Sum::make()
                             ->label('Total')

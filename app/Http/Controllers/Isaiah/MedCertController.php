@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use App\Models\Scopes\TenantScope;
+use App\Support\PrintableContent;
 use Illuminate\Support\Number;
 use TCPDF;
 use App\Models\Consultation;
@@ -297,10 +298,10 @@ class MedCertController extends Controller
         $age = Carbon::parse($consultation->patient->birthday)->age;
         $sex = $consultation->patient->sex == 'M' ? 'Male' : 'Female';
         $address = $consultation->patient->address;
-        $diagnosis = $consultation->diagnosis ?? 'Diagnosis';
+        $diagnosis = PrintableContent::toHtml($consultation->diagnosis ?? 'Diagnosis');
         $dateToday = now()->format('F d, Y');
         $remarks = $consultation->medical_cert_remarks
-            ? strip_tags($consultation->medical_cert_remarks)
+            ? PrintableContent::toHtml($consultation->medical_cert_remarks)
             : '___________________________';
         $fontSize = $this->fontSize;
 
@@ -334,7 +335,7 @@ class MedCertController extends Controller
             'estimated_date_to' => $estimatedDateTo,
             'approximate_days' => (string) $approximateDays,
             'return_date' => $returnDate,
-            'chief_complaint' => $consultation->chief_complaint ?? '___________________________',
+            'chief_complaint' => PrintableContent::toHtml($consultation->chief_complaint ?? '___________________________'),
         ];
 
         $headerMergeTags = [
