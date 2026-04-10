@@ -298,10 +298,11 @@ class MedCertController extends Controller
         $age = Carbon::parse($consultation->patient->birthday)->age;
         $sex = $consultation->patient->sex == 'M' ? 'Male' : 'Female';
         $address = $consultation->patient->address;
-        $diagnosis = PrintableContent::toHtml($consultation->diagnosis ?? 'Diagnosis');
+        $diagnosis = $this->renderPlainTextForPrint($consultation->diagnosis ?? 'Diagnosis');
+        $management = $this->renderPlainTextForPrint($consultation->management ?? '___________________________');
         $dateToday = now()->format('F d, Y');
         $remarks = $consultation->medical_cert_remarks
-            ? PrintableContent::toHtml($consultation->medical_cert_remarks)
+            ? $this->renderPlainTextForPrint($consultation->medical_cert_remarks)
             : '___________________________';
         $fontSize = $this->fontSize;
 
@@ -330,12 +331,13 @@ class MedCertController extends Controller
             'date' => $dateToday,
             'consultation_date' => $consultationDate,
             'diagnosis' => $diagnosis,
+            'management' => $management,
             'remarks' => $remarks,
             'estimated_date' => $estimatedDate,
             'estimated_date_to' => $estimatedDateTo,
             'approximate_days' => (string) $approximateDays,
             'return_date' => $returnDate,
-            'chief_complaint' => PrintableContent::toHtml($consultation->chief_complaint ?? '___________________________'),
+            'chief_complaint' => $this->renderPlainTextForPrint($consultation->chief_complaint ?? '___________________________'),
         ];
 
         $headerMergeTags = [
@@ -439,5 +441,12 @@ class MedCertController extends Controller
         $html .= '</table><br>';
 
         return $html;
+    }
+
+    protected function renderPlainTextForPrint(mixed $content): string
+    {
+        $text = PrintableContent::toPlainText($content);
+
+        return $text === '' ? '' : nl2br(e($text), false);
     }
 }

@@ -25,7 +25,27 @@ class PrintableContent
             return '';
         }
 
-        return trim(strip_tags(self::normalizeEntities((string) $content)));
+        $content = self::normalizeEntities((string) $content);
+
+        if ($content === strip_tags($content)) {
+            return trim(preg_replace("/\R{3,}/", "\n\n", $content) ?? $content);
+        }
+
+        $blockBreaks = [
+            '/<\s*br\s*\/?>/i' => "\n",
+            '/<\s*\/p\s*>/i' => "\n\n",
+            '/<\s*\/div\s*>/i' => "\n",
+            '/<\s*\/h[1-6]\s*>/i' => "\n",
+            '/<\s*li\b[^>]*>/i' => '- ',
+            '/<\s*\/li\s*>/i' => "\n",
+        ];
+
+        $content = preg_replace(array_keys($blockBreaks), array_values($blockBreaks), $content) ?? $content;
+        $content = strip_tags($content);
+        $content = preg_replace("/[ \t]+\n/", "\n", $content) ?? $content;
+        $content = preg_replace("/\n{3,}/", "\n\n", $content) ?? $content;
+
+        return trim($content);
     }
 
     protected static function normalizeEntities(string $content): string
