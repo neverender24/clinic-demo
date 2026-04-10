@@ -2,26 +2,17 @@
 
 namespace App\Filament\Widgets;
 
-use Carbon\Carbon;
-use App\Models\Clinic;
-use Filament\Support\RawJs;
 use App\Models\Consultation;
-use Filament\Schemas\Schema;
 use App\Trait\HasPeriodFilter;
 use App\Trait\Dashboard\HasDashboardSettings;
-use Filament\Facades\Filament;
-use App\Models\Scopes\TenantScope;
-use Filament\Forms\Components\Select;
-use App\Models\Scopes\ConsultationScope;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\DatePicker;
-use Filament\Widgets\ChartWidget\Concerns\HasFiltersSchema;
+use App\Trait\Dashboard\InteractsWithDashboardFilters;
 use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
 
 class ConsultationChart extends ApexChartWidget
 {
     use HasDashboardSettings;
-    use HasPeriodFilter, HasFiltersSchema;
+    use HasPeriodFilter;
+    use InteractsWithDashboardFilters;
 
     // protected static ?string $pollingInterval = '';
 
@@ -39,45 +30,14 @@ class ConsultationChart extends ApexChartWidget
 
     protected static ?string $heading = 'Out-Patient Chart';
 
+    protected $chartData;
 
-     protected $chartData;
-
-     protected $chartLabel;
-
-    public function filtersSchema(Schema $schema): Schema
-    {
-        return $schema->components($this->getFormSchema());
-    }
-
-     protected function getFormSchema(): array
-    {
-        return [
-
-            Select::make('clinic_id')
-                ->options(function() {
-
-                    $hospital = Clinic::all()->pluck('name', 'id');
-
-                    return ['All' => 'All'] + $hospital->toArray();
-                })
-                ->label('Clinic')
-                ->default('All')
-                // ->default(Filament::getTenant()->id)
-                ,
-            Select::make('period')
-                ->options([
-                    'Daily' => 'Daily',
-                    'Weekly' => 'Weekly',
-                    'Monthly' => 'Monthly',
-                    'Yearly' => 'Yearly',
-                ])
-                ->default('Monthly'),
-        ];
-    }
+    protected $chartLabel;
 
     protected function getOptions(): array
     {
         $this->getData();
+        $period = $this->getDashboardPeriod();
 
         return [
             'chart' => [
@@ -109,7 +69,7 @@ class ConsultationChart extends ApexChartWidget
                 'size' => 0, // Remove markers
             ],
             'title' => [
-                'text' => "Showing {$this->filters['period']} Consultations", // Chart title
+                'text' => "Showing {$period} Consultations",
                 'align' => 'left',
             ],
             'fill' => [
@@ -159,32 +119,27 @@ class ConsultationChart extends ApexChartWidget
 
     protected function getData(): void
     {
-        // dd($this->filters['clinic_id']);
-        // dd();
+        $period = $this->getDashboardPeriod();
 
-        $data = Consultation::withoutGlobalScopes([TenantScope::class])
-                    ->when($this->filters['clinic_id'] != 'All', fn($query) => $query->where('clinic_id', $this->filters['clinic_id']))
-                    ->withPeriod($this->filters['period'])
-                    ->get()
-                    ->each(function($item) {
-                        $item->consultation_date = $item->date->format('Y-m-d');
-                    });
+        $data = $this->applyDashboardConsultationFilters(Consultation::query())
+            ->get()
+            ->each(function ($item) {
+                $item->consultation_date = $item->date->format('Y-m-d');
+                $item->year = $item->date->year;
+            });
 
         $filteredData = [];
-        if ($this->filters['period'] === 'Daily') {
+        if ($period === 'Daily') {
             $filteredData = $this->getDaily($data);
-        } else if ($this->filters['period'] === 'Weekly') {
+        } elseif ($period === 'Weekly') {
             $filteredData = $this->getWeekly($data);
-        } else if ($this->filters['period'] === 'Monthly') {
+        } elseif ($period === 'Monthly') {
             $filteredData = $this->getMonthly($data);
-        } else if ($this->filters['period'] === 'Yearly') {
+        } elseif ($period === 'Yearly') {
             $filteredData = $this->getYearly($data);
         }
-
-//        dd($filteredData);
         $this->chartData = $filteredData->pluck('count');
         $this->chartLabel = $filteredData->pluck('label');
-
     }
 
     // protected function extraJsOptions(): RawJs

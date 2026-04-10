@@ -4,8 +4,8 @@ namespace App\Filament\Widgets;
 
 use Throwable;
 use App\Models\Medicine;
-use App\Models\Scopes\ConsultationScope;
 use App\Trait\Dashboard\HasDashboardSettings;
+use App\Trait\Dashboard\InteractsWithDashboardFilters;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Support\HtmlString;
@@ -13,6 +13,7 @@ use Illuminate\Support\HtmlString;
 class MostPrescribedDrugs extends BaseWidget
 {
     use HasDashboardSettings;
+    use InteractsWithDashboardFilters;
 
     protected $medicines;
 
@@ -38,18 +39,20 @@ class MostPrescribedDrugs extends BaseWidget
 
     protected function getStats(): array
     {
-        $this->medicines = Medicine::with(['consultations'])
-                            ->whereHas('consultations')
-                            ->where('active',1)
-                            ->get();
+        $this->medicines = Medicine::query()
+            ->withCount([
+                'consultations as filtered_consultations_count' => fn ($query) => $this->applyDashboardConsultationFilters($query),
+            ])
+            ->whereHas('consultations', fn ($query) => $this->applyDashboardConsultationFilters($query))
+            ->where('active', 1)
+            ->get();
 
-//                             dd($this->medicines);
         $data = $this->medicines->map(fn($item) => [
                                 'stat' => Stat::make(
                                                 new HtmlString($item->name . ($item->brand ? "- (".ucwords($item->brand).")" : '')),
-                                                $item->consultations->count()
+                                                $item->filtered_consultations_count
                                             ),
-                                'count' => $item->consultations->count()
+                                'count' => $item->filtered_consultations_count
                             ])
                             ->sortByDesc('count')
                             ->take(3)
@@ -57,20 +60,5 @@ class MostPrescribedDrugs extends BaseWidget
                             ->toArray();
 
         return $data;
-
-        // return [
-        //     Stat::make('Unique views', '192.1k')
-        //         ->description('32k increase')
-        //         ->descriptionIcon('heroicon-m-arrow-trending-up')
-        //         ->color('success'),
-        //     Stat::make('Bounce rate', '21%')
-        //         ->description('7% increase')
-        //         ->descriptionIcon('heroicon-m-arrow-trending-down')
-        //         ->color('danger'),
-        //     Stat::make('Average time on page', '3:12')
-        //         ->description('3% increase')
-        //         ->descriptionIcon('heroicon-m-arrow-trending-up')
-        //         ->color('success'),
-        // ];
     }
 }

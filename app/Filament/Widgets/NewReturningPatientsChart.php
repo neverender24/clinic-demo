@@ -5,12 +5,14 @@ namespace App\Filament\Widgets;
 use Illuminate\Support\Facades\DB;
 use App\Trait\Dashboard\HasAgeDistributationColumn;
 use App\Trait\Dashboard\HasDashboardSettings;
+use App\Trait\Dashboard\InteractsWithDashboardFilters;
 use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
 
 class NewReturningPatientsChart extends ApexChartWidget
 {
     use HasDashboardSettings;
     use HasAgeDistributationColumn;
+    use InteractsWithDashboardFilters;
 
     protected static ?string $chartId = 'newReturningPatientsChart';
     protected static ?string $heading = 'New vs Returning Patients';
@@ -18,9 +20,14 @@ class NewReturningPatientsChart extends ApexChartWidget
 
     protected function getOptions(): array
     {
-        // 🧠 Query: Count patients by number of consultations
         $patientStats = DB::table('consultations')
             ->select('patient_id', DB::raw('COUNT(*) as total_consultations'))
+            ->when(
+                $this->getDashboardFilter('clinic_id', 'All') !== 'All',
+                fn ($query) => $query->where('clinic_id', $this->getDashboardFilter('clinic_id')),
+            );
+
+        $patientStats = $this->applyDashboardDateFilter($patientStats, 'date')
             ->groupBy('patient_id')
             ->get();
 

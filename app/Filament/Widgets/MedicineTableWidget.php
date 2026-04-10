@@ -2,20 +2,18 @@
 
 namespace App\Filament\Widgets;
 
-use Filament\Tables;
 use App\Models\Medicine;
 use Filament\Tables\Table;
 use App\Trait\Dashboard\HasDashboardSettings;
+use App\Trait\Dashboard\InteractsWithDashboardFilters;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Widgets\TableWidget as BaseWidget;
-use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
-use Dom\Text;
 
 class MedicineTableWidget extends BaseWidget
 {
     use HasDashboardSettings;
+    use InteractsWithDashboardFilters;
 
-    // use HasWidgetShield;
     protected int | string | array $columnSpan = 'full';
 
     public function getColumnSpan(): int | string | array
@@ -26,12 +24,19 @@ class MedicineTableWidget extends BaseWidget
     {
         return $table
             ->query(
-                Medicine::take(10)
+                Medicine::query()
+                    ->withCount([
+                        'consultations as filtered_consultations_count' => fn ($query) => $this->applyDashboardConsultationFilters($query),
+                    ])
+                    ->whereHas('consultations', fn ($query) => $this->applyDashboardConsultationFilters($query))
             )
             ->columns([
                 TextColumn::make("name")->searchable(),
                 TextColumn::make("brand")->searchable(),
-                TextColumn::make("consultations_count")->counts('consultations')->sortable(),
-            ])->defaultSort('consultations_count', 'desc');
+                TextColumn::make('filtered_consultations_count')
+                    ->label('Consultations')
+                    ->sortable(),
+            ])
+            ->defaultSort('filtered_consultations_count', 'desc');
     }
 }

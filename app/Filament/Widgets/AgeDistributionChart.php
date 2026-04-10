@@ -5,12 +5,14 @@ namespace App\Filament\Widgets;
 use Illuminate\Support\Facades\DB;
 use App\Trait\Dashboard\HasAgeDistributationColumn;
 use App\Trait\Dashboard\HasDashboardSettings;
+use App\Trait\Dashboard\InteractsWithDashboardFilters;
 use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
 
 class AgeDistributionChart extends ApexChartWidget
 {
     use HasDashboardSettings;
     use HasAgeDistributationColumn;
+    use InteractsWithDashboardFilters;
 
     protected static ?string $chartId = 'ageDistributionChart';
     protected static ?string $heading = 'Age Group Distribution';
@@ -18,7 +20,6 @@ class AgeDistributionChart extends ApexChartWidget
 
     protected function getOptions(): array
     {
-        // 🧠 Calculate age dynamically from birthday and group by range
         $ageGroups = DB::table('consultations')
             ->join('patients', 'consultations.patient_id', '=', 'patients.id')
             ->selectRaw("
@@ -32,11 +33,16 @@ class AgeDistributionChart extends ApexChartWidget
                 END AS age_group,
                 COUNT(DISTINCT patients.id) AS total
             ")
+            ->when(
+                $this->getDashboardFilter('clinic_id', 'All') !== 'All',
+                fn ($query) => $query->where('consultations.clinic_id', $this->getDashboardFilter('clinic_id')),
+            );
+
+        $ageGroups = $this->applyDashboardDateFilter($ageGroups, 'consultations.date')
             ->groupBy('age_group')
             ->orderByRaw('MIN(TIMESTAMPDIFF(YEAR, patients.birthday, CURDATE()))')
             ->get();
 
-        // 📊 Prepare chart data
         $labels = $ageGroups->pluck('age_group')->toArray();
         $series = $ageGroups->pluck('total')->toArray();
 

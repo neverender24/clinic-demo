@@ -5,11 +5,13 @@ namespace App\Filament\Widgets;
 use App\Models\Patient;
 use Illuminate\Support\Collection;
 use App\Trait\Dashboard\HasDashboardSettings;
+use App\Trait\Dashboard\InteractsWithDashboardFilters;
 use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
 
 class MedicalConditionsChart extends ApexChartWidget
 {
     use HasDashboardSettings;
+    use InteractsWithDashboardFilters;
 
     protected static ?string $chartId = 'medicalConditionsChart';
 
@@ -110,6 +112,7 @@ class MedicalConditionsChart extends ApexChartWidget
     protected function getMedicalConditionsData(): Collection
     {
         $patients = Patient::whereNotNull('medical_conditions')
+            ->whereHas('consultations', fn ($query) => $this->applyDashboardConsultationFilters($query))
             ->pluck('medical_conditions');
 
         $conditionCounts = collect();

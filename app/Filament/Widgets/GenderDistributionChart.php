@@ -3,15 +3,16 @@
 namespace App\Filament\Widgets;
 
 use App\Models\Patient;
-use App\Trait\Dashboard\HasWidgetStatsColumn;
 use App\Trait\Dashboard\HasAgeDistributationColumn;
 use App\Trait\Dashboard\HasDashboardSettings;
+use App\Trait\Dashboard\InteractsWithDashboardFilters;
 use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
 
 class GenderDistributionChart extends ApexChartWidget
 {
     use HasDashboardSettings;
     use HasAgeDistributationColumn;
+    use InteractsWithDashboardFilters;
 
     protected static ?string $chartId = 'genderDistributionChart';
 
@@ -20,11 +21,12 @@ class GenderDistributionChart extends ApexChartWidget
 
     protected function getOptions(): array
     {
-        // 🧠 Step 1: Count male & female patients
-        $maleCount = Patient::where('sex', 'M')->count();
-        $femaleCount = Patient::where('sex', 'F')->count();
+        $patients = Patient::query()
+            ->whereHas('consultations', fn ($query) => $this->applyDashboardConsultationFilters($query));
 
-        // 🧮 Step 2: Prepare chart data
+        $maleCount = (clone $patients)->where('sex', 'M')->count();
+        $femaleCount = (clone $patients)->where('sex', 'F')->count();
+
         return [
             'chart' => [
                 'type' => 'donut',

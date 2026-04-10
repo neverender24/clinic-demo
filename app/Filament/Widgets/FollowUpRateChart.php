@@ -5,12 +5,14 @@ namespace App\Filament\Widgets;
 use App\Models\Consultation;
 use App\Trait\Dashboard\HasAgeDistributationColumn;
 use App\Trait\Dashboard\HasDashboardSettings;
+use App\Trait\Dashboard\InteractsWithDashboardFilters;
 use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
 
 class FollowUpRateChart extends ApexChartWidget
 {
     use HasDashboardSettings;
     use HasAgeDistributationColumn;
+    use InteractsWithDashboardFilters;
 
     protected static ?string $chartId = 'followUpRateChart';
     protected static ?string $heading = 'Follow-up Rate (%)';
@@ -18,30 +20,28 @@ class FollowUpRateChart extends ApexChartWidget
  
     protected function getOptions(): array
     {
-        // 🧠 Step 1: Get consultations that have a follow-up scheduled
-        $scheduledFollowUps = Consultation::whereNotNull('next_follow_up_schedule')->get();
+        $scheduledFollowUps = $this->applyDashboardConsultationFilters(
+            Consultation::query()->whereNotNull('next_follow_up_schedule')
+        )->get();
 
         $totalScheduled = $scheduledFollowUps->count();
         $totalReturned = 0;
 
-        // 🧩 Step 2: For each scheduled patient, check if they had another consultation
         foreach ($scheduledFollowUps as $consult) {
-            $hasFollowedUp = Consultation::where('patient_id', $consult->patient_id)
+            $hasFollowedUp = $this->applyDashboardConsultationFilters(
+                Consultation::query()->where('patient_id', $consult->patient_id)
                 ->where('date', '>=', $consult->next_follow_up_schedule) // include same date
-                ->where('id', '!=', $consult->id) // avoid counting the same record
-                ->exists();
+                ->where('id', '!=', $consult->id)
+            )->exists();
 
             if ($hasFollowedUp) {
                 $totalReturned++;
             }
         }
 
-        // 📊 Step 3: Compute rate
         $followUpRate = $totalScheduled > 0
             ? round(($totalReturned / $totalScheduled) * 100, 1)
             : 0;
-
-        // ✅ Step 4: Return chart options
 
         return [
             'chart' => [
