@@ -302,7 +302,7 @@ class MedCertController extends Controller
         $management = $this->renderPlainTextForPrint($consultation->management ?? $this->blankLine());
         $dateToday = now()->format('F d, Y');
         $remarks = $consultation->medical_cert_remarks
-            ? $this->renderPlainTextForPrint($consultation->medical_cert_remarks)
+            ? $this->renderPlainTextForPrint($consultation->medical_cert_remarks, compactSpacing: true)
             : $this->blankLine();
         $fontSize = $this->fontSize;
 
@@ -381,11 +381,11 @@ class MedCertController extends Controller
             $body = str_replace(array_keys($htmlMergeTags), array_values($htmlMergeTags), $body);
 
             $content .= '<style>
-                p { margin:0; padding:0; line-height:1.15; }
-                p + p { margin-top:2px; }
+                p { margin:0; padding:0; line-height:1.3; }
+                p + p { margin-top:0; }
                 div { margin:0; padding:0; }
                 ul, ol { margin:2px 0; padding-left:14px; }
-                li { margin:0; padding:0; line-height:1.15; }
+                li { margin:0; padding:0; line-height:1.3; }
             </style>';
             $content .= '<div style="font-size:'.$fontSize.'pt; line-height:1.3; font-family: Arial, sans-serif;">'.$body.'</div>';
         } else {
@@ -456,9 +456,13 @@ class MedCertController extends Controller
         return $html;
     }
 
-    protected function renderPlainTextForPrint(mixed $content): string
+    protected function renderPlainTextForPrint(mixed $content, bool $compactSpacing = false): string
     {
         $text = PrintableContent::toPlainText($content);
+
+        if ($compactSpacing) {
+            $text = preg_replace("/\n{2,}/", "\n", $text) ?? $text;
+        }
 
         return $text === '' ? '' : nl2br(e($text), false);
     }
