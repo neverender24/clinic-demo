@@ -252,14 +252,7 @@ class MedCertController extends Controller
             </tr>
             <tr>
                 <td><b>Address:</b> '.$address.'</td>
-                <td class="right">
-                    <table style="margin-left:auto; border-collapse:collapse;" cellpadding="0" cellspacing="0">
-                        <tr>
-                            <td style="white-space:nowrap; padding-right:4px;"><b>Age:</b> '.$age.'</td>
-                            <td style="white-space:nowrap;"><b>Sex:</b> '.$sex.'</td>
-                        </tr>
-                    </table>
-                </td>
+                <td class="right"><span style="white-space:nowrap;"><b>Age:</b> '.$age.' <b>Sex:</b> '.$sex.'</span></td>
             </tr>';
 
         if (! request('type')) {
@@ -416,7 +409,6 @@ class MedCertController extends Controller
     {
         $leftParts = [];
         $rightParts = [];
-        $ageAndSex = [];
 
         if (in_array('name', $fields)) {
             $leftParts[] = '<b>Name:</b> '.$mergeTags['{{ name }}'];
@@ -427,17 +419,21 @@ class MedCertController extends Controller
         if (in_array('address', $fields)) {
             $leftParts[] = '<b>Address:</b> '.$mergeTags['{{ address }}'];
         }
-        if (in_array('age', $fields)) {
-            $ageAndSex[] = '<td style="white-space:nowrap; padding-right:4px;"><b>Age:</b> '.$mergeTags['{{ age }}'].'</td>';
-        }
-        if (in_array('sex', $fields)) {
-            $ageAndSex[] = '<td style="white-space:nowrap;"><b>Sex:</b> '.$mergeTags['{{ sex }}'].'</td>';
+        if (in_array('age', $fields) || in_array('sex', $fields)) {
+            $ageSexParts = [];
+
+            if (in_array('age', $fields)) {
+                $ageSexParts[] = '<b>Age:</b> '.$mergeTags['{{ age }}'];
+            }
+
+            if (in_array('sex', $fields)) {
+                $ageSexParts[] = '<b>Sex:</b> '.$mergeTags['{{ sex }}'];
+            }
+
+            $rightParts[] = '<span style="white-space:nowrap;">'.implode(' ', $ageSexParts).'</span>';
         }
         if (in_array('consultation_date', $fields)) {
             $rightParts[] = '<b>Date of Consultation:</b> '.$mergeTags['{{ consultation_date }}'];
-        }
-        if ($ageAndSex !== []) {
-            $rightParts[] = '<table style="margin-left:auto; border-collapse:collapse;" cellpadding="0" cellspacing="0"><tr>'.implode('', $ageAndSex).'</tr></table>';
         }
 
         $html = '<table width="100%" style="font-size:'.$fontSize.'pt; border-collapse:collapse;">';
