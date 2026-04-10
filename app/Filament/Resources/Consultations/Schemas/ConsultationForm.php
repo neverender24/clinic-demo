@@ -96,8 +96,8 @@ class ConsultationForm
                                 ...self::soapField('chief_complaint', 'label_subjective', 'Subjective', 'editor_subjective',
                                     fn ($field) => \App\Models\ClinicSetting::getConsultationSetting('show_vital_signs')
                                         ? $field->hint(fn (): View => view('forms.components.vital-signs-hint'))
-                                                ->afterStateHydrated(fn (Set $set, $state) => $set('chief_complaint', strip_tags($state)))
-                                        : $field->afterStateHydrated(fn (Set $set, $state) => $set('chief_complaint', strip_tags($state))),
+                                                ->afterStateHydrated(fn (Set $set, $state) => $set('chief_complaint', self::normalizePlainTextState($state)))
+                                        : $field->afterStateHydrated(fn (Set $set, $state) => $set('chief_complaint', self::normalizePlainTextState($state))),
                                     fn ($field) => \App\Models\ClinicSetting::getConsultationSetting('show_vital_signs')
                                         ? $field->hint(fn (): View => view('forms.components.vital-signs-hint'))
                                         : $field,
@@ -122,7 +122,7 @@ class ConsultationForm
                                         && request()->user()->can('addVitalSign', Consultation::class)),
 
                                 ...self::soapField('test_results', 'label_objective', 'Objective', 'editor_objective',
-                                    fn ($field) => $field->afterStateHydrated(fn (Set $set, $state) => $set('test_results', strip_tags($state))),
+                                    fn ($field) => $field->afterStateHydrated(fn (Set $set, $state) => $set('test_results', self::normalizePlainTextState($state))),
                                     fn ($field) => $field,
                                     fn () => request()->user()->can('addTestResult', Consultation::class),
                                 ),
@@ -335,6 +335,8 @@ class ConsultationForm
                 ->columnSpanFull()
                 ->required()
                 ->toolbarButtons(['bold', 'underline', 'italic'])
+                ->afterStateHydrated(fn (Set $set, $state) => $set($fieldName, self::normalizeRichTextState($state)))
+                ->dehydrateStateUsing(fn ($state) => self::normalizeRichTextState($state))
                 ->visible($visibleWhen);
 
             return [$richEditorDecorator($field)];
@@ -345,6 +347,8 @@ class ConsultationForm
             ->columnSpanFull()
             ->autosize()
             ->required()
+            ->afterStateHydrated(fn (Set $set, $state) => $set($fieldName, self::normalizePlainTextState($state)))
+            ->dehydrateStateUsing(fn ($state) => self::normalizePlainTextState($state))
             ->visible($visibleWhen);
 
         return [$textareaDecorator($field)];
@@ -361,5 +365,30 @@ class ConsultationForm
             'undo',
             'attachFiles',
         ];
+    }
+
+    protected static function normalizePlainTextState(mixed $state): string
+    {
+        if (blank($state)) {
+            return '';
+        }
+
+        return trim(strip_tags(self::decodeHtmlEntities((string) $state)));
+    }
+
+    protected static function normalizeRichTextState(mixed $state): string
+    {
+        if (blank($state)) {
+            return '';
+        }
+
+        return self::decodeHtmlEntities((string) $state);
+    }
+
+    protected static function decodeHtmlEntities(string $value): string
+    {
+        $decoded = html_entity_decode($value, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+        return str_replace("\u{00A0}", ' ', $decoded);
     }
 }
