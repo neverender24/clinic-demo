@@ -255,7 +255,7 @@ class MedCertController extends Controller
                 <td class="right">
                     <table style="margin-left:auto; border-collapse:collapse;" cellpadding="0" cellspacing="0">
                         <tr>
-                            <td style="white-space:nowrap; padding-right:10px;"><b>Age:</b> '.$age.'</td>
+                            <td style="white-space:nowrap; padding-right:4px;"><b>Age:</b> '.$age.'</td>
                             <td style="white-space:nowrap;"><b>Sex:</b> '.$sex.'</td>
                         </tr>
                     </table>
@@ -428,7 +428,7 @@ class MedCertController extends Controller
             $leftParts[] = '<b>Address:</b> '.$mergeTags['{{ address }}'];
         }
         if (in_array('age', $fields)) {
-            $ageAndSex[] = '<td style="white-space:nowrap; padding-right:10px;"><b>Age:</b> '.$mergeTags['{{ age }}'].'</td>';
+            $ageAndSex[] = '<td style="white-space:nowrap; padding-right:4px;"><b>Age:</b> '.$mergeTags['{{ age }}'].'</td>';
         }
         if (in_array('sex', $fields)) {
             $ageAndSex[] = '<td style="white-space:nowrap;"><b>Sex:</b> '.$mergeTags['{{ sex }}'].'</td>';
