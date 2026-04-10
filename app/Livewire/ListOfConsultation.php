@@ -171,7 +171,7 @@ class ListOfConsultation extends Component implements HasTable, HasForms, HasAct
             ->heading('Previous Consultations')
             ->paginated(true)
             ->paginationPageOptions([
-                'All',
+                'all',
                 3,
                 4,
                 5,
