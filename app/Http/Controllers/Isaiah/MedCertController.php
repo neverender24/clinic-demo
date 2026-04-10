@@ -252,7 +252,14 @@ class MedCertController extends Controller
             </tr>
             <tr>
                 <td><b>Address:</b> '.$address.'</td>
-                <td class="right"><b>Age:</b> '.$age.' &nbsp;&nbsp;&nbsp;&nbsp;<b>Sex:</b> '.$sex.'</td>
+                <td class="right">
+                    <table style="margin-left:auto; border-collapse:collapse;" cellpadding="0" cellspacing="0">
+                        <tr>
+                            <td style="white-space:nowrap; padding-right:10px;"><b>Age:</b> '.$age.'</td>
+                            <td style="white-space:nowrap;"><b>Sex:</b> '.$sex.'</td>
+                        </tr>
+                    </table>
+                </td>
             </tr>';
 
         if (! request('type')) {
@@ -409,6 +416,7 @@ class MedCertController extends Controller
     {
         $leftParts = [];
         $rightParts = [];
+        $ageAndSex = [];
 
         if (in_array('name', $fields)) {
             $leftParts[] = '<b>Name:</b> '.$mergeTags['{{ name }}'];
@@ -420,13 +428,16 @@ class MedCertController extends Controller
             $leftParts[] = '<b>Address:</b> '.$mergeTags['{{ address }}'];
         }
         if (in_array('age', $fields)) {
-            $rightParts[] = '<b>Age:</b> '.$mergeTags['{{ age }}'];
+            $ageAndSex[] = '<td style="white-space:nowrap; padding-right:10px;"><b>Age:</b> '.$mergeTags['{{ age }}'].'</td>';
         }
         if (in_array('sex', $fields)) {
-            $rightParts[] = '<b>Sex:</b> '.$mergeTags['{{ sex }}'];
+            $ageAndSex[] = '<td style="white-space:nowrap;"><b>Sex:</b> '.$mergeTags['{{ sex }}'].'</td>';
         }
         if (in_array('consultation_date', $fields)) {
             $rightParts[] = '<b>Date of Consultation:</b> '.$mergeTags['{{ consultation_date }}'];
+        }
+        if ($ageAndSex !== []) {
+            $rightParts[] = '<table style="margin-left:auto; border-collapse:collapse;" cellpadding="0" cellspacing="0"><tr>'.implode('', $ageAndSex).'</tr></table>';
         }
 
         $html = '<table width="100%" style="font-size:'.$fontSize.'pt; border-collapse:collapse;">';
