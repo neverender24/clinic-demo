@@ -299,11 +299,11 @@ class MedCertController extends Controller
         $sex = $consultation->patient->sex == 'M' ? 'Male' : 'Female';
         $address = $consultation->patient->address;
         $diagnosis = $this->renderPlainTextForPrint($consultation->diagnosis ?? 'Diagnosis');
-        $management = $this->renderPlainTextForPrint($consultation->management ?? '___________________________');
+        $management = $this->renderPlainTextForPrint($consultation->management ?? $this->blankLine());
         $dateToday = now()->format('F d, Y');
         $remarks = $consultation->medical_cert_remarks
             ? $this->renderPlainTextForPrint($consultation->medical_cert_remarks)
-            : '___________________________';
+            : $this->blankLine();
         $fontSize = $this->fontSize;
 
         $consultationDate = $consultation->created_at
@@ -312,16 +312,16 @@ class MedCertController extends Controller
 
         $estimatedDate = $consultation->estimated_date
             ? Carbon::parse($consultation->estimated_date)->format('F d, Y')
-            : '___________________________';
+            : $this->blankLine();
         $estimatedDateTo = $consultation->estimated_date_to
             ? Carbon::parse($consultation->estimated_date_to)->format('F d, Y')
-            : '___________________________';
+            : $this->blankLine();
         $approximateDays = $consultation->approximate_days
             ? Number::spell($consultation->approximate_days) . ' (' . $consultation->approximate_days . ')'
-            : '___________________________';
+            : $this->blankLine();
         $returnDate = $consultation->return_date
             ? Carbon::parse($consultation->return_date)->format('F d, Y')
-            : '___________________________';
+            : $this->blankLine();
 
         $mergeTagValues = [
             'name' => $patientName,
@@ -337,7 +337,7 @@ class MedCertController extends Controller
             'estimated_date_to' => $estimatedDateTo,
             'approximate_days' => (string) $approximateDays,
             'return_date' => $returnDate,
-            'chief_complaint' => $this->renderPlainTextForPrint($consultation->chief_complaint ?? '___________________________'),
+            'chief_complaint' => $this->renderPlainTextForPrint($consultation->chief_complaint ?? $this->blankLine()),
         ];
 
         $headerMergeTags = [
@@ -380,7 +380,13 @@ class MedCertController extends Controller
             }
             $body = str_replace(array_keys($htmlMergeTags), array_values($htmlMergeTags), $body);
 
-            $content .= '<style>p { margin:0; line-height:1.3; }</style>';
+            $content .= '<style>
+                p { margin:0; padding:0; line-height:1.15; }
+                p + p { margin-top:2px; }
+                div { margin:0; padding:0; }
+                ul, ol { margin:2px 0; padding-left:14px; }
+                li { margin:0; padding:0; line-height:1.15; }
+            </style>';
             $content .= '<div style="font-size:'.$fontSize.'pt; line-height:1.3; font-family: Arial, sans-serif;">'.$body.'</div>';
         } else {
             // Fallback to original hardcoded content
@@ -455,5 +461,10 @@ class MedCertController extends Controller
         $text = PrintableContent::toPlainText($content);
 
         return $text === '' ? '' : nl2br(e($text), false);
+    }
+
+    protected function blankLine(): string
+    {
+        return '<span style="text-decoration:none;">___________________________</span>';
     }
 }
