@@ -317,7 +317,7 @@ class MedCertController extends Controller
             ? Carbon::parse($consultation->estimated_date_to)->format('F d, Y')
             : '___________________________';
         $approximateDays = $consultation->approximate_days
-            ? Number::spell($consultation->approximate_days) . ' ( <u>' . $consultation->approximate_days . '</u> )'
+            ? Number::spell($consultation->approximate_days) . ' (' . $consultation->approximate_days . ')'
             : '___________________________';
         $returnDate = $consultation->return_date
             ? Carbon::parse($consultation->return_date)->format('F d, Y')
