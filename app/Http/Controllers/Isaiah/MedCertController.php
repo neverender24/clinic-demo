@@ -12,6 +12,7 @@ use TCPDF;
 use App\Models\Consultation;
 use App\Models\ClinicSetting;
 use Filament\Forms\Components\RichEditor\RichContentRenderer;
+use Illuminate\Support\HtmlString;
 
 class MedCertController extends Controller
 {
@@ -367,7 +368,7 @@ class MedCertController extends Controller
                 // JSON content from RichEditor with .json()
                 // First try RichContentRenderer for proper mergeTag nodes
                 $body = RichContentRenderer::make($templateContent)
-                    ->mergeTags($mergeTagValues)
+                    ->mergeTags($this->prepareRichEditorMergeTags($mergeTagValues))
                     ->toUnsafeHtml();
             } else {
                 $body = $templateContent;
@@ -454,6 +455,15 @@ class MedCertController extends Controller
         $html .= '</table><br>';
 
         return $html;
+    }
+
+    protected function prepareRichEditorMergeTags(array $mergeTagValues): array
+    {
+        return collect($mergeTagValues)
+            ->map(fn ($value) => is_string($value) && $value !== strip_tags($value)
+                ? new HtmlString($value)
+                : $value)
+            ->all();
     }
 
     protected function renderPlainTextForPrint(mixed $content, bool $compactSpacing = false): string
