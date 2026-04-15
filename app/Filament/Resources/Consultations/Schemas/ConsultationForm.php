@@ -5,27 +5,29 @@ namespace App\Filament\Resources\Consultations\Schemas;
 use App\Filament\Forms\Components\PatientField;
 use App\Filament\Resources\Medicines\MedicineResource;
 use App\Filament\Resources\Patients\Schemas\PatientForm;
+use App\Models\ClinicSetting;
 use App\Models\Consultation;
 use App\Models\ConsultationMedicine;
 use App\Models\Medicine;
 use App\Models\Patient;
-use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Repeater\TableColumn;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Flex;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\UploadedFile;
 use Illuminate\View\View;
 
 class ConsultationForm
@@ -50,18 +52,11 @@ class ConsultationForm
                                     ->default(now())
                                     ->required()
                                     ->native(false),
-                                Select::make('doctor_id')
-                                    ->label('Assigned Doctor')
-                                    ->options(function () {
-                                        return User::role('Doctor')->pluck('name', 'id');
-                                    })
-                                    ->default(fn () => auth()->user()->hasRole('Doctor') ? auth()->id() : null)
-                                    ->searchable()
-                                    ->preload(),
-                                \Filament\Forms\Components\Toggle::make('is_dialysis')
+                                Hidden::make('doctor_id'),
+                                Toggle::make('is_dialysis')
                                     ->label('Dialysis')
                                     ->inline(false)
-                                    ->visible(fn () => \App\Models\ClinicSetting::getConsultationSetting('show_dialysis')),
+                                    ->visible(fn () => ClinicSetting::getConsultationSetting('show_dialysis')),
                                 Select::make('patient_id')
                                     ->label('Patient')
                                     ->relationship('patient', 'full_name')
@@ -94,31 +89,32 @@ class ConsultationForm
                                     ->live()
                                     ->required(),
                                 ...self::soapField('chief_complaint', 'label_subjective', 'Subjective', 'editor_subjective',
-                                    fn ($field) => \App\Models\ClinicSetting::getConsultationSetting('show_vital_signs')
+                                    fn ($field) => ClinicSetting::getConsultationSetting('show_vital_signs')
                                         ? $field->hint(fn (): View => view('forms.components.vital-signs-hint'))
-                                                ->afterStateHydrated(fn (Set $set, $state) => $set('chief_complaint', self::normalizePlainTextState($state)))
+                                            ->afterStateHydrated(fn (Set $set, $state) => $set('chief_complaint', self::normalizePlainTextState($state)))
                                         : $field->afterStateHydrated(fn (Set $set, $state) => $set('chief_complaint', self::normalizePlainTextState($state))),
-                                    fn ($field) => \App\Models\ClinicSetting::getConsultationSetting('show_vital_signs')
+                                    fn ($field) => ClinicSetting::getConsultationSetting('show_vital_signs')
                                         ? $field->hint(fn (): View => view('forms.components.vital-signs-hint'))
                                         : $field,
                                     fn () => request()->user()->can('addChiefComplaint', Consultation::class),
                                 ),
                                 Textarea::make('vital_signs')
-                                    ->columnSpan(fn() => [
-                                        'sm' => request()->user()->can('addVitalSign', Consultation::class) ? 1 : 2
+                                    ->columnSpan(fn () => [
+                                        'sm' => request()->user()->can('addVitalSign', Consultation::class) ? 1 : 2,
                                     ])
                                     ->autosize()
                                     ->default(function () {
                                         $words = ['BP: ', 'HR: ', 'Weight: '];
+
                                         return implode("\n", $words);
                                     })
                                     ->afterStateHydrated(function (Set $set, $state) {
-                                        if (!$state) {
+                                        if (! $state) {
                                             $words = ['BP: ', 'HR: ', 'Weight: '];
                                             $set('vital_signs', implode("\n", $words));
                                         }
                                     })
-                                    ->visible(fn() => \App\Models\ClinicSetting::getConsultationSetting('show_vital_signs')
+                                    ->visible(fn () => ClinicSetting::getConsultationSetting('show_vital_signs')
                                         && request()->user()->can('addVitalSign', Consultation::class)),
 
                                 ...self::soapField('test_results', 'label_objective', 'Objective', 'editor_objective',
@@ -145,7 +141,7 @@ class ConsultationForm
                                     ->openable()
                                     ->maxSize(5120)
                                     ->imagePreviewHeight('250')
-                                    ->visible(fn () => \App\Models\ClinicSetting::getConsultationSetting('show_attachments'))
+                                    ->visible(fn () => ClinicSetting::getConsultationSetting('show_attachments'))
                                     ->rules([
                                         fn (): \Closure => function (string $attribute, $value, \Closure $fail) {
                                             // Skip validation if it's already a stored path (string)
@@ -154,7 +150,7 @@ class ConsultationForm
                                             }
 
                                             // Validate new uploads
-                                            if ($value instanceof \Illuminate\Http\UploadedFile && ! str_starts_with($value->getMimeType(), 'image/')) {
+                                            if ($value instanceof UploadedFile && ! str_starts_with($value->getMimeType(), 'image/')) {
                                                 $fail('The file must be an image.');
                                             }
                                         },
@@ -166,7 +162,7 @@ class ConsultationForm
                                         ->visible(fn ($livewire) => request()->user()->can('addFollowupSchedule', Consultation::class)),
                                     TextInput::make('fee')
                                         ->label('Consultation Fee')
-                                        ->visible(fn () => \App\Models\ClinicSetting::getConsultationSetting('show_consultation_fee_form')),
+                                        ->visible(fn () => ClinicSetting::getConsultationSetting('show_consultation_fee_form')),
                                 ])
                                     ->columnSpanFull(),
 
@@ -272,7 +268,7 @@ class ConsultationForm
                                                     ]),
                                                 TextInput::make('remarks')
                                                     ->datalist(fn () => ConsultationMedicine::distinct('remarks')->pluck('remarks')->toArray())
-                                                     ->extraInputAttributes([
+                                                    ->extraInputAttributes([
                                                         'onchange' => 'this.focus()',
                                                     ])
                                                     ->required()
@@ -326,8 +322,8 @@ class ConsultationForm
         \Closure $richEditorDecorator,
         \Closure $visibleWhen,
     ): array {
-        $label = fn () => \App\Models\ClinicSetting::getConsultationValue($labelKey, $labelDefault);
-        $isRich = \App\Models\ClinicSetting::getConsultationValue($editorKey, 'textarea') === 'richeditor';
+        $label = fn () => ClinicSetting::getConsultationValue($labelKey, $labelDefault);
+        $isRich = ClinicSetting::getConsultationValue($editorKey, 'textarea') === 'richeditor';
 
         if ($isRich) {
             $field = RichEditor::make($fieldName)

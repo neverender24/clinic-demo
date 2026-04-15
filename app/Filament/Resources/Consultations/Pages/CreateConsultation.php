@@ -95,6 +95,7 @@ class CreateConsultation extends CreateRecord
     {
         $data['queueing_number'] = $this->checkLastQueue($data['date']) + 1;
         $data['clinic_id'] = Filament::getTenant()->id;
+        $data['doctor_id'] = 3;
 
         return $data;
     }
