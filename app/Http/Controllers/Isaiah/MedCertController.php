@@ -479,6 +479,6 @@ class MedCertController extends Controller
 
     protected function blankLine(): string
     {
-        return '<span style="text-decoration:none;">___________________________</span>';
+        return 'N/A';
     }
 }
