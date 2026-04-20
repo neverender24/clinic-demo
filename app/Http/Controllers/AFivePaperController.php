@@ -332,7 +332,7 @@ class AFivePaperController extends Controller
         $pdf->Output('prescription.pdf', 'I');
     }
 
-    protected function patientinfo($consultation)
+    protected function patientinfo($consultation, ?string $heading = null)
     {
         $sex = $consultation->patient->sex == 'M' ? 'Male' : 'Female';
         $age = Carbon::parse($consultation->patient->birthday)->age;
@@ -367,13 +367,15 @@ class AFivePaperController extends Controller
             </tr>
            
             ';
-            if (! request('type')) {
+            $heading ??= request('type');
+
+            if (! $heading) {
                 
             } else {
                 $content .= '
                 <tr>
                     <td colspan="2" style="line-height:1;">
-                        <div style="text-align:center; font-weight:bold; font-size: '.($fontSize+3).'; text-transform:uppercase">'.(request('type') ?? '').'</div>
+                        <div style="text-align:center; font-weight:bold; font-size: '.($fontSize+3).'; text-transform:uppercase">'.htmlspecialchars($heading, ENT_QUOTES, 'UTF-8').'</div>
                     </td>
                 </tr>';
                 
@@ -388,7 +390,7 @@ class AFivePaperController extends Controller
 
     protected function generateCustomContent($title, $content, $consultation, bool $isHtml = false): void
     {
-        $final_content = $this->patientinfo($consultation);
+        $final_content = $this->patientinfo($consultation, $title);
         $rendered = $isHtml ? $content : nl2br(htmlspecialchars($content));
         $final_content .= '<style>p { margin: 0; line-height: 1.3; }</style>';
         $final_content .= '<div style="font-size:' . $this->fontSize . 'pt; line-height:1.3;"><br>' . $rendered . '</div>';

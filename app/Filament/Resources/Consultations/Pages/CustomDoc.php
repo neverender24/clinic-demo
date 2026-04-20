@@ -28,6 +28,7 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\HtmlString;
+use Illuminate\Support\Js;
 use Illuminate\View\View;
 use Torgodly\Html2Media\Tables\Actions\Html2MediaAction;
 
@@ -53,14 +54,30 @@ class CustomDoc extends ManageRelatedRecords implements HasForms, HasTable
         return 'Custom Documents';
     }
 
+    protected function getCustomDocPrintUrl(ModelsCustomDoc $record): string
+    {
+        return route('pdf.new-tab', [
+            'id' => $record->consultation_id,
+            'paper' => $record->size ?: 'A5',
+            'type' => 'Custom Doc',
+            'custom_doc_id' => $record->id,
+        ]);
+    }
+
+    protected function openCustomDocPrintWindow($livewire, ModelsCustomDoc $record): void
+    {
+        $livewire->js('window.open(' . Js::from($this->getCustomDocPrintUrl($record)) . ", '_blank')");
+    }
+
     public function form(Schema $schema): Schema
     {
 
         return $schema
             ->components([
-                TextInput::make('
-                ')
-                    ->label('New Document'),
+                TextInput::make('doc_name')
+                    ->label('New Document')
+                    ->required()
+                    ->maxLength(255),
                 Select::make('size')
                     ->label('Size')
                     ->options([
@@ -119,7 +136,8 @@ class CustomDoc extends ManageRelatedRecords implements HasForms, HasTable
 
                         // dd($data);
                         return $data;
-                    }),
+                    })
+                    ->after(fn ($livewire, ModelsCustomDoc $record) => $this->openCustomDocPrintWindow($livewire, $record)),
                 // ->action(function($data) {
                 //     $data['consultation_id'] = $this->record->id;
                 //     // dd($data);
@@ -135,15 +153,11 @@ class CustomDoc extends ManageRelatedRecords implements HasForms, HasTable
             ->recordActions([
                 EditAction::make()
                     ->schema(fn ($form) => $this->form($form))
-                    ->url(''),
+                    ->url('')
+                    ->after(fn ($livewire, ModelsCustomDoc $record) => $this->openCustomDocPrintWindow($livewire, $record)),
                 DeleteAction::make(),
                 Action::make('print')
-                    ->url(fn ($record) => route('pdf.new-tab', [
-                        'id' => $record->consultation_id,
-                        'paper' => 'A5',
-                        'type' => 'Custom Doc',
-                        'custom_doc_id' => $record->id,
-                    ]), true),
+                    ->url(fn (ModelsCustomDoc $record): string => $this->getCustomDocPrintUrl($record), true),
                 // Html2MediaAction::make('print')
                 //     ->label(fn($record) => 'Print ')
                 //     ->color('success')
